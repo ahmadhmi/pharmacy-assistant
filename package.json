@@ -10,15 +10,26 @@
   },
   "dependencies": {
     "next": "14.0.4",
+<<<<<<< HEAD
     "react": "^18",
     "react-dom": "^18",
     "react-query": "^3.39.3"
+=======
+    "next-auth": "^4.24.5",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^5.0.1"
+>>>>>>> d0cc3f2a48e1752f9742224315c3c31c95743164
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+<<<<<<< HEAD
+=======
+    "daisyui": "^4.6.0",
+>>>>>>> d0cc3f2a48e1752f9742224315c3c31c95743164
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "postcss": "^8",
