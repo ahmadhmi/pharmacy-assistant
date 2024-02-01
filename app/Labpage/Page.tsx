@@ -3,7 +3,7 @@ import React from "react";
 
 const Data: LabData[] = [
   {
-    student: "Qiaomu Lei",
+    student: "Qiaomu Lei 1",
     RxNum: ["123131", "132131", "123131"],
   },
   {
