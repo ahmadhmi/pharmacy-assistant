@@ -2,11 +2,11 @@ import { Gradesheet } from "@/types/gradesheet";
 import { Student } from "@/types/student";
 
 interface Props {
-  student: Student,
+  student:Student,
   gradesheets: Gradesheet[],
 }
 
-export default function StudentAccordion({ student }: Props) {
+export default function StudentAccordion({gradesheets, student} : Props) {
   return (
     <div className="collapse collapse-arrow min-w-80 border-2 border-black">
       <input type="checkbox" name="my-accordion-1"></input>

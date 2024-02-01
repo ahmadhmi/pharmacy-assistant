@@ -1,5 +1,5 @@
 export interface Gradesheet{
-    id:string,
+    id?:string,
     rx:String,
     criteria: {
         name:string,
