@@ -6,6 +6,7 @@ export default function Home() {
   return (
     <div>
       <nav>Pharmacy Assistant</nav>
+      <Link href="/Labpage" style={{display:"block"}}>Lab Page</Link>
       <Link href="/api/auth/signin">Login</Link>
     </div>
   );
