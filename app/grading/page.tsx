@@ -15,8 +15,9 @@ export default function Grading(){
     return(
         <main className="flex justify-center">
             <div className="flex flex-col">
-                <StudentAccordion student={students[0]}></StudentAccordion>
+                <StudentAccordion student={students[0]} gradesheets={[]}></StudentAccordion>
             </div>
+            
         </main>
     )
 }
