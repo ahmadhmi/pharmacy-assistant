@@ -24,10 +24,6 @@ export async function GET(request: NextRequest, { params }: Props) {
 
       const blocks = await getAllBlocks(params.id);
 
-      if(blocks.length <= 0){
-        throw {error: "There are no blocks available"}
-      }
-
       return NextResponse.json(blocks, {
         status: 200,
       });
@@ -80,7 +76,7 @@ export async function POST(request: NextRequest, { params }: Props) {
   }
 }
 
-export async function PUT(
+export async function PATCH(
   request: NextRequest,
   { params }: { params: { userID: string } }
 ) {
