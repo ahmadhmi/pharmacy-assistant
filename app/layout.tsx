@@ -4,6 +4,7 @@ import SideBar from "./UI/SideBar";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import AuthProvider from "./_utils/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <AuthProvider>
       <body className={inter.className + " min-h-screen"}>
         <NavBar />
         <div className="flex flex-row min-h-full">
@@ -28,6 +30,7 @@ export default function RootLayout({
           <main className=" flex-1 ">{children}</main>
         </div>
       </body>
+      </AuthProvider>
     </html>
   );
 }
