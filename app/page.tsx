@@ -4,7 +4,7 @@ import { User } from "next-auth";
 
 export default function Home() {
   return (
-    <div>
+    <div className="bg-red-600">
       <nav>Pharmacy Assistant</nav>
       <Link href="/api/auth/signin">Login</Link>
     </div>
