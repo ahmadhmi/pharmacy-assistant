@@ -1,9 +1,9 @@
 import { run } from "./_services/databaseService";
 import NavBar from "./UI/NavBar";
 import SideBar from "./UI/SideBar";
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +25,7 @@ export default function RootLayout({
           <div className="bg-primary p-3 hidden lg:block">
             <SideBar />
           </div>
-          <main>{children}</main>
+          <main className=" flex-1 ">{children}</main>
         </div>
       </body>
     </html>

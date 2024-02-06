@@ -36,10 +36,9 @@ const Data: LabData[] = [
   },
 ];
 
-
 export default function LabPage() {
   return (
-    <div className="display-flex justify-center h-screen w-screen px-8 py-10">
+    <div className="display-flex justify-center h-screen w-100% px-8 py-10">
       <h1 className="text-center mb-6 text-3xl">Lab Page</h1>
       <div className="border-y overflow-y-auto" style={{ height: "80%" }}>
         {Data.map((item, index) => (
@@ -57,7 +56,7 @@ export default function LabPage() {
         ))}
       </div>
       <div className=" flex justify-center w-100% mt-4">
-        <MyButton text="Export"/>
+        <MyButton text="Export" />
       </div>
     </div>
   );
