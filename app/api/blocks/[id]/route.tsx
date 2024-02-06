@@ -8,6 +8,7 @@ import {
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { error } from "console";
+import { Block } from "@/interfaces/block";
 
 interface Props {
   params: { id: string };
@@ -23,7 +24,9 @@ export async function GET(request: NextRequest, { params }: Props) {
 
       const blocks = await getAllBlocks(params.id);
 
-      console.log(blocks); 
+      if(blocks.length <= 0){
+        throw {error: "There are no blocks available"}
+      }
 
       return NextResponse.json(blocks, {
         status: 200,
@@ -35,7 +38,7 @@ export async function GET(request: NextRequest, { params }: Props) {
     }
   } catch (ex: any) {
     console.log("Error has occurred");
-    return NextResponse.json(ex.error);
+    return NextResponse.json(ex.error, {status: 404});
   }
 }
 

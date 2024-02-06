@@ -59,7 +59,6 @@ export async function addBlock(userID, block){
         await client.connect(); 
         let collection = db.collection("blocks"); 
 
-
         await collection.insertOne(block);
         console.log("Connected to atlas and added a block"); 
     }
@@ -75,13 +74,20 @@ export async function addBlock(userID, block){
 export async function getAllBlocks(userID){
 
     try{
+        console.log(`Getting blocks for user ${userID}`);
         await client.connect();
-        let filter = {"name" : `Block 1`}; 
+        let filter = {
+            users: {
+                $in : [String(userID)]
+            }
+        }; 
         let collection = db.collection("blocks");
-        const blocks = await collection.findOne(filter);
+        const cursor = await collection.find(filter);
+        const blocks = await cursor.toArray(); 
+
         return blocks; 
     }catch(ex){
-        return false;
+        return [];
     }finally{
         await client.close();
     }
