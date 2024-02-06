@@ -1,25 +1,36 @@
-import { Gradesheet } from "@/types/gradesheet";
-import { Student } from "@/types/student";
+import { Lab } from "@/interfaces/Lab";
+import AccordionTab from "./AccordionTab";
+import { Gradesheet } from "@/interfaces/gradesheet";
+import { group } from "console";
 
 interface Props {
-  student:Student,
-  gradesheets: Gradesheet[],
+  studentLab: Lab,
 }
 
-export default function StudentAccordion({gradesheets, student} : Props) {
-  return (
-    <div className="collapse collapse-arrow min-w-80 border-2 border-black">
-      <input type="checkbox" name="my-accordion-1"></input>
-      <div className="collapse-title flex justify-between items-center gap-2">
-        <h3 className="text-md font-bold">{`${student.firstName} ${student.lastName}`}</h3>
-        <div className="flex flex-row gap-2">
-          <div className="badge badge-primary">4</div>
-          <div className="badge badge-primary">{`${40}/${44}`}</div>
-        </div>
-      </div>
-      <div className="collapse-content">
-        <p>Hello world</p>
-      </div>
-    </div>
+ 
+
+export default function StudentAccordion({studentLab} : Props) {
+
+  // reduce student lab gradesheets to get gradesheets in arrays, grouped by student ID
+
+  const gradesheetsByStudents: Record<string, Gradesheet[]> = studentLab.gradesheets.reduce(
+    (groupedGradesheets:Record<string, Gradesheet[]>, gradesheet) => {
+      const studentID = gradesheet.studentID;
+  
+      if (groupedGradesheets[studentID] == null) groupedGradesheets[studentID] = [];
+  
+      groupedGradesheets[studentID].push(gradesheet);
+  
+      return groupedGradesheets;
+    },
+    {}
   );
+
+  console.log(gradesheetsByStudents); 
+
+
+  // for every group, it should have an accordion tab, the group should be passed into the accordion tab to create the table
+    return(
+      <p>Hello</p>
+    )
 }

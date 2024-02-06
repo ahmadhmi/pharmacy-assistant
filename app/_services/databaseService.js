@@ -1,9 +1,7 @@
 import { Filter, MongoClient } from "mongodb";
 import { User } from "next-auth";
- 
-// Replace the following with your Atlas connection string                                                                                                                                        
-const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.tgnwjnk.mongodb.net/?retryWrites=true&w=majority`;
-// Connect to your Atlas cluster
+                                                                                                                                      
+const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(url);
 const db = client.db(process.env.MONGO_CONNECTION_DATABASE); 
 
@@ -74,3 +72,11 @@ export async function addBlock(name){
         await client.close(); 
     }
 }
+
+export async function getAllBlocks(){
+
+    let collection = db.collection("blocks");
+    const blocks = await collection.find(); 
+    
+}
+
