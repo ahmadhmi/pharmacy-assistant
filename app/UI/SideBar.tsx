@@ -1,9 +1,19 @@
-import React from 'react'
+import React from "react";
 
 const SideBar = () => {
+  const blocks = ["Block A", "Block B", "Block C"];
   return (
-    <div>SideBar</div>
-  )
-}
+    <aside>
+      {blocks.map((block) => (
+        <button className="btn btn-neutral mb-3 w-full text-lg" key={block}>
+          {block}
+        </button>
+      ))}
+      <button className="btn btn-primary mb-3 w-full text-lg">
+        Add Block
+      </button>
+    </aside>
+  );
+};
 
-export default SideBar
+export default SideBar;
