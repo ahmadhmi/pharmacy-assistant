@@ -1,9 +1,7 @@
 import { Filter, MongoClient } from "mongodb";
 import { User } from "next-auth";
- 
-// Replace the following with your Atlas connection string                                                                                                                                        
-const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.tgnwjnk.mongodb.net/?retryWrites=true&w=majority`;
-// Connect to your Atlas cluster
+                                                                                                                                      
+const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(url);
 const db = client.db(process.env.MONGO_CONNECTION_DATABASE); 
 
@@ -55,16 +53,14 @@ export async function addUser(user){
     }
 }
 
-export async function addBlock(name){
+//todo
+export async function addBlock(userID, block){
     try{
         await client.connect(); 
         let collection = db.collection("blocks"); 
 
-        let newBlock = {
-            name: name
-        };
 
-        await collection.insertOne(newBlock);
+        await collection.insertOne(block);
         console.log("Connected to atlas and added a block"); 
     }
     catch{
@@ -74,3 +70,34 @@ export async function addBlock(name){
         await client.close(); 
     }
 }
+
+//todo get all blocks with a userID of the one passed
+export async function getAllBlocks(userID){
+
+    try{
+        await client.connect();
+        let filter = {"name" : `Block 1`}; 
+        let collection = db.collection("blocks");
+        const blocks = await collection.findOne(filter);
+        return blocks; 
+    }catch(ex){
+        return false;
+    }finally{
+        await client.close();
+    }
+
+    
+}
+
+//todo
+export async function updateBlock(userID, block){
+    //make sure the block in the database with the blockID in the block being passed contains the userID passed before updating
+}
+
+//todo
+export async function deleteBlock(userID, blockID){
+    //make sure the block in the database with the blockID passed contains the userID passed before deleting
+}
+
+//todo
+

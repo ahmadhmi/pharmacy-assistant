@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { User } from "next-auth";
 
-export default function Home() {
+export default async function Home() {
   return (
     <div>
       <nav>Pharmacy Assistant</nav>

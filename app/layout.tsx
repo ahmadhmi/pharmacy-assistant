@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className + " min-h-screen"}>
         <NavBar />
-        <div className="flex flex-row min-h-screen">
+        <div className="flex flex-row min-h-full">
           <div className="bg-primary p-3 hidden lg:block">
             <SideBar />
           </div>
