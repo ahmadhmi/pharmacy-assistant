@@ -34,6 +34,10 @@ const Data: LabData[] = [
     student: "john Dao",
     RxNum: ["123123123"],
   },
+  {
+    student: "john Dao",
+    RxNum: ["123123123"],
+  },
 ];
 
 export default function LabPage() {
