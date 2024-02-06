@@ -26,8 +26,6 @@ export default function StudentAccordion({studentLab} : Props) {
     {}
   );
 
-  console.log(gradesheetsByStudents); 
-
 
   // for every group, it should have an accordion tab, the group should be passed into the accordion tab to create the table
     return(
