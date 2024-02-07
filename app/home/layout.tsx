@@ -6,7 +6,6 @@ import BlocksContextProvider from "../_utils/blocks-context";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
       <BlocksContextProvider>
-          <NavBar />
           <SideBar>{children}</SideBar>
       </BlocksContextProvider>
   );
