@@ -103,6 +103,23 @@ export async function updateBlock(userID, block){
 //todo
 export async function deleteBlock(userID, blockID){
     //make sure the block in the database with the blockID passed contains the userID passed before deleting
+    try {
+        await client.connect();
+        let collection = db.collection("blocks");
+        const filter = { _id: blockID, userID: userID}
+        const result = await collection.deleteOne(filter);
+
+        if (result.deletedCount === 1) {
+            console.log("Successfully deleted a block");
+        } else {
+            console.log("No block found with the specified ID and userID")
+        }
+    } catch(err) {
+        console.log("Delete failed with error\n" + err);
+    } finally {
+        await client.close();
+    }
+
 }
 
 //todo
