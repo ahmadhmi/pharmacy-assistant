@@ -1,6 +1,6 @@
 import { LabData } from "@/types/LabData";
 import React from "react";
-import MyButton from "../UI/componenttest";
+import MyButton from "../../UI/componenttest";
 const Data: LabData[] = [
   {
     student: "Qiaomu Lei 1",

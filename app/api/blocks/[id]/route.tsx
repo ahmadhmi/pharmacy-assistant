@@ -113,9 +113,10 @@ export async function DELETE(
   const session = await getServerSession(authOptions);
 
   try {
-    console.log(session);
     if (session) {
       const body = await request.json();
+
+      console.log(params.id + " " + body.block.id)
 
       await deleteBlock(params.id, body.block.id);
 
