@@ -21,15 +21,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-        <AuthProvider>
+      <AuthProvider>
         <BlocksContextProvider>
-      <body className={inter.className + " min-h-screen"}>
-        <NavBar />
-        <SideBar>{children}</SideBar>
-      </body>
-</BlocksContextProvider>
+          <body className={inter.className + " min-h-screen"}>
+            <NavBar />
+            <SideBar>{children}</SideBar>
+          </body>
+        </BlocksContextProvider>
       </AuthProvider>
-
     </html>
   );
 }

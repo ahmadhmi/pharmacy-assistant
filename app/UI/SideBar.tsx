@@ -2,15 +2,15 @@
 
 import React, { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
+import { useBlocksContext } from "../_utils/blocks-context";
 
 interface Props {
   children: React.ReactNode;
 }
 
 const SideBar = ({ children }: Props) => {
-  const blocks: string[] = [
-    "Block 1", "Block 2"
-  ];
+  
+  const {blocks} = useBlocksContext();
   const [selectedBlock, setSelectedBlock] = useState("");
   return (
     <div className="drawer lg:drawer-open">
