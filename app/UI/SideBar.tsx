@@ -3,15 +3,17 @@
 import React, { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { useBlocksContext } from "../_utils/blocks-context";
+import { Block } from "@/interfaces/block";
 
 interface Props {
   children: React.ReactNode;
 }
 
 const SideBar = ({ children }: Props) => {
-  
-  const {blocks} = useBlocksContext();
-  const [selectedBlock, setSelectedBlock] = useState("");
+  const blocks: string[] = [
+    "Block 1", "Block 2"
+  ];
+  const {selectedBlock, setSelectedBlock}:{selectedBlock:Block, setSelectedBlock:Function } = useBlocksContext();
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -21,10 +23,10 @@ const SideBar = ({ children }: Props) => {
           className="btn btn-primary drawer-button lg:hidden m-3 text-xl
               "
         >
-          {selectedBlock}
+          {selectedBlock.name}
           <IoIosArrowDown />
         </label>
-        <div className="p-3">{children}</div>
+        <main className="p-3 bg-white min-h-screen">{children}</main>
       </div>
       <div className="drawer-side">
         <label
