@@ -1,7 +1,7 @@
 "use client"; 
 import { Student } from "@/interfaces/student"
-import StudentAccordion from "../UI/Grading/StudentAccordion"
-import { addBlock } from "../_services/databaseService"
+import StudentAccordion from "@/app/UI/Grading/StudentAccordion";
+import AddBlock from "../blocks/AddBlock/page";
 import { Gradesheet } from "@/interfaces/gradesheet"
 import { Lab } from "@/interfaces/Lab"
 import { useEffect, useState } from "react";
@@ -9,22 +9,6 @@ import { useEffect, useState } from "react";
 export default function Grading(){
 
     const [test, setTest] = useState(""); 
-
-    async function testFunc(){
-        let res = await fetch(
-            "http://localhost:3000/api/blocks/1",
-            {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }
-            );
-        
-            let js = await res.json();
-            console.log(js);
-            setTest(js); 
-    }
 
     let studentLab:Lab = {
         id: "11122234513",
@@ -48,13 +32,6 @@ export default function Grading(){
         ]
 
     }
-
-    useEffect(
-        () => {
-            console.log(test);
-        },
-        [test]
-    )
 
     return(
         <main className="flex flex-col items-center">

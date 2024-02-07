@@ -5,6 +5,7 @@ import { User } from "next-auth";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { RedirectType, redirect } from "next/navigation";
+import { Block } from "@/interfaces/block";
 import BlockButton from "./UI/Blocks/BlockButton";
 
 export default function Home() {
@@ -20,8 +21,7 @@ export default function Home() {
     [status]
   )
 
-
-  return (
+return (
     <div className="bg-red-600">
       <nav>Pharmacy Assistant</nav>
       <BlockButton />
