@@ -1,6 +1,10 @@
+"use client"
+
 import React from "react";
 import logo from "@/app/assets/logo.png";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import Skeleton from "@/app/UI/Skeleton";
 
 const NavBar = () => {
   return (
@@ -10,6 +14,19 @@ const NavBar = () => {
           <img src={logo.src} alt="logo" width="50px" />
         </Link>
       </div>
+      <AuthStatus/>
+    </div>
+  );
+};
+
+const AuthStatus = () => {
+  const { status, data: session } = useSession();
+  if (status === "unauthenticated")
+    return <Link href={"/api/auth/signin"}>Login</Link>;
+
+  if (status === "loading") return <Skeleton width="3rem" />;
+  if (status === "authenticated")
+    return (
       <div className="flex-none gap-2">
         <div className="dropdown dropdown-end">
           <div
@@ -20,7 +37,7 @@ const NavBar = () => {
             <div className="w-10 rounded-full">
               <img
                 alt="Tailwind CSS Navbar component"
-                src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                src={session.user?.image!}
               />
             </div>
           </div>
@@ -30,21 +47,19 @@ const NavBar = () => {
           >
             <li>
               <a className="justify-between">
-                Profile
-                <span className="badge">New</span>
+                {session.user?.name}
+                {/* <span className="badge">New</span> */}
               </a>
             </li>
-            <li>
+            {/* <li>
               <a>Settings</a>
-            </li>
+            </li> */}
             <li>
-              <a>Logout</a>
+              <Link href="/api/auth/signout">Logout</Link>
             </li>
           </ul>
         </div>
       </div>
-    </div>
-  );
+    );
 };
-
 export default NavBar;
