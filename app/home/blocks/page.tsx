@@ -7,7 +7,7 @@ export default function Home(){
     const {blocks} = useBlocksContext(); 
 
     return(
-        <div>
+        <div className="text-black">
             {blocks.length > 0? blocks[0].name : "Nothing to show"}
         </div>
     )
