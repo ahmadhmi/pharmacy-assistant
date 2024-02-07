@@ -34,10 +34,6 @@ const Data: LabData[] = [
     student: "john Dao",
     RxNum: ["123123123"],
   },
-  {
-    student: "john Dao",
-    RxNum: ["123123123"],
-  },
 ];
 
 export default function LabPage() {
@@ -47,7 +43,7 @@ export default function LabPage() {
       <div className="border-y overflow-y-auto" style={{ height: "80%" }}>
         {Data.map((item, index) => (
           <div className="collapse collapse-arrow bg-base-200 my-3" key={index}>
-            <input type="radio" name="my-accordion-2" placeholder="1" />
+            <input type="checkbox" name="my-accordion-2" placeholder="1" />
             <div className="collapse-title text-xl font-medium">
               {item.student}
             </div>
