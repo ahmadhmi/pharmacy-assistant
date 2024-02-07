@@ -6,7 +6,7 @@ import {
   deleteBlock,
 } from "@/app/_services/databaseService";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import authOptions from "@/app/auth/authOptions";
 import { error } from "console";
 import { Block } from "@/interfaces/block";
 
