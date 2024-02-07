@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { useBlocksContext } from "../_utils/blocks-context";
+import { useBlocksContext } from "@/app/_utils/blocks-context";
 import { Block } from "@/interfaces/block";
 
 export default function Home(){
