@@ -78,6 +78,7 @@ export async function getAllBlocks(userID) {
 
     return blocks;
   } catch (ex) {
+    console.log(ex)
     return [];
   } finally {
     await client.close();
