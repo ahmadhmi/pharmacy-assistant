@@ -1,11 +1,11 @@
-const { MongoClient } = require("mongodb");
- 
-// Replace the following with your Atlas connection string                                                                                                                                        
-const url = `mongodb+srv://pharmacy-assistant:pharmacyAssistant1234@pharmacy-assistant.mongodb.net/?retryWrites=true&w=majority`;
-// Connect to your Atlas cluster
+import { Filter, MongoClient } from "mongodb";
+import { User } from "next-auth";
+                                                                                                                                      
+const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(url);
+const db = client.db(process.env.MONGO_CONNECTION_DATABASE); 
 
-export default async function run() {
+export async function run() {
     try {
         await client.connect();
         console.log("Successfully connected to Atlas");

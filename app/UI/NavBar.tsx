@@ -1,10 +1,14 @@
 import React from "react";
+import logo from "@/app/assets/logo.png";
+import Link from "next/link";
 
 const NavBar = () => {
   return (
     <div className="navbar bg-base-100">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <Link href={"/"}>
+          <img src={logo.src} alt="logo" width="50px" />
+        </Link>
       </div>
       <div className="flex-none gap-2">
         <div className="dropdown dropdown-end">
