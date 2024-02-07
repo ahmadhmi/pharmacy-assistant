@@ -60,7 +60,6 @@ export default function AddBlock() {
     },
   ];
 
-  if (!(blocks.length <= 0)) {
     return (
       <section className="flex flex-col items-center sm:items-start">
         <h1 className="text-2xl text-primary p-2 rounded-lg mb-4">
@@ -127,7 +126,4 @@ export default function AddBlock() {
         </div>
       </section>
     );
-  } else {
-    return <p>Select a block to continue</p>;
-  }
 }
