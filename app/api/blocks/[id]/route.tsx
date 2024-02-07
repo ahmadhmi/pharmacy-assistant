@@ -39,21 +39,12 @@ export async function GET(request: NextRequest, { params }: Props) {
 }
 
 export async function POST(request: NextRequest, { params }: Props) {
-  const session = getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
   try {
     //checking if the user is authenticated
     if (session) {
-      console.log(session);
-    } else {
-      throw {
-        error: "User not authenticated",
-      };
-    }
-
-    //getting the blocks for that user
-
-    const body = await request.json();
+      const body = await request.json();
 
     try {
       await addBlock(params.id, body.block);
@@ -71,6 +62,15 @@ export async function POST(request: NextRequest, { params }: Props) {
     return NextResponse.json(null, {
       status: 200,
     });
+    } else {
+      throw {
+        error: "User not authenticated",
+      };
+    }
+
+    //getting the blocks for that user
+
+    
   } catch (ex: any) {
     return NextResponse.json(ex.error);
   }

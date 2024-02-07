@@ -11,6 +11,7 @@ export default function BlocksContextProvider({children}){
 
     const {session, data} = useSession(); 
     const [blocks, setBlocks] = useState([]);
+    const [selectedBlock, setSelectedBlock] = useState({}); 
 
 
 
@@ -31,14 +32,27 @@ export default function BlocksContextProvider({children}){
         setBlocks(newBlocks); 
     }
 
+    async function addBlock(block){
+
+        const response = await fetch(
+            "http://localhost:3000/api/blocks/1",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        )
+    }
+
     useEffect(
         () => {
             getBlocks(); 
         },
-        [session]
+        [session?.user]
     )
 
-    return( <BlocksContext.Provider value={{blocks}}>
+    return( <BlocksContext.Provider value={{blocks, selectedBlock, setSelectedBlock}}>
         {children}
     </BlocksContext.Provider>)
 
