@@ -6,7 +6,6 @@ import {
   deleteBlock,
   getUserID,
 } from "@/app/_services/databaseService";
-import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
 import { error } from "console";
 import { Block } from "@/interfaces/block";
@@ -16,18 +15,16 @@ interface Props {
 }
 
 export async function GET(request: NextRequest, { params }: Props) {
-  const session = await getServerSession(authOptions);
+
+  let session = true;
 
   try {
-    console.log(session); 
+    console.log("Email: " + params.id); 
     //checking if the user is authenticated
     if (session) {
       //getting the blocks for that user
 
-      const body = await request.json(); 
-      const userID = await getUserID(body.email); 
-
-      const blocks = await getAllBlocks(userID);
+      const blocks = await getAllBlocks(params.id);
 
       return NextResponse.json(blocks, {
         status: 200,
@@ -44,11 +41,12 @@ export async function GET(request: NextRequest, { params }: Props) {
 }
 
 export async function POST(request: NextRequest, { params }: Props) {
-  const session = await getServerSession(authOptions);
+
+  let session = true;
   const body = await request.json();
   try {
     //checking if the user is authenticated
-    if (session && session.user?.email === body.email) {
+    if (session) {
     try {
       await addBlock(body.email, body.block);
     } catch (ex: any) {
@@ -83,7 +81,8 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { userID: string } }
 ) {
-  const session = await getServerSession(authOptions);
+
+  let session = true;
 
   try {
     const body = await request.json();
@@ -113,7 +112,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const session = await getServerSession(authOptions);
+  let session = true;
 
   try {
     if (session) {

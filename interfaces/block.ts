@@ -5,5 +5,5 @@ export interface Block{
     id?:string,
     name?:string,
     weeks?:Week[],
-    users:string,
+    users:string[],
 }

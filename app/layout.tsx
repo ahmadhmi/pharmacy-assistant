@@ -21,12 +21,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <AuthProvider>
-        <NavBar/>
-        <div className={inter.className + " min-h-screen"}> 
+      <body className={inter.className + " min-h-screen"}>
+          <NavBar />
           {children}
-        </div>
-      </AuthProvider>
+      </body>
     </html>
   );
 }
