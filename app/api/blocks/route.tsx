@@ -39,14 +39,16 @@ export async function GET(request: NextRequest, { params }: Props) {
   
   export async function POST(request: NextRequest, { params }: Props) {
   
-    let session = true;
+    const session = await getServerSession(authOptions); 
     const body = await request.json();
+
 
     try {
       //checking if the user is authenticated
       if (session) {
+        let addedBlock; 
       try {
-        await addBlock(body.block);
+        addedBlock = await addBlock(body);
       } catch (ex: any) {
         return NextResponse.json(
           {
@@ -58,7 +60,7 @@ export async function GET(request: NextRequest, { params }: Props) {
         );
       }
   
-      return NextResponse.json(null, {
+      return NextResponse.json(addedBlock, {
         status: 200,
       });
       } else {
