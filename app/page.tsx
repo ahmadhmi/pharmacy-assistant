@@ -14,6 +14,20 @@ export default function Login() {
   }, [status]);
 
   return (
-  <Link href="/api/auth/signin">Login</Link>
-  )
+    <div className="flex flex-row justify-center items-center min-h-screen gap-20 ">
+      <div>
+        <h1 className="text-5xl font-bold bg-clip-text mx-11">
+          Welcome To{" "}
+          <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-green-500 to-purple-500 ">
+            Pharmacy Assistant
+          </span>
+        </h1>
+      </div>
+      <div>
+        <Link href="/api/auth/signin" className="btn btn-wide mx-11 text-2xl">
+          Login
+        </Link>
+      </div>
+    </div>
+  );
 }
