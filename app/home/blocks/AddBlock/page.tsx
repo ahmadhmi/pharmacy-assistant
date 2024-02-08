@@ -23,7 +23,7 @@ export default function AddBlock() {
   };
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const letters = /^[A-Za-z]+$/;
+    const letters = /^[A-Za-z\s]+$/;
     const Numbers = /^[1-9]+$/;
     if (!firstName.match(letters)) {
       alert("The FirstName should be all in letters ");
