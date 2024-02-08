@@ -19,7 +19,7 @@ export default function Login() {
         <h1 className="text-2xl  sm:text-5xl font-bold bg-clip-text mx-11">
           Welcome To{" "}
           <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-green-500 to-purple-500 text-6xl py-2 ">
-            Pharmacy Assistant
+            PharmaGrades
           </span>
         </h1>
       </div>
@@ -28,7 +28,7 @@ export default function Login() {
           href="/api/auth/signin"
           Icon={VscArrowRight}
           IconSize={25}
-          className="btn-wide btn-accent"
+          className="btn-wide btn-accent text-white"
         >
           Get Started
         </LinkBlock>
