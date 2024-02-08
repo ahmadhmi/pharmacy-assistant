@@ -77,13 +77,16 @@ export async function getUserID(email){
 //todo
 export async function addBlock(block) {
   try {
+    const session = await getServerSession(authOptions); 
     await client.connect();
     let collection = db.collection("blocks");
-
+    console.log(block); 
     block.users.push(session.user.email); 
+
 
     await collection.insertOne(block);
     console.log("Connected to atlas and added a block");
+    return block; 
   } catch {
     console.log("Tried to add a block, error encountered\n" + err.log);
   } finally {

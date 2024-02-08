@@ -35,19 +35,14 @@ export default function BlocksContextProvider({children}){
     }
 
     async function addBlock(block){
+        console.log(block); 
+        try{
+            const response = await axios.post("http://localhost:3000/api/blocks", block); 
+            setBlocks([...blocks, response.data]);
+        }catch(ex){
+            console.log(ex); 
+        }
 
-        // const response = await fetch(
-        //     "http://localhost:3000/api/blocks/addBlock/",
-        //     {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json"
-        //         },
-        //         body:{
-        //             block:block
-        //         }
-        //     }
-        // )
     }
 
     useEffect(
