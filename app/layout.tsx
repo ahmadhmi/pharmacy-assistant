@@ -4,7 +4,7 @@ import SideBar from "./UI/SideBar";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import AuthProvider from "./_utils/AuthProvider";
+import AuthProvider from "./auth/AuthProvider";
 import BlocksContextProvider from "./_utils/blocks-context";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -22,7 +22,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
-        <body className={inter.className + " min-h-screen"}> {children}</body>
+        <NavBar/>
+        <div className={inter.className + " min-h-screen"}> 
+          {children}
+        </div>
       </AuthProvider>
     </html>
   );
