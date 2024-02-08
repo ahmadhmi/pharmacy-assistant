@@ -13,8 +13,8 @@ interface Props{
 export default function LinkBlock({href, Icon, IconSize, className, children}: Props){
 
     return(
-        <Link href={href} className="btn btn-primary">
-        <div className={className + " flex flex-row justify-between items-center min-w-full"
+        <Link href={href}>
+        <div className={className + " btn btn-primary flex flex-row justify-between items-center min-w-full"
     }>
             <p>{children}</p>
             {Icon? <Icon size={IconSize}></Icon> : <></>}
