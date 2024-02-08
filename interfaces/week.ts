@@ -1,7 +1,7 @@
-import { StudentLab } from "./Lab";
+import { Lab } from "./Lab"
 
 export interface Week{
     id?:string,
     name:string,
-    labs?:StudentLab[]
+    labs?:Lab[]
 }

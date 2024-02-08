@@ -1,5 +1,8 @@
+"use server"; 
 import { NextRequest, NextResponse } from "next/server";
 import { getAllBlocks, addBlock } from "@/app/_services/databaseService";
+import { getServerSession } from "next-auth";
+import authOptions from "@/app/auth/authOptions";
 
 interface Props{
     params: {
@@ -10,15 +13,15 @@ interface Props{
 
 export async function GET(request: NextRequest, { params }: Props) {
 
-    let session = true;
+
   
     try {
-      console.log("Email: " + params.email); 
+      const session = await getServerSession(authOptions); 
       //checking if the user is authenticated
       if (session) {
         //getting the blocks for that user
-  
-        const blocks = await getAllBlocks(params.email);
+
+        const blocks = await getAllBlocks(session.user?.email); 
   
         return NextResponse.json(blocks, {
           status: 200,
@@ -30,14 +33,13 @@ export async function GET(request: NextRequest, { params }: Props) {
       }
     } catch (ex: any) {
       console.log("Error has occurred");
-      return NextResponse.json(ex.error, {status: 404});
+      return NextResponse.json(ex, {status: 404});
     }
   }
   
   export async function POST(request: NextRequest, { params }: Props) {
   
     let session = true;
-    console.log("Hello"); 
     const body = await request.json();
 
     try {

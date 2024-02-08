@@ -1,22 +1,23 @@
+"use server"; 
 import { Filter, MongoClient, ObjectId } from "mongodb";
 import { User } from "next-auth";
 import { getServerSession } from "next-auth";
+import authOptions from '@/app/auth/authOptions'; 
 
 const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(url);
-const db = client.db(process.env.MONGO_CONNECTION_DATABASE);
-const {data:session} = getServerSession(); 
+const db = client.db(process.env.MONGO_CONNECTION_DATABASE); 
 
-export async function run() {
-  try {
-    await client.connect();
-    console.log("Successfully connected to Atlas");
-  } catch (err) {
-    console.log(err.stack);
-  } finally {
-    await client.close();
-  }
-}
+// export async function run() {
+//   try {
+//     await client.connect();
+//     console.log("Successfully connected to Atlas");
+//   } catch (err) {
+//     console.log(err.stack);
+//   } finally {
+//     await client.close();
+//   }
+// }
 
 export async function addUser(user) {
   try {
@@ -51,26 +52,26 @@ export async function addUser(user) {
 
 export async function getUserID(email){
 
-  try{
-    await client.connect(); 
+  // try{
+  //   await client.connect(); 
 
-    let collection = db.collection("users");
-    let filter = {"email": email};
+  //   let collection = db.collection("users");
+  //   let filter = {"email": email};
 
-    let document = await collection.findOne(filter); 
+  //   let document = await collection.findOne(filter); 
 
-    if(document._id){
-      return document._id
-    }
-    else{
-      return null; 
-    }
-  }catch(ex){
-    console.log(ex);
-    return null; 
-  }finally{
-    await client.close(); 
-  }
+  //   if(document._id){
+  //     return document._id
+  //   }
+  //   else{
+  //     return null; 
+  //   }
+  // }catch(ex){
+  //   console.log(ex);
+  //   return null; 
+  // }finally{
+  //   await client.close(); 
+  // }
 }
 
 //todo
@@ -91,23 +92,22 @@ export async function addBlock(block) {
 }
 
 //todo get all blocks with a userID of the one passed
-export async function getAllBlocks(userID) {
+export async function getAllBlocks(userEmail) {
+  const session = getServerSession(authOptions);
   try {
-    console.log(`Getting blocks for user ${userID}`);
     await client.connect();
     let filter = {
       users: {
-        $in: [String(userID)],
+        $in: [String(userEmail)],
       },
     };
     let collection = db.collection("blocks");
     const cursor = await collection.find(filter);
     const blocks = await cursor.toArray();
-    console.log(blocks); 
 
     return blocks;
   } catch (ex) {
-    console.log(ex)
+    console.log("Error occurred here")
     return [];
   } finally {
     await client.close();

@@ -29,7 +29,7 @@ export default function AddBlock() {
           placeholder="Block Name"
           className="input input-bordered input-primary w-full max-w-xs join-item my-2"
           value={blockName}
-          onChange={(e) => {setBlockName(e.currentTarget.value); console.log(blockName)}}
+          onChange={(e) => {setBlockName(e.currentTarget.value);}}
         />
         <button className="btn btn-primary" onClick={handleCreateBlock}>Add</button>
       </div>

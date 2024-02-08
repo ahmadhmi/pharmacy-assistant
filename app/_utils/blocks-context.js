@@ -1,5 +1,6 @@
 
 "use client"; 
+import axios from 'axios'; 
 import { useSession } from "next-auth/react";
 import React from "react";
 import { useContext, useState, useEffect, createContext } from "react";
@@ -16,41 +17,42 @@ export default function BlocksContextProvider({children}){
 
 
     async function getBlocks(){
-        let newBlocks = [];
 
-        const response = await fetch(
-            "http://localhost:3000/api/blocks",
-            {
-                method: "",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            }
-        )
-        
-        newBlocks = await response.json(); 
-        setBlocks(newBlocks); 
+        const response = await axios.get("http://localhost:3000/api/blocks/"); 
+
+        let blocks = []
+        if(response.data){
+            response.data.forEach(element => {
+                blocks.push({
+                    id: element._id,
+                    name: element.name,
+                    weeks: element.weeks,
+                    users: element.users
+                })
+            });
+        }
+        setBlocks(blocks); 
     }
 
     async function addBlock(block){
 
-        const response = await fetch(
-            "http://localhost:3000/api/blocks/addBlock/",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body:{
-                    block:block
-                }
-            }
-        )
+        // const response = await fetch(
+        //     "http://localhost:3000/api/blocks/addBlock/",
+        //     {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json"
+        //         },
+        //         body:{
+        //             block:block
+        //         }
+        //     }
+        // )
     }
 
     useEffect(
         () => {
-            if(data.user){
+            if(data?.user){
                 getBlocks()
             }
         },
