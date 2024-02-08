@@ -47,11 +47,36 @@ export async function addUser(user) {
   }
 }
 
+export async function getUserID(email){
+
+  try{
+    await client.connect(); 
+
+    let collection = db.collection("users");
+    let filter = {"email": email};
+
+    let document = await collection.findOne(filter); 
+
+    if(document._id){
+      return document._id
+    }
+    else{
+      return null; 
+    }
+  }catch(ex){
+    console.log(ex);
+    return null; 
+  }finally{
+    await client.close(); 
+  }
+}
+
 //todo
 export async function addBlock(userID, block) {
   try {
     await client.connect();
     let collection = db.collection("blocks");
+    block.users.push(userID); 
 
     await collection.insertOne(block);
     console.log("Connected to atlas and added a block");
