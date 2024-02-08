@@ -115,8 +115,40 @@ export async function getAllBlocks(userEmail) {
 }
 
 //todo
-export async function updateBlock(userID, block) {
+export async function updateBlock(userID, blockID, newName) {
   //make sure the block in the database with the blockID in the block being passed contains the userID passed before updating
+  try {
+    await client.connect();
+    let collection = db.collection("blocks");
+    const filter = {
+        _id: new ObjectId(blockID),
+        users: {
+            $in: [userID],
+        },
+    };
+    const update = {
+        "$set": {
+            "name": newName
+        }
+    };
+    // if there is no document matches query, this wont insert new document
+    const options = {"upsert": false};
+    
+    const result = await collection.updateOne(filter, update, options);
+
+    const {modifiedCount, matchedCount} = result;
+    if(modifiedCount && matchedCount) {
+        console.log("Successfully updated a block");
+    } else if (modifiedCount === 0) {
+        console.log("A matching document was found but not modified");
+    } else if (matchedCount === 0) {
+        console.log("There is no document matching the query");
+    } 
+} catch (err) {
+    console.log("Update failed with error\n" + err);
+} finally {
+    await client.close();
+}
 }
 
 //todo

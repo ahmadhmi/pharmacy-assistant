@@ -73,7 +73,35 @@ export default function Home() {
   // };
   // test1();
 
-
+  // const test2 = async () => {
+  //   try {
+  //     const blockId = "65c25ddc239a2f9abed3c8aa"; // Replace with the actual block ID
+  //     const newName = "Block 10"
+  //     const response = await fetch(`http://localhost:3000/api/blocks/1`, {
+  //       method: "PATCH",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         block: {
+  //           id: blockId,
+  //           newName: newName
+  //         },
+  //       }),
+  //     });
+  
+  //     if (!response.ok) {
+  //       // Handle the error if the response status is not okay (e.g., 404 Not Found)
+  //       const errorData = await response.json();
+  //       console.error(errorData.error);
+  //     } else {
+  //       console.log("Block updated successfully");
+  //     }
+  //   } catch (error) {
+  //     console.error("An error occurred:", error);
+  //   }
+  // };
+  // test2();
 
   return (
     <div className="flex flex-row flex-wrap gap-4">
