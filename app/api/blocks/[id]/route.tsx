@@ -4,6 +4,7 @@ import {
   addBlock,
   updateBlock,
   deleteBlock,
+  getUserID,
 } from "@/app/_services/databaseService";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/auth/authOptions";
@@ -18,11 +19,15 @@ export async function GET(request: NextRequest, { params }: Props) {
   const session = await getServerSession(authOptions);
 
   try {
+    console.log(session); 
     //checking if the user is authenticated
     if (session) {
       //getting the blocks for that user
 
-      const blocks = await getAllBlocks(params.id);
+      const body = await request.json(); 
+      const userID = await getUserID(body.email); 
+
+      const blocks = await getAllBlocks(userID);
 
       return NextResponse.json(blocks, {
         status: 200,
@@ -40,14 +45,12 @@ export async function GET(request: NextRequest, { params }: Props) {
 
 export async function POST(request: NextRequest, { params }: Props) {
   const session = await getServerSession(authOptions);
-
+  const body = await request.json();
   try {
     //checking if the user is authenticated
-    if (session) {
-      const body = await request.json();
-
+    if (session && session.user?.email === body.email) {
     try {
-      await addBlock(params.id, body.block);
+      await addBlock(body.email, body.block);
     } catch (ex: any) {
       return NextResponse.json(
         {
