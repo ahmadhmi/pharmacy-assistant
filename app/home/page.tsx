@@ -3,17 +3,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { User } from "next-auth";
 import { useEffect } from "react";
-import { RedirectType, redirect } from "next/navigation";
+import { RedirectType, redirect, useSearchParams } from "next/navigation";
 import { Block } from "@/interfaces/block";
 import BlockButton from "../UI/Blocks/BlockButton";
 import LinkBlock from "../UI/home/link";
 import { VscArrowRight } from "react-icons/vsc";
 import { useBlocksContext } from "../_utils/blocks-context";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
 
   const {blocks} = useBlocksContext(); 
 
+  const {data:session} = useSession(); 
 
   // const test = async () => {
   //   try {
@@ -86,7 +88,7 @@ export default function Home() {
         </div>
       </div>
       <div>
-      <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary">Blocks</h2>
+      <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary">{session?.user?.name? session.user.name : "No user"}</h2>
       <div className="flex flex-col gap-2 shadow-xl py-4 px-2 rounded-lg">
         {blocks.map(
           (block:Block) => {

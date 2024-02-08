@@ -20,8 +20,8 @@ const NavBar = () => {
 };
 
 const AuthStatus = () => {
-  //const { status, data: session } = useSession();
-  let status = "authenticated"; 
+  const { status, data: session } = useSession();
+
   if (status === "unauthenticated")
     return <Link href={"/api/auth/signin"}>Login</Link>;
 
@@ -38,7 +38,7 @@ const AuthStatus = () => {
             <div className="w-10 rounded-full">
               <img
                 alt="Tailwind CSS Navbar component"
-          // src={session.user?.image!}
+           src={session.user?.image!}
               />
             </div>
           </div>

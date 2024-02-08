@@ -1,11 +1,24 @@
 "use client";
 import React, { useEffect } from "react";
-import { RedirectType, redirect } from "next/navigation";
+import { RedirectType, redirect, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import LinkBlock from "./UI/home/link";
 import { VscArrowLeft, VscArrowRight } from "react-icons/vsc";
+import { useSession } from "next-auth/react";
+
 export default function Login() {
+
+  const {status} = useSession(); 
+
+  useEffect(
+    () => {
+      if (status === "authenticated"){
+        redirect("/home/", RedirectType.push)
+      }
+    },
+    [status]
+  )
 
   return (
     <div className="flex flex-col lg:flex-row justify-center items-center min-h-screen gap-20 ">
@@ -19,7 +32,7 @@ export default function Login() {
       </div>
       <div>
         <LinkBlock
-          href="/home"
+          href="/api/auth/signin"
           Icon={VscArrowRight}
           IconSize={25}
           className="btn-wide btn-accent text-white"
