@@ -104,7 +104,7 @@ export default function Home() {
   // test2();
 
   return (
-    <div className="flex flex-row flex-wrap gap-4">
+    <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4">
       <div>
         <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary">Quick Links</h2>
         <div className="flex flex-col gap-2 shadow-xl py-4 px-2 rounded-lg">
@@ -116,11 +116,11 @@ export default function Home() {
         </div>
       </div>
       <div>
-      <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary">{session?.user?.name? session.user.name : "No user"}</h2>
+      <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary">Recent Blocks</h2>
       <div className="flex flex-col gap-2 shadow-xl py-4 px-2 rounded-lg">
-      {blocks.map(
+      {blocks.slice(1,5).map(
         (block:Block) => {
-          return <p key={block.id}>{block.name}</p> 
+          return <LinkBlock key={block.id} href={`/blocks/${block.id}`} Icon={VscArrowRight} IconSize={25}>{block.name}</LinkBlock>
         }
       )}
         </div>
