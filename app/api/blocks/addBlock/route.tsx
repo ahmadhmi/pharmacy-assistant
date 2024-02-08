@@ -7,34 +7,7 @@ interface Props{
     }
 }
 
-
-export async function GET(request: NextRequest, { params }: Props) {
-
-    let session = true;
-  
-    try {
-      console.log("Email: " + params.email); 
-      //checking if the user is authenticated
-      if (session) {
-        //getting the blocks for that user
-  
-        const blocks = await getAllBlocks(params.email);
-  
-        return NextResponse.json(blocks, {
-          status: 200,
-        });
-      } else {
-        throw {
-          error: "User not authenticated",
-        };
-      }
-    } catch (ex: any) {
-      console.log("Error has occurred");
-      return NextResponse.json(ex.error, {status: 404});
-    }
-  }
-  
-  export async function POST(request: NextRequest, { params }: Props) {
+export async function POST(request: NextRequest, { params }: Props) {
   
     let session = true;
     console.log("Hello"); 

@@ -1,7 +1,7 @@
 "use client"; 
 import { Student } from "@/interfaces/student"
 import StudentAccordion from "@/app/UI/Grading/StudentAccordion";
-import AddBlock from "../blocks/AddBlock/page";
+import AddBlock from "../blocks/[id]/editBlock/page";
 import { Gradesheet } from "@/interfaces/gradesheet"
 import { Lab } from "@/interfaces/Lab"
 import { useEffect, useState } from "react";
