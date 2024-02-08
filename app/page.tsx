@@ -4,7 +4,8 @@ import { useSession } from "next-auth/react";
 import { RedirectType, redirect } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
+import LinkBlock from "./UI/home/link";
+import { VscArrowLeft, VscArrowRight } from "react-icons/vsc";
 export default function Login() {
   const { status, data: session } = useSession();
 
@@ -13,9 +14,9 @@ export default function Login() {
   }, [session]);
 
   return (
-    <div className="flex flex-row justify-center items-center min-h-screen gap-20 ">
+    <div className="flex flex-col lg:flex-row justify-center items-center min-h-screen gap-20 ">
       <div>
-        <h1 className="text-5xl font-bold bg-clip-text mx-11 ">
+        <h1 className="text-2xl  sm:text-5xl font-bold bg-clip-text mx-11">
           Welcome To{" "}
           <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-green-500 to-purple-500 text-6xl p-2 ">
             Pharmacy Assistant
@@ -23,9 +24,14 @@ export default function Login() {
         </h1>
       </div>
       <div>
-        <Link href="/api/auth/signin" className="btn btn-wide mx-11 text-2xl">
-          Login
-        </Link>
+        <LinkBlock
+          href="/api/auth/signin"
+          Icon={VscArrowRight}
+          IconSize={25}
+          className="btn-wide btn-accent"
+        >
+          Get Started
+        </LinkBlock>
       </div>
     </div>
   );
