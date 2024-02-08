@@ -24,7 +24,6 @@ export default function BlocksContextProvider({children}){
                 method: "",
                 headers: {
                     "Content-Type": "application/json",
-                    "userEmail": "test@example.com"
                 },
             }
         )
@@ -36,7 +35,7 @@ export default function BlocksContextProvider({children}){
     async function addBlock(block){
 
         const response = await fetch(
-            "http://localhost:3000/api/blocks/",
+            "http://localhost:3000/api/blocks/addBlock/",
             {
                 method: "POST",
                 headers: {
@@ -51,13 +50,15 @@ export default function BlocksContextProvider({children}){
 
     useEffect(
         () => {
-            getBlocks()
+            if(data.user){
+                getBlocks()
+            }
         },
-        [data?.user]
+        [status]
     )
 
 
-    return( <BlocksContext.Provider value={{blocks, selectedBlock, setSelectedBlock}}>
+    return( <BlocksContext.Provider value={{blocks, addBlock, selectedBlock, setSelectedBlock}}>
         {children}
     </BlocksContext.Provider>)
 

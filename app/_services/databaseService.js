@@ -1,9 +1,11 @@
 import { Filter, MongoClient, ObjectId } from "mongodb";
 import { User } from "next-auth";
+import { getServerSession } from "next-auth";
 
 const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(url);
 const db = client.db(process.env.MONGO_CONNECTION_DATABASE);
+const {data:session} = getServerSession(); 
 
 export async function run() {
   try {
@@ -54,10 +56,8 @@ export async function getUserID(email){
 
     let collection = db.collection("users");
     let filter = {"email": email};
-    console.log(email);
 
     let document = await collection.findOne(filter); 
-    console.log(document); 
 
     if(document._id){
       return document._id
@@ -78,6 +78,8 @@ export async function addBlock(block) {
   try {
     await client.connect();
     let collection = db.collection("blocks");
+
+    block.users.push(session.user.email); 
 
     await collection.insertOne(block);
     console.log("Connected to atlas and added a block");
