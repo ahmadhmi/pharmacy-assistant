@@ -8,17 +8,7 @@ import { use, useEffect, useState } from "react";
 import { RedirectType, redirect } from "next/navigation";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-
-  // const session = await getServerSession(authOptions);
-
-  // useEffect(
-  //   () => {
-  //     if (!(session?.user)){
-  //       redirect("/", RedirectType.replace); 
-  //     }
-  //   }
-  // )
-
+  
   return (
       <BlocksContextProvider>
           <SideBar>{children}</SideBar>

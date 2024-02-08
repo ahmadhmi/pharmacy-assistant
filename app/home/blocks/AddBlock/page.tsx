@@ -1,7 +1,6 @@
 "use client";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Block } from "@/interfaces/block";
-import BlockButton from "../../UI/Blocks/BlockButton";
 import CreateBlock from "@/app/UI/Blocks/CreateBlock";
 import { useBlocksContext } from "@/app/_utils/blocks-context";
 import { useSession } from "next-auth/react";
@@ -69,7 +68,7 @@ export default function AddBlock() {
             required
             type="text"
             placeholder="Block Name"
-            className="input input-bordered input-primary w-full max-w-xs join-item"
+            className="input input-bordered input-primary w-full max-w-xs join-item my-2"
           />
         <input
           type="file"

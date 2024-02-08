@@ -1,17 +1,11 @@
 "use client";
 import React, { useEffect } from "react";
-import { useSession } from "next-auth/react";
 import { RedirectType, redirect } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import LinkBlock from "./UI/home/link";
 import { VscArrowLeft, VscArrowRight } from "react-icons/vsc";
 export default function Login() {
-  const { status, data: session } = useSession();
-
-  useEffect(() => {
-    console.log(session?.user);
-  }, [session]);
 
   return (
     <div className="flex flex-col lg:flex-row justify-center items-center min-h-screen gap-20 ">
@@ -25,7 +19,7 @@ export default function Login() {
       </div>
       <div>
         <LinkBlock
-          href="/api/auth/signin"
+          href="/home"
           Icon={VscArrowRight}
           IconSize={25}
           className="btn-wide btn-accent text-white"

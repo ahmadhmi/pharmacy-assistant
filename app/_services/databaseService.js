@@ -54,8 +54,10 @@ export async function getUserID(email){
 
     let collection = db.collection("users");
     let filter = {"email": email};
+    console.log(email);
 
     let document = await collection.findOne(filter); 
+    console.log(document); 
 
     if(document._id){
       return document._id
@@ -100,6 +102,7 @@ export async function getAllBlocks(userID) {
     let collection = db.collection("blocks");
     const cursor = await collection.find(filter);
     const blocks = await cursor.toArray();
+    console.log(blocks); 
 
     return blocks;
   } catch (ex) {
