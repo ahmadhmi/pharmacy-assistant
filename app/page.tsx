@@ -18,7 +18,7 @@ export default function Login() {
       <div>
         <h1 className="text-2xl  sm:text-5xl font-bold bg-clip-text mx-11">
           Welcome To{" "}
-          <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-green-500 to-purple-500 text-6xl p-2 ">
+          <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-green-500 to-purple-500 text-6xl py-2 ">
             Pharmacy Assistant
           </span>
         </h1>
