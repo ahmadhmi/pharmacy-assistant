@@ -9,7 +9,7 @@ const BlocksContext = createContext();
 
 export default function BlocksContextProvider({children}){
 
-    const {session, data} = useSession(); 
+    const {status, data} = useSession(); 
     const [blocks, setBlocks] = useState([]);
     const [selectedBlock, setSelectedBlock] = useState({}); 
 
@@ -24,6 +24,9 @@ export default function BlocksContextProvider({children}){
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
+                },
+                body: {
+                    email : data.user.email
                 }
             }
         )
@@ -49,7 +52,7 @@ export default function BlocksContextProvider({children}){
         () => {
             getBlocks(); 
         },
-        [session?.user]
+        [data?.user]
     )
 
     return( <BlocksContext.Provider value={{blocks, selectedBlock, setSelectedBlock}}>

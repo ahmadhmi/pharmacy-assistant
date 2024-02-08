@@ -66,6 +66,12 @@ export default function AddBlock() {
           Add a Block
         </h1>
         <input
+            required
+            type="text"
+            placeholder="Block Name"
+            className="input input-bordered input-primary w-full max-w-xs join-item"
+          />
+        <input
           type="file"
           className="file-input file-input-bordered file-input-primary w-full max-w-xs border-gray-300 shadow-xl"
           placeholder="No"

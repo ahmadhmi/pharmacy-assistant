@@ -12,6 +12,7 @@ import { VscArrowRight } from "react-icons/vsc";
 
 export default function Home() {
 
+  const {status, data:session} = useSession();
 
   // const test = async () => {
   //   try {
@@ -41,33 +42,33 @@ export default function Home() {
   // };
   // test();
 
-  const test1 = async () => {
-    try {
-      const blockId = "65bd6d9bc6248e23a7c07e02"; // Replace with the actual block ID
-      const response = await fetch(`http://localhost:3000/api/blocks/1`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          block: {
-            id: blockId,
-          },
-        }),
-      });
+  // const test1 = async () => {
+  //   try {
+  //     const blockId = "65bd6d9bc6248e23a7c07e02"; // Replace with the actual block ID
+  //     const response = await fetch(`http://localhost:3000/api/blocks/1`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         block: {
+  //           id: blockId,
+  //         },
+  //       }),
+  //     });
   
-      if (!response.ok) {
-        // Handle the error if the response status is not okay (e.g., 404 Not Found)
-        const errorData = await response.json();
-        console.error(errorData.error);
-      } else {
-        console.log("Block deleted successfully");
-      }
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
-  };
-  test1();
+  //     if (!response.ok) {
+  //       // Handle the error if the response status is not okay (e.g., 404 Not Found)
+  //       const errorData = await response.json();
+  //       console.error(errorData.error);
+  //     } else {
+  //       console.log("Block deleted successfully");
+  //     }
+  //   } catch (error) {
+  //     console.error("An error occurred:", error);
+  //   }
+  // };
+  // test1();
 
 
 
@@ -84,7 +85,7 @@ export default function Home() {
         </div>
       </div>
       <div>
-      <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary">Metrics</h2>
+      <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary">{status}</h2>
       </div>
     </div>
   );
