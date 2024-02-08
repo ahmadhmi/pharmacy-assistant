@@ -74,11 +74,10 @@ export async function getUserID(email){
 }
 
 //todo
-export async function addBlock(userID, block) {
+export async function addBlock(block) {
   try {
     await client.connect();
     let collection = db.collection("blocks");
-    block.users.push(userID); 
 
     await collection.insertOne(block);
     console.log("Connected to atlas and added a block");
