@@ -1,4 +1,4 @@
-import { Filter, MongoClient, ObjectID } from "mongodb";
+import { Filter, MongoClient, ObjectId } from "mongodb";
 import { User } from "next-auth";
 
 const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
@@ -97,9 +97,9 @@ export async function deleteBlock(userID, blockID) {
     await client.connect();
     let collection = db.collection("blocks");
     const filter = {
-      _id: new ObjectID(blockID),
+      _id: new ObjectId(blockID),
       users: {
-        $in: [String(userID)],
+        $in: [userID],
       },
     };
     const result = await collection.deleteOne(filter);
