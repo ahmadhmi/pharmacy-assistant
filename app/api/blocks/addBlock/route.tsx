@@ -10,7 +10,6 @@ interface Props{
 export async function POST(request: NextRequest, { params }: Props) {
   
     let session = true;
-    console.log("Hello"); 
     const body = await request.json();
 
     try {

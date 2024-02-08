@@ -118,11 +118,11 @@ export default function Home() {
       <div>
       <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary">{session?.user?.name? session.user.name : "No user"}</h2>
       <div className="flex flex-col gap-2 shadow-xl py-4 px-2 rounded-lg">
-        {blocks.map(
-          (block:Block) => {
-            <LinkBlock href={`/home/blocks/${block.id}`} Icon={VscArrowRight} IconSize={25}>{block.name}</LinkBlock>
-          }
-        )}
+      {blocks.map(
+        (block:Block) => {
+          return <p key={block.id}>{block.name}</p> 
+        }
+      )}
         </div>
       </div>
     </div>
