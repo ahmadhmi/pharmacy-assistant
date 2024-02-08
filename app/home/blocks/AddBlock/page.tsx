@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useBlocksContext } from "@/app/_utils/blocks-context";
 import { Block } from "@/interfaces/block";
 import { useSession } from "next-auth/react";
+import { VscTrash } from "react-icons/vsc";
 
 export default function AddBlock() {
   const [blockName, setBlockName] = useState("");
@@ -28,7 +29,12 @@ export default function AddBlock() {
 
   return (
     <section className="flex flex-col items-center sm:items-start">
+      <div className="flex w-full justify-between items-center flex-row">
       <h1 className="text-2xl text-primary p-2 rounded-lg mb-4">Add a Block</h1>
+      <button className="btn btn-primary" onClick={handleCreateBlock}>
+          Add Block
+      </button>
+      </div>
       <div className="flex flex-row gap-2 items-center">
         <input
           required
@@ -40,9 +46,6 @@ export default function AddBlock() {
             setBlockName(e.currentTarget.value);
           }}
         />
-        <button className="btn btn-primary" onClick={handleCreateBlock}>
-          Add
-        </button>
       </div>
       <div className="flex flex-row gap-2 items-center">
         <input
@@ -59,10 +62,17 @@ export default function AddBlock() {
           Add
         </button>
       </div>
-      <div className="flex flex-col">
-        {emails.map((email) => {
-          return <div className="">{email}</div>
-        })}
+      <div className="flex flex-col shadow-lg border-t-4 w-full p-2 my-4 min-h-72 max-h-72 gap-2 overflow-y-auto">
+        {emails.length > 0? emails.map((email) => {
+          return (
+          <div className="flex flex-row justify-between items-center badge badge-primary w-full rounded-md p-4">
+            <p className="text-lg">{email}</p>
+            <button className=""><VscTrash size={20}></VscTrash></button>
+          </div>
+          )
+        })
+      :
+      <div className="badge badge-primary w-full rounded-md p-4">Add other users by their email</div>}
       </div>
     </section>
   );
