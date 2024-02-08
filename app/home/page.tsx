@@ -13,11 +13,39 @@ import { VscArrowRight } from "react-icons/vsc";
 export default function Home() {
 
 
-  const test = async () => {
+  // const test = async () => {
+  //   try {
+  //     const blockId = "65bd6d9bc6248e23a7c07e02"; // Replace with the actual block ID
+  //     const response = await fetch(`http://localhost:3000/api/blocks/0`, {
+  //       method: "DELETE",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         block: {
+  //           id: blockId,
+  //         },
+  //       }),
+  //     });
+  
+  //     if (!response.ok) {
+  //       // Handle the error if the response status is not okay (e.g., 404 Not Found)
+  //       const errorData = await response.json();
+  //       console.error(errorData.error);
+  //     } else {
+  //       console.log("Block deleted successfully");
+  //     }
+  //   } catch (error) {
+  //     console.error("An error occurred:", error);
+  //   }
+  // };
+  // test();
+
+  const test1 = async () => {
     try {
       const blockId = "65bd6d9bc6248e23a7c07e02"; // Replace with the actual block ID
-      const response = await fetch(`http://localhost:3000/api/blocks/0`, {
-        method: "DELETE",
+      const response = await fetch(`http://localhost:3000/api/blocks/1`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -39,7 +67,7 @@ export default function Home() {
       console.error("An error occurred:", error);
     }
   };
-  test();
+  test1();
 
 
 
