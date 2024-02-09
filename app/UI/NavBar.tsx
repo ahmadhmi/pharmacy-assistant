@@ -1,16 +1,20 @@
 "use client"
 
-import React from "react";
+import React, { useEffect } from "react";
 import logo from "@/app/assets/logo.png";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import Skeleton from "@/app/UI/Skeleton";
+import { RedirectType, redirect } from "next/navigation";
 
 const NavBar = () => {
+
+  const {status} = useSession(); 
+
   return (
     <div className="navbar bg-base-100">
       <div className="flex-1">
-        <Link href={"/"}>
+        <Link href={status === "authenticated" ? "/home" : "/"}>
           <img src={logo.src} alt="logo" width="50px" />
         </Link>
       </div>
