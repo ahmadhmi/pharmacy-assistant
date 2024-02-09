@@ -7,9 +7,12 @@ import LinkBlock from "./UI/home/link";
 import { VscArrowLeft, VscArrowRight } from "react-icons/vsc";
 import { useSession } from "next-auth/react";
 
+
 export default function Login() {
 
   const {status} = useSession(); 
+  const searchParams = useSearchParams(); 
+  const callBackUrl = searchParams.get('callbackUrl') || '/home/';
 
   useEffect(
     () => {
@@ -19,6 +22,7 @@ export default function Login() {
     },
     [status]
   )
+
 
   return (
     <div className="flex flex-col lg:flex-row justify-center items-center min-h-screen gap-20 ">
@@ -32,7 +36,7 @@ export default function Login() {
       </div>
       <div>
         <LinkBlock
-          href="/api/auth/signin"
+          href={`/api/auth/signin?callbackUrl=${encodeURIComponent(callBackUrl)}`}
           Icon={VscArrowRight}
           IconSize={25}
           className="btn-wide btn-accent text-white"
