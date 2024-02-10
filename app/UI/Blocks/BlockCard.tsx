@@ -1,30 +1,36 @@
 import React from "react";
 import { Block } from "@/interfaces/block";
+import { CiEdit } from "react-icons/ci";
 
-const BlockCard = () => {
-  const block: Block = {
-    name: "Block A",
-    users: [
-      "amd.heshmati@gmail.com",
-      "john.doe@yahoo.com",
-      "john.smith@msn.com",
-    ],
-  };
+interface Props {
+    block: Block;
+    handleEditBlock: (block: Block) => void;
+    handleViewBlock: (block: Block) => void;
+}
+
+const BlockCard = ({block, handleEditBlock, handleViewBlock} : Props) => {
+
   return (
     <div className="card w-96 bg-base-100 shadow-xl">
-      <div className="card-body">
-        <h2 className="card-title self-center mb-3">{block.name}</h2>
+      <div className="card-body gap-6">
+        <h2 className="card-title self-center">{block.name}</h2>
         <hr />
         <div>
           <h3 className="font-semibold mb-1">Users</h3>
           <ul>
-            {block.users.map((user, index) => (
-              <li key={index}>{user}</li>
+            {block.users.map((user) => (
+              <li key={user}>{user}</li>
             ))}
           </ul>
         </div>
-        <div className="card-actions justify-end">
-          <button className="btn btn-primary">Buy Now</button>
+        <div className="card-actions justify-between items-center">
+            <CiEdit
+                size={30}
+                color="#37cdbe"
+                className="hover:cursor-pointer self-center"
+                onClick={() => handleEditBlock(block)}
+            />
+            <button className="btn btn-primary w-20" onClick={() => handleViewBlock(block)}>View</button>
         </div>
       </div>
     </div>
