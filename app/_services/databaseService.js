@@ -98,7 +98,7 @@ export async function getAllBlocks(userEmail) {
     console.log("We got here");
     let filter = {
       users: {
-        $in: [String(userEmail)],
+        $in: [String(userEmail.toLowerCase())],
       },
     };
     let collection = db.collection("blocks");
