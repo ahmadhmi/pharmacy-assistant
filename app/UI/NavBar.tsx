@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useEffect } from "react";
 import logo from "@/app/assets/logo.png";
@@ -8,26 +8,23 @@ import Skeleton from "@/app/UI/Skeleton";
 import { RedirectType, redirect } from "next/navigation";
 
 const NavBar = () => {
-
-  const {status} = useSession(); 
+  const { status } = useSession();
 
   return (
     <div className="navbar bg-base-100">
-      <div className="flex-1">
+      <div className="">
         <Link href={status === "authenticated" ? "/home" : "/"}>
           <img src={logo.src} alt="logo" width="50px" />
         </Link>
       </div>
-      <AuthStatus/>
+      <div className="flex-1 justify-center text-xl tracking-wider">PharmaGrade</div>
+      <AuthStatus />
     </div>
   );
 };
 
 const AuthStatus = () => {
   const { status, data: session } = useSession();
-
-  if (status === "unauthenticated")
-    return <Link href={"/api/auth/signin"}>Login</Link>;
 
   if (status === "loading") return <Skeleton width="3rem" />;
   if (status === "authenticated")
@@ -42,7 +39,7 @@ const AuthStatus = () => {
             <div className="w-10 rounded-full">
               <img
                 alt="Tailwind CSS Navbar component"
-           src={session.user?.image!}
+                src={session.user?.image!}
               />
             </div>
           </div>
@@ -51,14 +48,8 @@ const AuthStatus = () => {
             className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
           >
             <li>
-              <a className="justify-between">
-                {/* {session.user?.name} */}
-                {/* <span className="badge">New</span> */}
-              </a>
+              <a>{session.user?.email}</a>
             </li>
-            {/* <li>
-              <a>Settings</a>
-            </li> */}
             <li>
               <Link href="/api/auth/signout">Logout</Link>
             </li>
