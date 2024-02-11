@@ -1,4 +1,3 @@
-import { run } from "./_services/databaseService";
 import NavBar from "./UI/NavBar";
 import SideBar from "./UI/SideBar";
 import type { Metadata } from "next";
@@ -21,9 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className + " min-h-screen"}>
+      <body data-theme="dark" className={inter.className + " min-h-screen"}>
         <AuthProvider>
-        <NavBar />
+          <NavBar />
           {children}
         </AuthProvider>
       </body>
