@@ -1,12 +1,13 @@
-"use server"; 
+"use server";
 import { Filter, MongoClient, ObjectId } from "mongodb";
 import { User } from "next-auth";
 import { getServerSession } from "next-auth";
-import authOptions from '@/app/auth/authOptions'; 
+import authOptions from "@/app/auth/authOptions";
 
-const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
+//const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
+const url = process.env.MONGODB_URI;
 const client = new MongoClient(url);
-const db = client.db(process.env.MONGO_CONNECTION_DATABASE); 
+const db = client.db(process.env.MONGO_CONNECTION_DATABASE);
 
 // export async function run() {
 //   try {
@@ -50,43 +51,38 @@ export async function addUser(user) {
   }
 }
 
-export async function getUserID(email){
-
+export async function getUserID(email) {
   // try{
-  //   await client.connect(); 
-
+  //   await client.connect();
   //   let collection = db.collection("users");
   //   let filter = {"email": email};
-
-  //   let document = await collection.findOne(filter); 
-
+  //   let document = await collection.findOne(filter);
   //   if(document._id){
   //     return document._id
   //   }
   //   else{
-  //     return null; 
+  //     return null;
   //   }
   // }catch(ex){
   //   console.log(ex);
-  //   return null; 
+  //   return null;
   // }finally{
-  //   await client.close(); 
+  //   await client.close();
   // }
 }
 
 //todo
 export async function addBlock(block) {
   try {
-    const session = await getServerSession(authOptions); 
+    const session = await getServerSession(authOptions);
     await client.connect();
     let collection = db.collection("blocks");
-    console.log(block); 
-    block.users.push(session.user.email); 
-
+    console.log(block);
+    block.users.push(session.user.email);
 
     await collection.insertOne(block);
     console.log("Connected to atlas and added a block");
-    return block; 
+    return block;
   } catch {
     console.log("Tried to add a block, error encountered\n" + err.log);
   } finally {
@@ -99,6 +95,7 @@ export async function getAllBlocks(userEmail) {
   const session = getServerSession(authOptions);
   try {
     await client.connect();
+    console.log("We got here");
     let filter = {
       users: {
         $in: [String(userEmail)],
@@ -110,7 +107,7 @@ export async function getAllBlocks(userEmail) {
 
     return blocks;
   } catch (ex) {
-    console.log("Error occurred here")
+    console.log("Error occurred here");
     return [];
   } finally {
     await client.close();
@@ -124,34 +121,34 @@ export async function updateBlock(userID, blockID, newName) {
     await client.connect();
     let collection = db.collection("blocks");
     const filter = {
-        _id: new ObjectId(blockID),
-        users: {
-            $in: [userID],
-        },
+      _id: new ObjectId(blockID),
+      users: {
+        $in: [userID],
+      },
     };
     const update = {
-        "$set": {
-            "name": newName
-        }
+      $set: {
+        name: newName,
+      },
     };
     // if there is no document matches query, this wont insert new document
-    const options = {"upsert": false};
-    
+    const options = { upsert: false };
+
     const result = await collection.updateOne(filter, update, options);
 
-    const {modifiedCount, matchedCount} = result;
-    if(modifiedCount && matchedCount) {
-        console.log("Successfully updated a block");
+    const { modifiedCount, matchedCount } = result;
+    if (modifiedCount && matchedCount) {
+      console.log("Successfully updated a block");
     } else if (modifiedCount === 0) {
-        console.log("A matching document was found but not modified");
+      console.log("A matching document was found but not modified");
     } else if (matchedCount === 0) {
-        console.log("There is no document matching the query");
-    } 
-} catch (err) {
+      console.log("There is no document matching the query");
+    }
+  } catch (err) {
     console.log("Update failed with error\n" + err);
-} finally {
+  } finally {
     await client.close();
-}
+  }
 }
 
 //todo

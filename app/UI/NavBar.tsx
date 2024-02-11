@@ -17,7 +17,9 @@ const NavBar = () => {
           <img src={logo.src} alt="logo" width="50px" />
         </Link>
       </div>
-      <div className="flex-1 justify-center text-xl tracking-wider">PharmaGrade</div>
+      <div className="flex-1 justify-center text-xl tracking-wider">
+        PharmaGrades
+      </div>
       <AuthStatus />
     </div>
   );

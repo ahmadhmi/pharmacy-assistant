@@ -63,7 +63,7 @@ const SideBar = ({ children }: Props) => {
               >
                 New Block
               </LinkBlock>
-              <LinkBlock href="/home/blocks" Icon={VscArrowRight} IconSize={25}>
+              <LinkBlock href="/home" Icon={VscArrowRight} IconSize={25}>
                 Blocks
               </LinkBlock>
               <LinkBlock
