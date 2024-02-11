@@ -23,7 +23,7 @@ export default function AddBlock() {
   }
 
   function handleAddEmail(){
-    setEmails([...emails, email.trim()]); 
+    setEmails([...emails, email.trim().toLowerCase()]); 
     setEmail("");
   }
 
