@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import Skeleton from "@/app/UI/Skeleton";
 import { RedirectType, redirect } from "next/navigation";
+import { VscAccount } from "react-icons/vsc";
 
 const NavBar = () => {
   const { status } = useSession();
@@ -39,10 +40,12 @@ const AuthStatus = () => {
             className="btn btn-ghost btn-circle avatar"
           >
             <div className="w-10 rounded-full">
+              {session.user?.image?  
               <img
                 alt="Tailwind CSS Navbar component"
                 src={session.user?.image!}
-              />
+              /> :
+              <VscAccount size={40}></VscAccount>}
             </div>
           </div>
           <ul
