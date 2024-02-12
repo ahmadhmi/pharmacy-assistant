@@ -61,13 +61,13 @@ export default function Home() {
       <div className="card border justify-center shadow-xl">
         <div className="card-body gap-10">
           <h2 className="card-title text-slate-600 self-center">
-            Blocks for {session?.user?.email}
+            Welcome, {session?.user?.name}
           </h2>
           <hr />
           <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-20 w-full">
             {blocks.length == 0 ? (
               <p className="text-slate-800">
-                There is no block for this account! Create a new block.
+                No blocks available currently. <Link href={"/home/blocks/AddBlock"} className="text-primary hover:text-neutral">Create one</Link>
               </p>
             ) : (
               blocks.map((block: Block) => (

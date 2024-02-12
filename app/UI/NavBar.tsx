@@ -53,7 +53,7 @@ const AuthStatus = () => {
             className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
           >
             <li>
-              <a>{session.user?.email}</a>
+              <a>{session.user?.name}</a>
             </li>
             <li>
               <Link href="/api/auth/signout">Logout</Link>
