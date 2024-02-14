@@ -57,7 +57,7 @@
             </task>
             <task id="9" name="Completion of revised project document" color="#8cb6ce" meeting="false" start="2024-01-23" duration="2" complete="0" thirdDate="2024-01-18" thirdDate-constraint="0" expand="true"/>
         </task>
-        <task id="10" name="Implementation" color="#8cb6ce" meeting="false" start="2024-01-29" duration="29" complete="0" thirdDate="2024-01-18" thirdDate-constraint="0" expand="true">
+        <task id="10" name="Implementation" color="#8cb6ce" meeting="false" start="2024-01-29" duration="34" complete="0" thirdDate="2024-01-18" thirdDate-constraint="0" expand="true">
             <task id="11" name="MVP User Interface" color="#8cb6ce" meeting="false" start="2024-01-29" duration="5" complete="0" thirdDate="2024-01-29" thirdDate-constraint="0" expand="true">
                 <depend id="12" type="2" difference="0" hardness="Strong"/>
             </task>
@@ -76,7 +76,7 @@
             <task id="16" name="File Presentation" color="#8cb6ce" meeting="false" start="2024-03-07" duration="3" complete="0" thirdDate="2024-02-06" thirdDate-constraint="0" expand="true"/>
             <task id="25" name="Client Acceptance Verification" color="#8cb6ce" meeting="false" start="2024-03-04" duration="2" complete="0" thirdDate="2024-02-05" thirdDate-constraint="0" expand="true" cost-manual-value="0.0" cost-calculated="true"/>
             <task id="19" name="Feedback Incorporation" color="#8cb6ce" meeting="false" start="2024-02-26" duration="10" complete="0" thirdDate="2024-01-15" thirdDate-constraint="0" expand="true"/>
-            <task id="20" name="Testing" color="#8cb6ce" meeting="false" start="2024-03-08" duration="5" complete="0" thirdDate="2024-01-08" thirdDate-constraint="0" expand="true"/>
+            <task id="20" name="Testing" color="#8cb6ce" meeting="false" start="2024-03-08" duration="10" complete="0" thirdDate="2024-01-08" thirdDate-constraint="0" expand="true"/>
             <task id="26" name="Client Acceptance Verification" color="#8cb6ce" meeting="false" start="2024-03-13" duration="2" complete="0" thirdDate="2024-03-04" thirdDate-constraint="0" expand="true" cost-manual-value="0.0" cost-calculated="true"/>
         </task>
         <task id="3" name="Presentations" color="#8cb6ce" meeting="false" start="2024-02-12" duration="15" complete="0" thirdDate="2023-12-29" thirdDate-constraint="0" expand="true">

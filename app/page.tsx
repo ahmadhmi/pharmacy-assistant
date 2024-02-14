@@ -25,7 +25,7 @@ export default function Login() {
 
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center items-center min-h-screen gap-20 ">
+    <div className="flex flex-col lg:flex-row justify-center items-center min-h-screen gap-20">
       <div>
         <h1 className="text-2xl  sm:text-5xl font-bold bg-clip-text mx-11">
           Welcome To{" "}
