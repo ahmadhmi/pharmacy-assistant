@@ -95,7 +95,6 @@ export async function getAllBlocks(userEmail) {
   const session = getServerSession(authOptions);
   try {
     await client.connect();
-    console.log("We got here");
     let filter = {
       users: {
         $in: [String(userEmail.toLowerCase())],
@@ -111,6 +110,24 @@ export async function getAllBlocks(userEmail) {
     return [];
   } finally {
     await client.close();
+  }
+}
+
+export async function getBlock(blockID){
+  try{
+    await client.connect(); 
+    let filter = {
+      _id: new ObjectId(blockID)
+    }
+    let collection = db.collection("blocks"); 
+    const retrievedDoc = await collection.findOne(filter);
+    return retrievedDoc; 
+
+    return block; 
+  }catch(ex){
+    console.log(`Error in retrieving block ID: ${blockID}`);
+  }finally{
+    await client.close(); 
   }
 }
 

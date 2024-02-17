@@ -12,14 +12,14 @@ const NavBar = () => {
   const { status } = useSession();
 
   return (
-    <div className="navbar bg-base-100">
-      <div className="">
+    <div className="navbar bg-base-100 flex flex-row justify-between">
+      <div className="flex flex-row gap-5">
         <Link href={status === "authenticated" ? "/home" : "/"}>
           <img src={logo.src} alt="logo" width="50px" />
         </Link>
-      </div>
-      <div className="flex-1 justify-center text-xl tracking-wider">
+        <div className="text-xl tracking-wider">
         PharmaGrades
+      </div>
       </div>
       <AuthStatus />
     </div>

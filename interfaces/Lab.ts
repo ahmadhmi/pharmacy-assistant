@@ -1,7 +1,7 @@
 import { Gradesheet } from "./gradesheet";
 
 export interface Lab{
-    id?:string,
+    _id?:string,
     name?:string,
     gradesheets:Gradesheet[]
 }
