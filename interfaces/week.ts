@@ -1,7 +1,7 @@
 import { Lab } from "./Lab"
 
 export interface Week{
-    id?:string,
+    _id?:string,
     name:string,
     labs?:Lab[]
 }

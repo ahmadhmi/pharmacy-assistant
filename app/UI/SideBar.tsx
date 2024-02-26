@@ -32,7 +32,7 @@ const SideBar = ({ children }: Props) => {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+        <ul className="menu p-4 max-w-64 min-h-full bg-base-100 text-base-content rounded-r-lg border-t--2 border-primary">
           {/* {blocks.length === 0 ? (
             <p>There is no block for this account!</p>
           ) : (

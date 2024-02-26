@@ -56,6 +56,9 @@ export default function Home() {
   //     users: ["user5", "user6"],
   //   },
   // ];
+
+ 
+
   return (
     <div className="flex justify-center items-start text-slate-100 mt-10">
       <div className="card border justify-center shadow-xl">
@@ -64,7 +67,7 @@ export default function Home() {
             Welcome, {session?.user?.name}
           </h2>
           <hr />
-          <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-20 w-full">
+          <div className=" grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-20 w-full">
             {blocks.length == 0 ? (
               <p className="text-slate-800">
                 No blocks available currently. <Link href={"/home/blocks/AddBlock"} className="text-primary hover:text-neutral">Create one</Link>
@@ -85,7 +88,7 @@ export default function Home() {
             )}
           </div>
         </div>
-      </div>
+      </div>   
     </div>
   );
 }
