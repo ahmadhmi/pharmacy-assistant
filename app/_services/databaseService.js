@@ -123,9 +123,9 @@ export async function getBlock(blockID){
     const retrievedDoc = await collection.findOne(filter);
     return retrievedDoc; 
 
-    return block; 
   }catch(ex){
     console.log(`Error in retrieving block ID: ${blockID}`);
+    return null;
   }finally{
     await client.close(); 
   }

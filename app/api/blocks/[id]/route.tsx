@@ -22,23 +22,29 @@ export async function GET(request: NextRequest, { params }: Props) {
 
     if(session?.user){
       const retrievedDoc = await getBlock(params.id); 
-      const retrievedBlock:Block = {
-        _id : retrievedDoc._id, 
-        name: retrievedDoc.name,
-        users: retrievedDoc.users,
-        weeks: retrievedDoc.weeks,
-      }
-      if (session.user.email && retrievedBlock.users.includes(session?.user.email)){
-        return NextResponse.json(
-          retrievedBlock,
-          {
-            status: 200
-          }
-        )
-      }else{
-        throw {error: "User does not have access to this block"}
-      }
+      let retrievedBlock:Block; 
 
+      if(retrievedDoc){
+        retrievedBlock = {
+          _id : new String(retrievedDoc._id), 
+          name: retrievedDoc.name,
+          weeks: retrievedDoc.weeks,
+          students: retrievedDoc.students,
+          users: retrievedDoc.users,
+        }
+        if (session.user.email && retrievedBlock.users.includes(session?.user.email)){
+          return NextResponse.json(
+            retrievedBlock,
+            {
+              status: 200
+            }
+          )
+        }else{
+          throw {error: "User does not have access to this block"}
+        }
+      }else{
+        throw {error: "No such block exists"}
+      }
     }else{
       throw {error: "User is not authenticated and is not allowed to retrieve a block"};
     }
