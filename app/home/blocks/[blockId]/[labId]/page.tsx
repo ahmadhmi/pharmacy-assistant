@@ -1,6 +1,14 @@
 import { LabData } from "@/types/LabData";
 import React from "react";
 import MyButton from "@/app/UI/componenttest";
+
+interface Props{
+  params: {
+    blockId:string,
+    labId:string, 
+  }
+}
+
 const Data: LabData[] = [
   {
     student: "Qiaomu Lei 1",
@@ -36,9 +44,10 @@ const Data: LabData[] = [
   },
 ];
 
-export default function LabPage() {
+export default function LabPage({params}:Props) {
   return (
     <section className="display-flex justify-center h-screen w-100% px-8 py-10">
+      <h2>BlockId: {params.blockId}, LabId: {params.labId}</h2>
       <h1 className="text-center mb-6 text-3xl">Lab Page</h1>
       <div className="border-y overflow-y-auto" style={{ height: "80%" }}>
         {Data.map((item, index) => (
