@@ -195,3 +195,44 @@ export async function deleteBlock(userID, blockID) {
 }
 
 //todo
+
+//get all gradesheets, return a gradesheet array, filled or empty for a lab provided a labId
+export async function getAllGradeSheets(labId){
+
+}
+
+//get singular gradesheet, return a single gradesheet or null for a lab provided a labID
+export async function getGradeSheet(labId){
+
+}
+
+//create gradesheet, return newly created gradesheet with its _id inserted
+
+export async function addGradeSheet(gradesheet){
+  return gradesheet; 
+}
+
+//update gradesheet, return true or false
+
+export async function updateGradeSheet(newGradesheet){
+
+}
+
+//delete gradesheet 
+
+export async function deleteGradeSheet(){
+
+}
+
+//add student, add student with its studentId as ObjectId and return the newly added student
+
+export async function addStudent(student){
+
+}
+
+//delete student, return true or false
+
+export async function deleteStudent(studentId){
+
+}
+

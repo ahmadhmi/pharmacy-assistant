@@ -31,7 +31,7 @@ export default function BlocksContextProvider({children}){
                 })
             });
         }
-        console.log("Called add block")
+        console.log("Called get block")
         setBlocks(blocks); 
     }
 
