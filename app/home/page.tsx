@@ -78,10 +78,10 @@ export default function Home() {
                   key={block.name}
                   block={block}
                   handleEditBlock={() => {
-                    console.log("Edit block");
+                    redirect(`/home/blocks/${block._id}/editBlock`);
                   }}
                   handleViewBlock={() => {
-                    console.log("View block");
+                    redirect(`/home/blocks/${block._id}`);
                   }}
                 />
               ))
