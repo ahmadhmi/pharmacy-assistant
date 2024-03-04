@@ -1,5 +1,5 @@
 "use client";
-
+import axios from "axios";
 import { Gradesheet } from "@/interfaces/gradesheet";
 import { FormEvent, useState } from "react";
 import { addGradeSheet } from "@/app/_services/databaseService";
@@ -47,10 +47,10 @@ export default function Grading({ params }: Props) {
             rx: rx,
         };
 
-        const added: Gradesheet = await addGradeSheet(newGradesheet);
+        const response = await axios.post(`http://localhost:3000/api/blocks/${params.blockId}/${params.labId}/grading`, newGradesheet);
 
-        if(added){
-            redirect("/home/", RedirectType.push);
+        if(response.data){
+           redirect(`/home/blocks/${params.blockId}/${params.labId}/grading/${response.data._id}`)
         }
     }
 
