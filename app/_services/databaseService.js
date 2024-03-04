@@ -209,7 +209,19 @@ export async function getGradeSheet(labId){
 //create gradesheet, return newly created gradesheet with its _id inserted
 
 export async function addGradeSheet(gradesheet){
-  return gradesheet; 
+  try {
+    await client.connect();
+    let collection = db.collection("gradesheets");
+    console.log(gradesheet);
+
+    await collection.insertOne(gradesheet);
+    const newGradesheet = await collection.findOne({_id:result.insertedId})
+    return newGradesheet;
+  } catch(error) {
+    console.log("failed to insert a gradesheet\n" + error);
+  } finally {
+    await client.close();
+  }
 }
 
 //update gradesheet, return true or false
