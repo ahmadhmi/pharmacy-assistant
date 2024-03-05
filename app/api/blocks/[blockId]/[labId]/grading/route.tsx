@@ -54,12 +54,13 @@ export async function POST(request: NextRequest, { params }: Props) {
                 }
 
             } else {
-                throw { error: "User does not have access to this block" };
+                throw { error: `${session.user.name} does not have access to this block` };
             }
         } else {
             throw { error: "Block specified does not exist" };
         }
     } catch (ex) {
+        console.log(ex)
         return NextResponse.json(ex, {
             status: 403,
         });
