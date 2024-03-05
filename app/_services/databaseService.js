@@ -114,20 +114,22 @@ export async function getAllBlocks(userEmail) {
 }
 
 export async function getBlock(blockID){
+  let retrievedDoc = null; 
   try{
     await client.connect(); 
     let filter = {
       _id: new ObjectId(blockID)
     }
     let collection = db.collection("blocks"); 
-    const retrievedDoc = await collection.findOne(filter);
-    return retrievedDoc; 
+    retrievedDoc = await collection.findOne(filter); 
 
   }catch(ex){
+    console.log(ex)
     console.log(`Error in retrieving block ID: ${blockID}`);
     return null;
   }finally{
     await client.close(); 
+    return retrievedDoc;
   }
 }
 
@@ -258,8 +260,43 @@ export async function addGradeSheet(gradesheet){
 
 //update gradesheet, return true or false
 
-export async function updateGradeSheet(newGradesheet){
+export async function updateGradeSheet(gradesheet){
+  try {
+    await client.connect();
+    let collection = db.collection("gradesheets");
+    const filter = {
+      _id: new ObjectId(gradesheet._id),
+    };
+    const update = {
+      $set: {
+        studentID: gradesheet.studentID,
+        studentName: gradesheet.studentName,
+        labId: gradesheet.labId, 
+        date: gradesheet.date, 
+        rx: gradesheet.rx,
+        criteria: gradesheet.criteria,
+        comment: gradesheet.comment,
+      },
+    };
+    // if there is no document matches query, this wont insert new document
+    const options = { upsert: false };
 
+    const result = await collection.updateOne(filter, update, options);
+    const { modifiedCount, matchedCount } = result;
+    if (modifiedCount && matchedCount) {
+      console.log("Successfully updated a gradesheet");
+    } else if (modifiedCount === 0) {
+      console.log("A matching document was found but not modified");
+    } else if (matchedCount === 0) {
+      console.log("There is no document matching the query");
+    }
+    return true; 
+  } catch (err) {
+    console.log("Update failed with error\n" + err);
+    return false; 
+  } finally {
+    await client.close();
+  }
 }
 
 //delete gradesheet 
