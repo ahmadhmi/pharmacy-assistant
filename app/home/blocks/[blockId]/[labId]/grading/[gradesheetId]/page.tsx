@@ -6,6 +6,7 @@ import { Gradesheet } from "@/interfaces/gradesheet";
 import { criteria } from "@/interfaces/criteria";
 import { updateGradeSheet } from "@/app/_services/databaseService";
 import { useRouter } from "next/navigation";
+import { VscCheck } from "react-icons/vsc";
 
 interface Props {
     params: {
@@ -71,10 +72,14 @@ export default function Grade({ params }: Props) {
                 `/api/blocks/${params.blockId}/${params.labId}/grading/${params.gradesheetId}`
             );
         } catch (ex: any) {
-            if(ex.response.data.error){
-                setError(`${ex.response.data.error}: Please go back to the grading page and make your way here again.`); 
-            }else{
-                setError(`${ex.response.statusText}: Please go back to the grading page and make your way here again.`)
+            if (ex.response.data.error) {
+                setError(
+                    `${ex.response.data.error}: Please go back to the grading page and make your way here again.`
+                );
+            } else {
+                setError(
+                    `${ex.response.statusText}: Please go back to the grading page and make your way here again.`
+                );
             }
         }
 
@@ -116,11 +121,13 @@ export default function Grade({ params }: Props) {
             );
             setComment("");
             setStateDefaultCriteria([]);
-            setTimeout(() =>             router.push(
-                `/home/blocks/${params.blockId}/${params.labId}/grading`
-            ),
-            1000);
-
+            setTimeout(
+                () =>
+                    router.push(
+                        `/home/blocks/${params.blockId}/${params.labId}/grading`
+                    ),
+                2000
+            );
         }
     }
 
@@ -162,31 +169,38 @@ export default function Grade({ params }: Props) {
                         onSubmit={(e) => saveGradeSheet(e)}
                     >
                         <ul className="flex flex-col items-center min-h-56 max-h-56 overflow-y-auto list-none">
-                            {stateDefaultCriteria.map((criteria) => (
-                                <li
-                                    className="w-full flex flex-row justify-between px-4 py-2 shadow-xl my-2 rounded"
-                                    key={criteria.name}
-                                    onClick={() =>
-                                        updateRadio(
-                                            stateDefaultCriteria.filter(
-                                                (stateCriteria) =>
-                                                    stateCriteria.name ===
-                                                    criteria.name
-                                            )[0]
-                                        )
-                                    }
-                                >
-                                    <h2 className="text-black text-md">
-                                        {criteria.name}
-                                    </h2>
-                                    <input
-                                        className="radio radio-primary"
-                                        type="radio"
-                                        checked={criteria.pass}
-                                        onChange={() => null}
-                                    ></input>
+                            {stateDefaultCriteria.length > 0 ? (
+                                stateDefaultCriteria.map((criteria) => (
+                                    <li
+                                        className="w-full flex flex-row justify-between px-4 py-2 shadow-xl my-2 rounded"
+                                        key={criteria.name}
+                                        onClick={() =>
+                                            updateRadio(
+                                                stateDefaultCriteria.filter(
+                                                    (stateCriteria) =>
+                                                        stateCriteria.name ===
+                                                        criteria.name
+                                                )[0]
+                                            )
+                                        }
+                                    >
+                                        <h2 className="text-black text-md">
+                                            {criteria.name}
+                                        </h2>
+                                        <input
+                                            className="radio radio-primary"
+                                            type="radio"
+                                            checked={criteria.pass}
+                                            onChange={() => null}
+                                        ></input>
+                                    </li>
+                                ))
+                            ) : (
+                                <li>
+                                    <VscCheck size={100} color="green"></VscCheck>
+                                    <h2 className="text-lg text-black">Submitted</h2>
                                 </li>
-                            ))}
+                            )}
                         </ul>
                         <button className="btn">Add Criteria</button>
                         <textarea
@@ -209,13 +223,21 @@ export default function Grade({ params }: Props) {
             <div
                 className="toast cursor-pointer"
                 onClick={() => {
-                    if(!gradesheet){
+                    if (!gradesheet) {
                         setError("");
-                        router.push(`/home/blocks/${params.blockId}/${params.labId}/grading`);
+                        router.push(
+                            `/home/blocks/${params.blockId}/${params.labId}/grading`
+                        );
                     }
                 }}
             >
-                <div className={`alert hover:alert-warning ${error === "Page is loading..." ? "alert-info" : "alert-error"}`}>
+                <div
+                    className={`alert hover:alert-warning ${
+                        error === "Page is loading..."
+                            ? "alert-info"
+                            : "alert-error"
+                    }`}
+                >
                     <p className="break-words">{error}</p>
                 </div>
             </div>
