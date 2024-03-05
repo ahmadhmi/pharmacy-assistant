@@ -63,25 +63,33 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { userID: string } }
 ) {
-  let session = true;
+  const session = await getServerSession(authOptions)
 
   try {
     const body = await request.json();
-
+    const oldBlock = await getBlock(body.block._id); 
     if (session) {
-      await updateBlock(params.userID, body.block);
 
-      return NextResponse.json(body.block, {
-        status: 200,
-      });
+      if(oldBlock && oldBlock.users.includes(session.user?.email)){
+        const success = await updateBlock(params.userID, body.block);
+        if(success){
+          return NextResponse.json(body.block, {
+            status: 200,
+          });
+        }else{
+          throw {error: "Something went wrong when trying to update a block"}
+        }
+
+      }else{
+        throw {error: `${session.user?.name} does not have access to this block or this block may not exist`}
+      }
+
     } else {
       throw { error: "User is not authenticated" };
     }
   } catch (ex: any) {
     return NextResponse.json(
-      {
-        error: ex.error,
-      },
+      ex,
       {
         status: 404,
       }
