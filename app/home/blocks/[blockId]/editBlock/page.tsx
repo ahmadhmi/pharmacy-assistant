@@ -14,9 +14,13 @@ interface Props {
 
 export default function AddBlock() {
   const { blocks, selectedBlock } = useBlocksContext();
+  const { data: session } = useSession();
+  console.log(session);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [studentID, setStudentID] = useState("");
+
+  const [students, setStudents] = useState<Student[]>([]);
 
   const handleFirstNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFirstName(event.target.value);
@@ -48,22 +52,11 @@ export default function AddBlock() {
       firstName: firstName,
       lastName: lastName,
     };
-    console.log(newStudent);
+    setStudents([...students, newStudent]);
+    setFirstName("");
+    setLastName("");
+    setStudentID("");
   };
-  const Data: LabData[] = [
-    {
-      student: "Qiaomu Lei",
-      RxNum: ["123131", "132131", "123131"],
-    },
-    {
-      student: "john Dao",
-      RxNum: ["123123123"],
-    },
-    {
-      student: "john Dao",
-      RxNum: ["123123123"],
-    },
-  ];
 
   return (
     <section className="flex flex-col items-center sm:items-start">
@@ -116,6 +109,7 @@ export default function AddBlock() {
       </form>
 
       <div className="w-full mt-6">
+<<<<<<< Updated upstream
         {Data.map((item, index) => (
           <div className="collapse collapse-arrow bg-base-200 my-3" key={index}>
             <input type="checkbox" name="my-accordion-2" placeholder="1" />
@@ -127,6 +121,18 @@ export default function AddBlock() {
                 <p key={index}>{items}</p>
               ))}
             </div>
+=======
+        {students.map((student) => (
+          <div
+            className="collapse collapse-arrow bg-base-200 my-3"
+            key={student._id}
+          >
+            <input type="checkbox" name="my-accordion-2" placeholder="1" />
+            <div className="collapse-title text-xl font-medium">
+              {student.firstName} {student.lastName}
+            </div>
+            <div className="collapse-content">{student._id}</div>
+>>>>>>> Stashed changes
           </div>
         ))}
       </div>
