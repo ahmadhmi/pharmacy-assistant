@@ -1,11 +1,11 @@
 "use client";
-
+import axios from "axios";
 import { Gradesheet } from "@/interfaces/gradesheet";
 import { FormEvent, useState } from "react";
 import { addGradeSheet } from "@/app/_services/databaseService";
-import { RedirectType, redirect } from "next/navigation";
 import { useBlocksContext } from "@/app/_utils/blocks-context";
 import { Block } from "@/interfaces/block";
+import { useRouter } from "next/navigation";
 
 interface Props {
     params: {
@@ -22,6 +22,7 @@ export default function Grading({ params }: Props) {
         return `${year}-${month}-${day}`;
     };
 
+    const router = useRouter(); 
     const [studentId, setId] = useState("");
     const [date, setDate] = useState(formatDate(new Date()));
     const [rx, setRx] = useState("");
@@ -36,7 +37,7 @@ export default function Grading({ params }: Props) {
 
     async function handleStartGrading(e: FormEvent) {
         e.preventDefault();
-        const Numbers = /^[1-9]+$/;
+        const Numbers = /^[0-9]+$/;
         if (!studentId.match(Numbers)) {
             alert("The studentID should be all in numbers");
             return;
@@ -47,10 +48,11 @@ export default function Grading({ params }: Props) {
             rx: rx,
         };
 
-        const added: Gradesheet = await addGradeSheet(newGradesheet);
-
-        if(added){
-            redirect("/home/", RedirectType.push);
+        const response = await axios.post(`http://localhost:3000/api/blocks/${params.blockId}/${params.labId}/grading`, newGradesheet);
+        console.log(response.data)
+        if(response.data){
+            let redirectUrl = `/home/blocks/${params.blockId}/${params.labId}/grading/${response.data._id}`;
+            router.push(redirectUrl); 
         }
     }
 
@@ -72,7 +74,7 @@ export default function Grading({ params }: Props) {
                             placeholder="000888999"
                             value={studentId}
                             onChange={(e) => {
-                                handleIdInput(e.currentTarget.value);
+                                setId(e.currentTarget.value);
                             }}
                         ></input>
                     </label>
@@ -84,7 +86,7 @@ export default function Grading({ params }: Props) {
                             type="date"
                             className="input-md rounded-md"
                             value={date}
-                            onChange={(e) => setDate(e.currentTarget.value)}
+                            onChange={(e) => {setDate(e.currentTarget.value);}}
                         ></input>
                     </label>
                 </div>
