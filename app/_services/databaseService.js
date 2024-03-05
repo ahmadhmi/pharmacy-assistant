@@ -114,25 +114,27 @@ export async function getAllBlocks(userEmail) {
 }
 
 export async function getBlock(blockID){
+  let retrievedDoc = null; 
   try{
     await client.connect(); 
     let filter = {
       _id: new ObjectId(blockID)
     }
     let collection = db.collection("blocks"); 
-    const retrievedDoc = await collection.findOne(filter);
-    return retrievedDoc; 
+    retrievedDoc = await collection.findOne(filter); 
 
-    return block; 
   }catch(ex){
+    console.log(ex)
     console.log(`Error in retrieving block ID: ${blockID}`);
+    return null;
   }finally{
     await client.close(); 
+    return retrievedDoc;
   }
 }
 
 //todo
-export async function updateBlock(userID, blockID, newName) {
+export async function updateBlock(blockID, newBlock) {
   //make sure the block in the database with the blockID in the block being passed contains the userID passed before updating
   try {
     await client.connect();
@@ -145,7 +147,10 @@ export async function updateBlock(userID, blockID, newName) {
     };
     const update = {
       $set: {
-        name: newName,
+        name: newBlock.name,
+        weeks:newBlock.weeks,
+        students: newBlock.students,
+        users: newBlock.users,
       },
     };
     // if there is no document matches query, this wont insert new document
@@ -161,8 +166,10 @@ export async function updateBlock(userID, blockID, newName) {
     } else if (matchedCount === 0) {
       console.log("There is no document matching the query");
     }
+    return true; 
   } catch (err) {
-    console.log("Update failed with error\n" + err);
+    console.log("Update block failed with error\n" + err);
+    return false;
   } finally {
     await client.close();
   }
@@ -201,21 +208,100 @@ export async function getAllGradeSheets(labId){
 
 }
 
-//get singular gradesheet, return a single gradesheet or null for a lab provided a labID
-export async function getGradeSheet(labId){
+//get singular gradesheet, return a single gradesheet or null for a lab provided a gradeSheetId
+export async function getGradeSheet(gradesheetId){
+  try{
+    await client.connect(); 
+    let collection = db.collection("gradesheets"); 
 
+    const found = await collection.findOne({_id: new ObjectId(gradesheetId)}); 
+    if(found){
+      return {
+        _id:found._id.toString(),
+        studentID:found.studentID,
+        studentName:found.studentName,
+        labId:found.labId, 
+        date:found.date, 
+        rx:found.rx,
+        criteria: found.criteria,
+        comment:found.comment,
+      }
+    }else{
+      return null; 
+    }
+
+  }catch(ex){
+    console.log(`Failed to retrieve with gradesheetID: ${gradesheetId}\nFailed with error: ${ex}`);
+    return null; 
+  }finally{
+    await client.close(); 
+  }
 }
 
 //create gradesheet, return newly created gradesheet with its _id inserted
 
 export async function addGradeSheet(gradesheet){
-  return gradesheet; 
+  try {
+    await client.connect();
+    let collection = db.collection("gradesheets");
+
+    const added = await collection.insertOne(gradesheet);
+    const found = await collection.findOne({_id:added.insertedId});
+    const newGradesheet = {
+      _id: found._id.toString(),
+      studentID:found.studentID, 
+      labId:found.labId, 
+      date:found.date, 
+      rx:found.rx,
+    }
+    return newGradesheet; 
+  } catch(error) {
+    console.log("failed to insert a gradesheet\n" + error);
+    return null; 
+  } finally {
+    await client.close();
+  }
 }
 
 //update gradesheet, return true or false
 
-export async function updateGradeSheet(newGradesheet){
+export async function updateGradeSheet(gradesheet){
+  try {
+    await client.connect();
+    let collection = db.collection("gradesheets");
+    const filter = {
+      _id: new ObjectId(gradesheet._id),
+    };
+    const update = {
+      $set: {
+        studentID: gradesheet.studentID,
+        studentName: gradesheet.studentName,
+        labId: gradesheet.labId, 
+        date: gradesheet.date, 
+        rx: gradesheet.rx,
+        criteria: gradesheet.criteria,
+        comment: gradesheet.comment,
+      },
+    };
+    // if there is no document matches query, this wont insert new document
+    const options = { upsert: false };
 
+    const result = await collection.updateOne(filter, update, options);
+    const { modifiedCount, matchedCount } = result;
+    if (modifiedCount && matchedCount) {
+      console.log("Successfully updated a gradesheet");
+    } else if (modifiedCount === 0) {
+      console.log("A matching document was found but not modified");
+    } else if (matchedCount === 0) {
+      console.log("There is no document matching the query");
+    }
+    return true; 
+  } catch (err) {
+    console.log("Update failed with error\n" + err);
+    return false; 
+  } finally {
+    await client.close();
+  }
 }
 
 //delete gradesheet 

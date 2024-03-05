@@ -13,7 +13,7 @@ import { Block } from "@/interfaces/block";
 import { getServerSession } from "next-auth";
 
 interface Props {
-  params: { id: string };
+  params: { blockId: string };
 }
 
 export async function GET(request: NextRequest, { params }: Props) {
@@ -21,24 +21,30 @@ export async function GET(request: NextRequest, { params }: Props) {
     const session = await getServerSession(authOptions); 
 
     if(session?.user){
-      const retrievedDoc = await getBlock(params.id); 
-      const retrievedBlock:Block = {
-        _id : retrievedDoc._id, 
-        name: retrievedDoc.name,
-        users: retrievedDoc.users,
-        weeks: retrievedDoc.weeks,
-      }
-      if (session.user.email && retrievedBlock.users.includes(session?.user.email)){
-        return NextResponse.json(
-          retrievedBlock,
-          {
-            status: 200
-          }
-        )
-      }else{
-        throw {error: "User does not have access to this block"}
-      }
+      const retrievedDoc = await getBlock(params.blockId); 
+      let retrievedBlock:Block; 
 
+      if(retrievedDoc){
+        retrievedBlock = {
+          _id : new String(retrievedDoc._id), 
+          name: retrievedDoc.name,
+          weeks: retrievedDoc.weeks,
+          students: retrievedDoc.students,
+          users: retrievedDoc.users,
+        }
+        if (session.user.email && retrievedBlock.users.includes(session?.user.email)){
+          return NextResponse.json(
+            retrievedBlock,
+            {
+              status: 200
+            }
+          )
+        }else{
+          throw {error: "User does not have access to this block"}
+        }
+      }else{
+        throw {error: "No such block exists"}
+      }
     }else{
       throw {error: "User is not authenticated and is not allowed to retrieve a block"};
     }
@@ -57,25 +63,33 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { userID: string } }
 ) {
-  let session = true;
+  const session = await getServerSession(authOptions)
 
   try {
     const body = await request.json();
-
+    const oldBlock = await getBlock(body.block._id); 
     if (session) {
-      await updateBlock(params.userID, body.block);
 
-      return NextResponse.json(body.block, {
-        status: 200,
-      });
+      if(oldBlock && oldBlock.users.includes(session.user?.email)){
+        const success = await updateBlock(params.userID, body.block);
+        if(success){
+          return NextResponse.json(body.block, {
+            status: 200,
+          });
+        }else{
+          throw {error: "Something went wrong when trying to update a block"}
+        }
+
+      }else{
+        throw {error: `${session.user?.name} does not have access to this block or this block may not exist`}
+      }
+
     } else {
       throw { error: "User is not authenticated" };
     }
   } catch (ex: any) {
     return NextResponse.json(
-      {
-        error: ex.error,
-      },
+      ex,
       {
         status: 404,
       }
