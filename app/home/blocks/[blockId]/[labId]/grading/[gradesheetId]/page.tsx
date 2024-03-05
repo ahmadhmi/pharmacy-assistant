@@ -6,7 +6,7 @@ import { Gradesheet } from "@/interfaces/gradesheet";
 import { criteria } from "@/interfaces/criteria";
 import { updateGradeSheet } from "@/app/_services/databaseService";
 import { useRouter } from "next/navigation";
-import { VscCheck } from "react-icons/vsc";
+import { VscCheck, VscError, VscLoading } from "react-icons/vsc";
 
 interface Props {
     params: {
@@ -221,7 +221,8 @@ export default function Grade({ params }: Props) {
     } else {
         return (
             <div
-                className="toast cursor-pointer"
+                role="alert"
+                className="cursor-pointer"
                 onClick={() => {
                     if (!gradesheet) {
                         setError("");
@@ -238,6 +239,7 @@ export default function Grade({ params }: Props) {
                             : "alert-error"
                     }`}
                 >
+                    {error === "Page is loading..." ? <VscLoading size={30}></VscLoading> : <VscError size={30}></VscError>}
                     <p className="break-words">{error}</p>
                 </div>
             </div>

@@ -2,12 +2,9 @@
 import axios from "axios";
 import { Gradesheet } from "@/interfaces/gradesheet";
 import { FormEvent, useEffect, useState } from "react";
-import { addGradeSheet } from "@/app/_services/databaseService";
-import { useBlocksContext } from "@/app/_utils/blocks-context";
-import { Block } from "@/interfaces/block";
 import { useRouter } from "next/navigation";
 import { Lab } from "@/interfaces/Lab";
-import { Week } from "@/interfaces/week";
+import { VscError, VscLoading } from "react-icons/vsc";
 
 interface Props {
     params: {
@@ -158,7 +155,8 @@ export default function Grading({ params }: Props) {
                 </form>
                 {error.length > 0 && error !== "Page is loading..." ? (
                     <div
-                        className="toast cursor-pointer"
+                        role="alert"
+                        className="cursor-pointer"
                         onClick={() => {
                             setError("");
                             router.push("/home/");
@@ -176,7 +174,8 @@ export default function Grading({ params }: Props) {
     } else {
         return (
             <div
-                className="toast cursor-pointer"
+                role="alert"
+                className="cursor-pointer"
                 onClick={() => {
                     if(!lab){
                         setError("");
@@ -185,6 +184,7 @@ export default function Grading({ params }: Props) {
                 }}
             >
                 <div className={`alert hover:alert-warning ${error === "Page is loading..." ? "alert-info" : "alert-error"}`}>
+                    {error === "Page is loading..." ? <VscLoading size={30}></VscLoading> : <VscError size={30}></VscError>}
                     <p className="break-words">{error}</p>
                 </div>
             </div>
