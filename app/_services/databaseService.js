@@ -201,24 +201,58 @@ export async function getAllGradeSheets(labId){
 
 }
 
-//get singular gradesheet, return a single gradesheet or null for a lab provided a labID
-export async function getGradeSheet(labId){
+//get singular gradesheet, return a single gradesheet or null for a lab provided a gradeSheetId
+export async function getGradeSheet(gradesheetId){
+  try{
+    await client.connect(); 
+    let collection = db.collection("gradesheets"); 
 
+    const found = await collection.findOne({_id: new ObjectId(gradesheetId)}); 
+    if(found){
+      return {
+        _id:found._id.toString(),
+        studentID:found.studentID,
+        studentName:found.studentName,
+        labId:found.labId, 
+        date:found.date, 
+        rx:found.rx,
+        criteria: found.criteria,
+        comment:found.comment,
+      }
+    }else{
+      return null; 
+    }
+
+  }catch(ex){
+    console.log(`Failed to retrieve with gradesheetID: ${gradesheetId}\nFailed with error: ${ex}`);
+    return null; 
+  }finally{
+    await client.close(); 
+  }
 }
 
 //create gradesheet, return newly created gradesheet with its _id inserted
 
 export async function addGradeSheet(gradesheet){
-  try{
-    await client.connect(); 
-    let collection = db.collection("gradesheets"); 
-    let inserted = await collection.insertOne(gradesheet); 
-    return inserted;
-  }catch(ex){
-    console.log(ex);
+  try {
+    await client.connect();
+    let collection = db.collection("gradesheets");
+
+    const added = await collection.insertOne(gradesheet);
+    const found = await collection.findOne({_id:added.insertedId});
+    const newGradesheet = {
+      _id: found._id.toString(),
+      studentID:found.studentID, 
+      labId:found.labId, 
+      date:found.date, 
+      rx:found.rx,
+    }
+    return newGradesheet; 
+  } catch(error) {
+    console.log("failed to insert a gradesheet\n" + error);
     return null; 
-  }finally{
-    await client.close(); 
+  } finally {
+    await client.close();
   }
 }
 

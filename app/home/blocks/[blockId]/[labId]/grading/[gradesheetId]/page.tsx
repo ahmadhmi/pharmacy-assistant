@@ -34,7 +34,7 @@ export default function Grade({ params }: Props) {
     return (
         <section className="flex flex-col items-center">
             <div className="">
-                <h2>{gradesheet?.studentID}</h2>
+                <h2 className="text-black">{gradesheet?.studentID}</h2>
             </div>
             <div className="flex flex-row gap-2">
                 <button
