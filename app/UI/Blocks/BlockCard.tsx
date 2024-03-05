@@ -30,7 +30,7 @@ const BlockCard = ({ block, handleEditBlock, handleViewBlock }: Props) => {
             className="hover:cursor-pointer self-center"
             onClick={() => handleEditBlock(block)}
           />
-          <Link href={`/home/blocks/${block.id}`}>
+          <Link href={`/home/blocks/${block._id}`}>
           <button
             className="btn btn-primary w-20"
             color="#a991f7"
