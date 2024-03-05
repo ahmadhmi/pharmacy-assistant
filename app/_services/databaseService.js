@@ -134,7 +134,7 @@ export async function getBlock(blockID){
 }
 
 //todo
-export async function updateBlock(userID, blockID, newName) {
+export async function updateBlock(blockID, newBlock) {
   //make sure the block in the database with the blockID in the block being passed contains the userID passed before updating
   try {
     await client.connect();
@@ -147,7 +147,10 @@ export async function updateBlock(userID, blockID, newName) {
     };
     const update = {
       $set: {
-        name: newName,
+        name: newBlock.name,
+        weeks:newBlock.weeks,
+        students: newBlock.students,
+        users: newBlock.users,
       },
     };
     // if there is no document matches query, this wont insert new document
@@ -163,8 +166,10 @@ export async function updateBlock(userID, blockID, newName) {
     } else if (matchedCount === 0) {
       console.log("There is no document matching the query");
     }
+    return true; 
   } catch (err) {
-    console.log("Update failed with error\n" + err);
+    console.log("Update block failed with error\n" + err);
+    return false;
   } finally {
     await client.close();
   }

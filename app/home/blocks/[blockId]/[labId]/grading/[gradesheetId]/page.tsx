@@ -172,7 +172,7 @@ export default function Grade({ params }: Props) {
                             {stateDefaultCriteria.length > 0 ? (
                                 stateDefaultCriteria.map((criteria) => (
                                     <li
-                                        className="w-full flex flex-row justify-between px-4 py-2 shadow-xl my-2 rounded"
+                                        className="w-full flex flex-row justify-between px-4 py-2 shadow-lg my-2 rounded"
                                         key={criteria.name}
                                         onClick={() =>
                                             updateRadio(
