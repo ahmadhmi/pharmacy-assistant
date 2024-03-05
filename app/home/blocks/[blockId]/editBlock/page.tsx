@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Block } from "@/interfaces/block";
 import axios from "axios";
 import CreateBlock from "@/app/UI/Blocks/CreateBlock";
@@ -12,7 +12,7 @@ interface Props {
   params: { blockId: string };
 }
 
-export default function AddBlock() {
+export default function EditBlock({ params }: Props) {
   const { blocks, selectedBlock } = useBlocksContext();
   const { data: session } = useSession();
   console.log(session);
@@ -22,6 +22,15 @@ export default function AddBlock() {
 
   const [students, setStudents] = useState<Student[]>([]);
   const [block, setBlock] = useState<Block>();
+
+  const fetchBlock = async () => {
+    const block = await axios.get<Block>(`/api/blocks/${params.blockId}`);
+    setBlock(block.data);
+  };
+
+  useEffect(() => {
+    fetchBlock();
+  }, [params.blockId]);
 
   const handleFirstNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFirstName(event.target.value);
@@ -79,9 +88,9 @@ export default function AddBlock() {
             required
             type="text"
             placeholder="Users"
-            className="input input-bordered input-primary w-full max-w-xs join-item my-2"
+            className="input input-bordered input-primary join-item w-full max-w-xs my-2"
           />
-          <button className="btn btn-primary join-item my-2">Add Users</button>
+          <button className="btn btn-primary my-2 join-item">Add Users</button>
         </div>
       </div>
       <input
