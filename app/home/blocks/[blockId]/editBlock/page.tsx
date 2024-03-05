@@ -21,6 +21,7 @@ export default function AddBlock() {
   const [studentID, setStudentID] = useState("");
 
   const [students, setStudents] = useState<Student[]>([]);
+  const [block, setBlock] = useState<Block>();
 
   const handleFirstNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFirstName(event.target.value);
@@ -59,14 +60,30 @@ export default function AddBlock() {
   };
 
   return (
-    <section className="flex flex-col items-center sm:items-start">
-      <h1 className="text-2xl text-primary p-2 rounded-lg mb-4">Add a Block</h1>
-      <input
-        required
-        type="text"
-        placeholder="Block Name"
-        className="input input-bordered input-primary w-full max-w-xs join-item my-2"
-      />
+    <section className="flex flex-col items-center sm:items-start w-full">
+      <div className="flex justify-between mb-8 w-full">
+        <h1 className="text-2xl text-primary p-2 flex-1 rounded-lg">
+          Add a Block
+        </h1>
+        <button className="btn btn-primary">Save</button>
+      </div>
+      <div className="flex gap-52 w-full">
+        <input
+          required
+          type="text"
+          placeholder="Block Name"
+          className="input input-bordered input-primary w-full max-w-xs join-item my-2"
+        />
+        <div className="flex gap-2">
+          <input
+            required
+            type="text"
+            placeholder="Users"
+            className="input input-bordered input-primary w-full max-w-xs join-item my-2"
+          />
+          <button className="btn btn-primary join-item my-2">Add Users</button>
+        </div>
+      </div>
       <input
         type="file"
         className="file-input file-input-bordered file-input-primary w-full max-w-xs border-gray-300 shadow-xl"
@@ -109,19 +126,6 @@ export default function AddBlock() {
       </form>
 
       <div className="w-full mt-6">
-<<<<<<< Updated upstream
-        {Data.map((item, index) => (
-          <div className="collapse collapse-arrow bg-base-200 my-3" key={index}>
-            <input type="checkbox" name="my-accordion-2" placeholder="1" />
-            <div className="collapse-title text-xl font-medium">
-              {item.student}
-            </div>
-            <div className="collapse-content">
-              {item.RxNum.map((items, index) => (
-                <p key={index}>{items}</p>
-              ))}
-            </div>
-=======
         {students.map((student) => (
           <div
             className="collapse collapse-arrow bg-base-200 my-3"
@@ -132,7 +136,6 @@ export default function AddBlock() {
               {student.firstName} {student.lastName}
             </div>
             <div className="collapse-content">{student._id}</div>
->>>>>>> Stashed changes
           </div>
         ))}
       </div>
