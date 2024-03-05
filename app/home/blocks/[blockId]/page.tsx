@@ -20,21 +20,22 @@ export default function BlockPage({params}:Props){
 
     const [block, setBlock] = useState<Block>();
 
-    const fetchBlock = async () => {
-        const block = await axios.get<Block>(`/api/blocks/${params.blockId}`);
-        setBlock(block.data);
-    };
+    // const fetchBlock = async () => {
+    //     const block = await axios.get<Block>(`/api/blocks/${params.blockId}`);
+    //     setBlock(block.data);
+    // };
 
-    useEffect(() => {
-        // fetch block
-        fetchBlock();
-    }, [params.blockId]);
-
+    // useEffect(() => {
+    //         // fetch block
+    //         fetchBlock();
+    // }, [params.blockId]);
+    // console.log(block);
     
-      const handleAddWeek = (event: FormEvent) => {
-        
-        event.preventDefault();
-      };
+        const handleAddWeek = (event: FormEvent) => {
+            
+            event.preventDefault();
+            // setBlock({...block, weeks: [...block?.weeks, {name: "Week 1"}]});
+        };
       return (
         <div className="flex justify-center items-start text-slate-100 mt-10">
           <div className="card border justify-center shadow-xl w-full">
@@ -116,7 +117,7 @@ export default function BlockPage({params}:Props){
                             placeholder="Week Name"
                             className="input input-bordered input-primary w-full max-w-xs"
                           />
-                          <button className="btn btn-primary">Create</button>
+                          <button type="submit" className="btn btn-primary">Create</button>
                         </form>
                       </div>
                     </dialog>
