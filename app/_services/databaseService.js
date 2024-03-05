@@ -205,7 +205,15 @@ export async function deleteBlock(userID, blockID) {
 
 //get all gradesheets, return a gradesheet array, filled or empty for a lab provided a labId
 export async function getAllGradeSheets(labId){
+  // try {
+  //   await client.connect();
+  //   let collection = db.collection("gradesheets");
+  //   let filter = {
 
+  //   }
+  // } catch (error) {
+    
+  // }
 }
 
 //get singular gradesheet, return a single gradesheet or null for a lab provided a gradeSheetId
@@ -306,8 +314,26 @@ export async function updateGradeSheet(gradesheet){
 
 //delete gradesheet 
 
-export async function deleteGradeSheet(){
+export async function deleteGradeSheet(gradesheetID){
+  try {
+    await client.connect();
+    let collection = db.collection("gradesheets");
 
+    const filter = {
+        _id: new ObjectId(gradesheetID),
+    };
+    const result = await collection.deleteOne(filter);
+
+    if (result.deletedCount === 1) {
+        console.log("Successfully deleted a gradesheet");
+    } else {
+        console.log("No gradesheet found with the specified ID");
+    }
+  } catch (error) {
+    console.log("Delete failed with error\n" + error);
+  } finally {
+    await client.close();
+  }
 }
 
 //add student, add student with its studentId as ObjectId and return the newly added student
