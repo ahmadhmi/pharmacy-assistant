@@ -205,15 +205,21 @@ export async function deleteBlock(userID, blockID) {
 
 //get all gradesheets, return a gradesheet array, filled or empty for a lab provided a labId
 export async function getAllGradeSheets(labId){
-  // try {
-  //   await client.connect();
-  //   let collection = db.collection("gradesheets");
-  //   let filter = {
-
-  //   }
-  // } catch (error) {
-    
-  // }
+  try {
+    await client.connect();
+    let collection = db.collection("gradesheets");
+    let filter = {
+      labId: labId,
+    }
+    const cursor = await collection.find(filter);
+    const gradesheets = await cursor.toArray();
+    return gradesheets;
+  } catch (error) {
+    console.log("Error occurred while fetching grade sheets: " + ex);
+    return [];
+  } finally {
+    await client.close();
+  }
 }
 
 //get singular gradesheet, return a single gradesheet or null for a lab provided a gradeSheetId
