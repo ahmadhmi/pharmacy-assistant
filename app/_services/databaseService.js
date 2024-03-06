@@ -8,6 +8,30 @@ import authOptions from "@/app/auth/authOptions";
 const url = process.env.MONGODB_URI;
 const client = new MongoClient(url);
 const db = client.db(process.env.MONGO_CONNECTION_DATABASE);
+var clientOpen = false;
+client.addListener('topologyClosed', () => clientOpen = false); 
+client.addListener('topologyOpening', () => clientOpen = true);
+
+
+async function requestClose(){
+    await client.close(); 
+    console.log("closed"); 
+    console.log("Closing, Client open?:" + clientOpen); 
+}
+
+async function requestOpen(){
+  //check if since its been more than 5 seconds since last request
+  console.log("Opening, Client open?:" + clientOpen);
+  if(!clientOpen){
+    await client.connect(); 
+    console.log("Opened")
+    setTimeout(requestClose, 10000)
+  }
+  else{
+    console.log("Rejected open request")
+    return Promise.resolve(); 
+  }
+}
 
 // export async function run() {
 //   try {
@@ -106,7 +130,6 @@ export async function getAllBlocks(userEmail) {
 
     return blocks;
   } catch (ex) {
-    console.log("Error occurred here");
     return [];
   } finally {
     await client.close();
@@ -116,19 +139,19 @@ export async function getAllBlocks(userEmail) {
 export async function getBlock(blockID){
   let retrievedDoc = null; 
   try{
-    await client.connect(); 
+    //await client.connect(); 
+    await requestOpen(); 
     let filter = {
       _id: new ObjectId(blockID)
     }
     let collection = db.collection("blocks"); 
     retrievedDoc = await collection.findOne(filter); 
-
   }catch(ex){
     console.log(ex)
     console.log(`Error in retrieving block ID: ${blockID}`);
     return null;
   }finally{
-    await client.close(); 
+    //await requestClose(); 
     return retrievedDoc;
   }
 }
@@ -243,12 +266,11 @@ export async function getGradeSheet(gradesheetId){
     }else{
       return null; 
     }
-
   }catch(ex){
     console.log(`Failed to retrieve with gradesheetID: ${gradesheetId}\nFailed with error: ${ex}`);
     return null; 
   }finally{
-    await client.close(); 
+    //await requestClose(); 
   }
 }
 
@@ -256,7 +278,8 @@ export async function getGradeSheet(gradesheetId){
 
 export async function addGradeSheet(gradesheet){
   try {
-    await client.connect();
+    //await client.connect(); 
+    await requestOpen(); 
     let collection = db.collection("gradesheets");
 
     const added = await collection.insertOne(gradesheet);
@@ -281,7 +304,8 @@ export async function addGradeSheet(gradesheet){
 
 export async function updateGradeSheet(gradesheet){
   try {
-    await client.connect();
+    //await client.connect();
+    await requestOpen(); 
     let collection = db.collection("gradesheets");
     const filter = {
       _id: new ObjectId(gradesheet._id),
@@ -314,7 +338,7 @@ export async function updateGradeSheet(gradesheet){
     console.log("Update failed with error\n" + err);
     return false; 
   } finally {
-    await client.close();
+    //await requestClose();
   }
 }
 
