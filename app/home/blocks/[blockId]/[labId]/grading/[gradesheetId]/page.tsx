@@ -121,13 +121,14 @@ export default function Grade({ params }: Props) {
             );
             setComment("");
             setStateDefaultCriteria([]);
-            setTimeout(
-                () =>
-                    router.push(
-                        `/home/blocks/${params.blockId}/${params.labId}/grading`
-                    ),
-                2000
+            router.push(
+                `/home/blocks/${params.blockId}/${params.labId}/grading`
             );
+            // setTimeout(
+            //     () =>
+            //        ,
+            //     2000
+            // );
         }
     }
 
