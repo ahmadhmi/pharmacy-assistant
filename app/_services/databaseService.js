@@ -387,6 +387,27 @@ export async function addStudent(student){
 //delete student, return true or false
 
 export async function deleteStudent(studentId){
+  try {
+    await client.connect();
+    let collection = db.collection("students");
+    const filter = {
+        _id: new ObjectId(studentId),
+    };
+    
+    const result = await collection.deleteOne(filter);
 
+    if (result.deletedCount === 1) {
+        console.log("A student with specified ID is found and deleted")
+        return true;
+    } else {
+        console.log("No student found with the specified ID");
+        return false;
+    }
+} catch (error) {
+    console.log("Delete failed with error\n" + error.message);
+    return false;
+} finally {
+    await client.close();
+}
 }
 
