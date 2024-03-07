@@ -8,30 +8,30 @@ import authOptions from "@/app/auth/authOptions";
 const url = process.env.MONGODB_URI;
 const client = new MongoClient(url);
 var db = client.db(process.env.MONGO_CONNECTION_DATABASE);
-var clientOpen = false;
-client.addListener('topologyClosed', () => clientOpen = false); 
-client.addListener('topologyOpening', () => clientOpen = true);
+// var clientOpen = false;
+// client.addListener('topologyClosed', () => clientOpen = false); 
+// client.addListener('topologyOpening', () => clientOpen = true);
 
 
-async function requestClose(){
-    await client.close(); 
-    console.log("closed"); 
-    console.log("Closing, Client open?:" + clientOpen); 
-}
+// async function requestClose(){
+//     await client.close(); 
+//     console.log("closed"); 
+//     console.log("Closing, Client open?:" + clientOpen); 
+// }
 
-async function requestOpen(){
-  //check if since its been more than 5 seconds since last request
-  console.log("Opening, Client open?:" + clientOpen);
-  if(!clientOpen){
-    await client.connect(); 
-    console.log("Opened")
-    setTimeout(requestClose, 30000)
-  }
-  else{
-    console.log("Rejected open request")
-    return Promise.resolve(); 
-  }
-}
+// async function requestOpen(){
+//   //check if since its been more than 5 seconds since last request
+//   console.log("Opening, Client open?:" + clientOpen);
+//   if(!clientOpen){
+//     await client.connect(); 
+//     console.log("Opened")
+//     setTimeout(requestClose, 30000)
+//   }
+//   else{
+//     console.log("Rejected open request")
+//     return Promise.resolve(); 
+//   }
+// }
 
 // export async function run() {
 //   try {
