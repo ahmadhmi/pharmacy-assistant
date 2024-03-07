@@ -116,7 +116,6 @@ export async function addBlock(block) {
 
 //todo get all blocks with a userID of the one passed
 export async function getAllBlocks(userEmail) {
-  const session = getServerSession(authOptions);
   try {
     await client.connect();
     let filter = {
@@ -140,10 +139,6 @@ export async function getBlock(blockID){
   let retrievedDoc = null; 
   try{
     await client.connect(); 
-    await client.connect(); 
-    // if(!clientOpen){
-    //   await requestOpen(); 
-    // }
     let filter = {
       _id: new ObjectId(blockID)
     }
@@ -154,7 +149,6 @@ export async function getBlock(blockID){
     console.log(`Error in retrieving block ID: ${blockID}`);
     return null;
   }finally{
-    await client.close(); 
     await client.close(); 
     return retrievedDoc;
   }
@@ -248,14 +242,8 @@ export async function getAllGradeSheets(labId){
 //get singular gradesheet, return a single gradesheet or null for a lab provided a gradeSheetId
 export async function getGradeSheet(gradesheetId){
   try{
-
-    // if(!clientOpen){
-    //   await requestOpen(); 
-    // }
     await client.connect(); 
-
     let collection = db.collection("gradesheets"); 
-
     const found = await collection.findOne({_id: new ObjectId(gradesheetId)}); 
     if(found){
       return {
@@ -275,8 +263,7 @@ export async function getGradeSheet(gradesheetId){
     console.log(`Failed to retrieve with gradesheetID: ${gradesheetId}\nFailed with error: ${ex}`);
     return null; 
   }finally{
-    await client.close(); 
-    await client.connect(); 
+    await client.close();  
   }
 }
 
@@ -285,12 +272,6 @@ export async function getGradeSheet(gradesheetId){
 export async function addGradeSheet(gradesheet){
   try {
     await client.connect(); 
-    // if(!clientOpen){
-    //   await requestOpen(); 
-    // }
-
-    await client.connect(); 
-    await requestOpen(); 
     let collection = db.collection("gradesheets");
 
     const added = await collection.insertOne(gradesheet);
@@ -315,11 +296,6 @@ export async function addGradeSheet(gradesheet){
 
 export async function updateGradeSheet(gradesheet){
   try {
-    await client.connect();
-    // if(!clientOpen){
-    //   await requestOpen(); 
-    // }
-
     await client.connect();
     let collection = db.collection("gradesheets");
     const filter = {
@@ -354,7 +330,6 @@ export async function updateGradeSheet(gradesheet){
     return false; 
   } finally {
     await client.close();
-    await client.connect();
   }
 }
 
