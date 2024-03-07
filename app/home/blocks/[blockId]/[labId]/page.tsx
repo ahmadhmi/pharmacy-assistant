@@ -93,7 +93,7 @@ export default function LabPage({ params }: Props) {
 
   useEffect(() => {
     fetchGradingSheets();
-  });
+  },[]);
 
 
   return (
