@@ -2,13 +2,6 @@ import { LabData } from "@/types/LabData";
 import React from "react";
 import MyButton from "@/app/UI/componenttest";
 
-interface Props{
-  params: {
-    blockId:string,
-    labId:string, 
-  }
-}
-
 const Data: LabData[] = [
   {
     student: "Qiaomu Lei 1",
@@ -44,10 +37,9 @@ const Data: LabData[] = [
   },
 ];
 
-export default function LabPage({params}:Props) {
+export default function LabPage() {
   return (
     <section className="display-flex justify-center h-screen w-100% px-8 py-10">
-      <h2>BlockId: {params.blockId}, LabId: {params.labId}</h2>
       <h1 className="text-center mb-6 text-3xl">Lab Page</h1>
       <div className="border-y overflow-y-auto" style={{ height: "80%" }}>
         {Data.map((item, index) => (
@@ -56,16 +48,30 @@ export default function LabPage({params}:Props) {
             <div className="collapse-title text-xl font-medium">
               {item.student}
             </div>
-            <div className="collapse-content">
+            <div className="collapse-content bg-primary">
               {item.RxNum.map((items, index) => (
-                <p key={index}>{items}</p>
+                <div className="flex flex-row items-center justify-between text-black my-2 ">
+                  <input
+                    title="checkbox"
+                    type="checkbox"
+                    defaultChecked
+                    className=" checkbox border-black"
+                  />
+                  <p key={index} className="font-bold">
+                    {items}
+                  </p>
+                  <div>
+                    <button className="btn btn-sm">Edit</button>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         ))}
       </div>
-      <div className=" flex justify-center w-100% mt-4">
+      <div className=" flex justify-center w-100% mt-4 gap-3">
         <MyButton text="Export" />
+        <MyButton text="Grading" />
       </div>
     </section>
   );
