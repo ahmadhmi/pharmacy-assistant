@@ -11,8 +11,8 @@ import { useSession } from "next-auth/react";
 export default function Login() {
 
   const {status} = useSession(); 
-  const searchParams = useSearchParams(); 
-  const callBackUrl = searchParams.get('callbackUrl') || '/home/';
+  // const searchParams = useSearchParams(); 
+  // const callBackUrl = searchParams.get('callbackUrl') || '/home/';
 
   // useEffect(
   //   () => {
