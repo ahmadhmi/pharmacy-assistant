@@ -34,12 +34,6 @@ export default function Blocks() {
               <BlockCard
                 key={block.name}
                 block={block}
-                handleEditBlock={() => {
-                  console.log("Edit block");
-                }}
-                handleViewBlock={() => {
-                  console.log("View block");
-                }}
               />
             ))}
           </div>
