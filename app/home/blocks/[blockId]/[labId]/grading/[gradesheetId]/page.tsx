@@ -193,6 +193,7 @@ export default function Grade({ params }: Props) {
                                             type="radio"
                                             checked={criteria.pass}
                                             onChange={() => null}
+                                            title="radio"
                                         ></input>
                                     </li>
                                 ))
