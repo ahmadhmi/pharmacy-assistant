@@ -116,7 +116,6 @@ export default function EditBlock({ params }: Props) {
       students: students || [],
       users: users || [],
     };
-    const userId = "65c519560592b6e63ca5a955";
     await axios
       .patch<Block>(`/api/blocks/${params.blockId}`, newBlock)
       .then((response) => {
@@ -214,10 +213,10 @@ export default function EditBlock({ params }: Props) {
                         <div className="collapse-content">{student._id}</div>
                       </div>
                       <button
-                        className="btn btn-outline btn-error"
+                        className="btn btn-outline btn-error ml-2"
                         onClick={handleDeleteStudent(index)}
                       >
-                        <MdDelete />
+                        <MdDelete size={20} />
                       </button>
                     </div>
                   ))}
@@ -254,7 +253,7 @@ export default function EditBlock({ params }: Props) {
                         className="btn btn-outline btn-error"
                         onClick={handleDeleteUser(index)}
                       >
-                        <MdDelete />
+                        <MdDelete size={20} />
                       </button>
                     </div>
                   ))}
