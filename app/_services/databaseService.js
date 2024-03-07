@@ -7,7 +7,31 @@ import authOptions from "@/app/auth/authOptions";
 //const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
 const url = process.env.MONGODB_URI;
 const client = new MongoClient(url);
-const db = client.db(process.env.MONGO_CONNECTION_DATABASE);
+var db = client.db(process.env.MONGO_CONNECTION_DATABASE);
+// var clientOpen = false;
+// client.addListener('topologyClosed', () => clientOpen = false); 
+// client.addListener('topologyOpening', () => clientOpen = true);
+
+
+// async function requestClose(){
+//     await client.close(); 
+//     console.log("closed"); 
+//     console.log("Closing, Client open?:" + clientOpen); 
+// }
+
+// async function requestOpen(){
+//   //check if since its been more than 5 seconds since last request
+//   console.log("Opening, Client open?:" + clientOpen);
+//   if(!clientOpen){
+//     await client.connect(); 
+//     console.log("Opened")
+//     setTimeout(requestClose, 30000)
+//   }
+//   else{
+//     console.log("Rejected open request")
+//     return Promise.resolve(); 
+//   }
+// }
 
 // export async function run() {
 //   try {
@@ -92,7 +116,6 @@ export async function addBlock(block) {
 
 //todo get all blocks with a userID of the one passed
 export async function getAllBlocks(userEmail) {
-  const session = getServerSession(authOptions);
   try {
     await client.connect();
     let filter = {
@@ -106,7 +129,6 @@ export async function getAllBlocks(userEmail) {
 
     return blocks;
   } catch (ex) {
-    console.log("Error occurred here");
     return [];
   } finally {
     await client.close();
@@ -122,7 +144,6 @@ export async function getBlock(blockID){
     }
     let collection = db.collection("blocks"); 
     retrievedDoc = await collection.findOne(filter); 
-
   }catch(ex){
     console.log(ex)
     console.log(`Error in retrieving block ID: ${blockID}`);
@@ -133,21 +154,20 @@ export async function getBlock(blockID){
   }
 }
 
-//todo
-export async function updateBlock(userID, blockID, newName) {
-  //make sure the block in the database with the blockID in the block being passed contains the userID passed before updating
+export async function updateBlock(blockID, newBlock) {
+  console.log(blockID + " " + newBlock)
   try {
     await client.connect();
     let collection = db.collection("blocks");
     const filter = {
       _id: new ObjectId(blockID),
-      users: {
-        $in: [userID],
-      },
     };
     const update = {
       $set: {
-        name: newName,
+        name: newBlock.name,
+        weeks:newBlock.weeks,
+        students: newBlock.students,
+        users: newBlock.users,
       },
     };
     // if there is no document matches query, this wont insert new document
@@ -163,8 +183,10 @@ export async function updateBlock(userID, blockID, newName) {
     } else if (matchedCount === 0) {
       console.log("There is no document matching the query");
     }
+    return true; 
   } catch (err) {
-    console.log("Update failed with error\n" + err);
+    console.log("Update block failed with error\n" + err);
+    return false;
   } finally {
     await client.close();
   }
@@ -200,7 +222,21 @@ export async function deleteBlock(userID, blockID) {
 
 //get all gradesheets, return a gradesheet array, filled or empty for a lab provided a labId
 export async function getAllGradeSheets(labId){
-
+  try {
+    await client.connect();
+    let collection = db.collection("gradesheets");
+    let filter = {
+      labId: labId,
+    }
+    const cursor = await collection.find(filter);
+    const gradesheets = await cursor.toArray();
+    return gradesheets;
+  } catch (error) {
+    console.log("Error occurred while fetching grade sheets: " + error);
+    return [];
+  } finally {
+    await client.close();
+  }
 }
 
 //get singular gradesheet, return a single gradesheet or null for a lab provided a gradeSheetId
@@ -208,7 +244,6 @@ export async function getGradeSheet(gradesheetId){
   try{
     await client.connect(); 
     let collection = db.collection("gradesheets"); 
-
     const found = await collection.findOne({_id: new ObjectId(gradesheetId)}); 
     if(found){
       return {
@@ -224,12 +259,11 @@ export async function getGradeSheet(gradesheetId){
     }else{
       return null; 
     }
-
   }catch(ex){
     console.log(`Failed to retrieve with gradesheetID: ${gradesheetId}\nFailed with error: ${ex}`);
     return null; 
   }finally{
-    await client.close(); 
+    await client.close();  
   }
 }
 
@@ -237,7 +271,7 @@ export async function getGradeSheet(gradesheetId){
 
 export async function addGradeSheet(gradesheet){
   try {
-    await client.connect();
+    await client.connect(); 
     let collection = db.collection("gradesheets");
 
     const added = await collection.insertOne(gradesheet);
@@ -301,19 +335,70 @@ export async function updateGradeSheet(gradesheet){
 
 //delete gradesheet 
 
-export async function deleteGradeSheet(){
+export async function deleteGradeSheet(gradesheetID){
+  try {
+    await client.connect();
+    let collection = db.collection("gradesheets");
 
+    const filter = {
+        _id: new ObjectId(gradesheetID),
+    };
+    const result = await collection.deleteOne(filter);
+
+    if (result.deletedCount === 1) {
+        console.log("Successfully deleted a gradesheet");
+    } else {
+        console.log("No gradesheet found with the specified ID");
+    }
+  } catch (error) {
+    console.log("Delete failed with error\n" + error);
+  } finally {
+    await client.close();
+  }
 }
 
 //add student, add student with its studentId as ObjectId and return the newly added student
 
 export async function addStudent(student){
-
+  try {
+    await client.connect();
+    let collection = db.collection("students");
+    const insertResult = await collection.insertOne(student);
+    const newStudent = await collection.findOne({_id: insertResult.insertedId});
+    newStudent._id = newStudent._id.toString();
+    return newStudent;
+  } catch (error) {
+    console.log("Fained to add a student\n" + error.message);
+    return null;
+  } finally {
+    await client.close();
+  }
 }
 
 //delete student, return true or false
 
 export async function deleteStudent(studentId){
+  try {
+    await client.connect();
+    let collection = db.collection("students");
+    const filter = {
+        _id: new ObjectId(studentId),
+    };
+    
+    const result = await collection.deleteOne(filter);
 
+    if (result.deletedCount === 1) {
+        console.log("A student with specified ID is found and deleted")
+        return true;
+    } else {
+        console.log("No student found with the specified ID");
+        return false;
+    }
+} catch (error) {
+    console.log("Delete failed with error\n" + error.message);
+    return false;
+} finally {
+    await client.close();
+}
 }
 

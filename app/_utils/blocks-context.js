@@ -24,7 +24,7 @@ export default function BlocksContextProvider({children}){
         if(response.data){
             response.data.forEach(element => {
                 blocks.push({
-                    id: element._id,
+                    _id: element._id,
                     name: element.name,
                     weeks: element.weeks,
                     users: element.users
@@ -52,7 +52,7 @@ export default function BlocksContextProvider({children}){
                 getBlocks()
             }
         },
-        [status]
+        [data?.user]
     )
 
 

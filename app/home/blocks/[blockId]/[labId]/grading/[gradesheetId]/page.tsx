@@ -6,7 +6,7 @@ import { Gradesheet } from "@/interfaces/gradesheet";
 import { criteria } from "@/interfaces/criteria";
 import { updateGradeSheet } from "@/app/_services/databaseService";
 import { useRouter } from "next/navigation";
-import { VscCheck } from "react-icons/vsc";
+import { VscCheck, VscError, VscLoading } from "react-icons/vsc";
 
 interface Props {
     params: {
@@ -121,19 +121,20 @@ export default function Grade({ params }: Props) {
             );
             setComment("");
             setStateDefaultCriteria([]);
-            setTimeout(
-                () =>
-                    router.push(
-                        `/home/blocks/${params.blockId}/${params.labId}/grading`
-                    ),
-                2000
+            router.push(
+                `/home/blocks/${params.blockId}/${params.labId}/grading`
             );
+            // setTimeout(
+            //     () =>
+            //        ,
+            //     2000
+            // );
         }
     }
 
     useEffect(() => {
         fetchGradesheet();
-    }, []);
+    },[]);
 
     if (gradesheet) {
         return (
@@ -172,7 +173,7 @@ export default function Grade({ params }: Props) {
                             {stateDefaultCriteria.length > 0 ? (
                                 stateDefaultCriteria.map((criteria) => (
                                     <li
-                                        className="w-full flex flex-row justify-between px-4 py-2 shadow-xl my-2 rounded"
+                                        className="w-full flex flex-row justify-between px-4 py-2 shadow-lg my-2 rounded"
                                         key={criteria.name}
                                         onClick={() =>
                                             updateRadio(
@@ -192,6 +193,7 @@ export default function Grade({ params }: Props) {
                                             type="radio"
                                             checked={criteria.pass}
                                             onChange={() => null}
+                                            title="radio"
                                         ></input>
                                     </li>
                                 ))
@@ -221,7 +223,8 @@ export default function Grade({ params }: Props) {
     } else {
         return (
             <div
-                className="toast cursor-pointer"
+                role="alert"
+                className="cursor-pointer"
                 onClick={() => {
                     if (!gradesheet) {
                         setError("");
@@ -238,6 +241,7 @@ export default function Grade({ params }: Props) {
                             : "alert-error"
                     }`}
                 >
+                    {error === "Page is loading..." ? <VscLoading size={30}></VscLoading> : <VscError size={30}></VscError>}
                     <p className="break-words">{error}</p>
                 </div>
             </div>
