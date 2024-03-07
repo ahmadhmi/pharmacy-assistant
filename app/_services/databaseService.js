@@ -7,7 +7,7 @@ import authOptions from "@/app/auth/authOptions";
 //const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
 const url = process.env.MONGODB_URI;
 const client = new MongoClient(url);
-const db = client.db(process.env.MONGO_CONNECTION_DATABASE);
+var db = client.db(process.env.MONGO_CONNECTION_DATABASE);
 var clientOpen = false;
 client.addListener('topologyClosed', () => clientOpen = false); 
 client.addListener('topologyOpening', () => clientOpen = true);
@@ -25,7 +25,7 @@ async function requestOpen(){
   if(!clientOpen){
     await client.connect(); 
     console.log("Opened")
-    setTimeout(requestClose, 10000)
+    setTimeout(requestClose, 30000)
   }
   else{
     console.log("Rejected open request")
@@ -140,6 +140,10 @@ export async function getBlock(blockID){
   let retrievedDoc = null; 
   try{
     await client.connect(); 
+    await client.connect(); 
+    // if(!clientOpen){
+    //   await requestOpen(); 
+    // }
     let filter = {
       _id: new ObjectId(blockID)
     }
@@ -150,6 +154,7 @@ export async function getBlock(blockID){
     console.log(`Error in retrieving block ID: ${blockID}`);
     return null;
   }finally{
+    await client.close(); 
     await client.close(); 
     return retrievedDoc;
   }
@@ -243,7 +248,12 @@ export async function getAllGradeSheets(labId){
 //get singular gradesheet, return a single gradesheet or null for a lab provided a gradeSheetId
 export async function getGradeSheet(gradesheetId){
   try{
+
+    // if(!clientOpen){
+    //   await requestOpen(); 
+    // }
     await client.connect(); 
+
     let collection = db.collection("gradesheets"); 
 
     const found = await collection.findOne({_id: new ObjectId(gradesheetId)}); 
@@ -265,6 +275,7 @@ export async function getGradeSheet(gradesheetId){
     console.log(`Failed to retrieve with gradesheetID: ${gradesheetId}\nFailed with error: ${ex}`);
     return null; 
   }finally{
+    await client.close(); 
     await client.connect(); 
   }
 }
@@ -273,6 +284,11 @@ export async function getGradeSheet(gradesheetId){
 
 export async function addGradeSheet(gradesheet){
   try {
+    await client.connect(); 
+    // if(!clientOpen){
+    //   await requestOpen(); 
+    // }
+
     await client.connect(); 
     await requestOpen(); 
     let collection = db.collection("gradesheets");
@@ -299,6 +315,11 @@ export async function addGradeSheet(gradesheet){
 
 export async function updateGradeSheet(gradesheet){
   try {
+    await client.connect();
+    // if(!clientOpen){
+    //   await requestOpen(); 
+    // }
+
     await client.connect();
     let collection = db.collection("gradesheets");
     const filter = {
@@ -332,6 +353,7 @@ export async function updateGradeSheet(gradesheet){
     console.log("Update failed with error\n" + err);
     return false; 
   } finally {
+    await client.close();
     await client.connect();
   }
 }
