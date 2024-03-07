@@ -139,8 +139,7 @@ export async function getAllBlocks(userEmail) {
 export async function getBlock(blockID){
   let retrievedDoc = null; 
   try{
-    //await client.connect(); 
-    await requestOpen(); 
+    await client.connect(); 
     let filter = {
       _id: new ObjectId(blockID)
     }
@@ -151,7 +150,7 @@ export async function getBlock(blockID){
     console.log(`Error in retrieving block ID: ${blockID}`);
     return null;
   }finally{
-    //await requestClose(); 
+    await client.close(); 
     return retrievedDoc;
   }
 }
@@ -234,7 +233,7 @@ export async function getAllGradeSheets(labId){
     const gradesheets = await cursor.toArray();
     return gradesheets;
   } catch (error) {
-    console.log("Error occurred while fetching grade sheets: " + ex);
+    console.log("Error occurred while fetching grade sheets: " + error);
     return [];
   } finally {
     await client.close();
@@ -266,7 +265,7 @@ export async function getGradeSheet(gradesheetId){
     console.log(`Failed to retrieve with gradesheetID: ${gradesheetId}\nFailed with error: ${ex}`);
     return null; 
   }finally{
-    //await requestClose(); 
+    await client.connect(); 
   }
 }
 
@@ -274,7 +273,7 @@ export async function getGradeSheet(gradesheetId){
 
 export async function addGradeSheet(gradesheet){
   try {
-    //await client.connect(); 
+    await client.connect(); 
     await requestOpen(); 
     let collection = db.collection("gradesheets");
 
@@ -300,8 +299,7 @@ export async function addGradeSheet(gradesheet){
 
 export async function updateGradeSheet(gradesheet){
   try {
-    //await client.connect();
-    await requestOpen(); 
+    await client.connect();
     let collection = db.collection("gradesheets");
     const filter = {
       _id: new ObjectId(gradesheet._id),
@@ -334,7 +332,7 @@ export async function updateGradeSheet(gradesheet){
     console.log("Update failed with error\n" + err);
     return false; 
   } finally {
-    //await requestClose();
+    await client.connect();
   }
 }
 
