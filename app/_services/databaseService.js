@@ -7,7 +7,7 @@ import authOptions from "@/app/auth/authOptions";
 //const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
 const url = process.env.MONGODB_URI;
 const client = new MongoClient(url);
-const db = client.db(process.env.MONGO_CONNECTION_DATABASE);
+var db = client.db(process.env.MONGO_CONNECTION_DATABASE);
 var clientOpen = false;
 client.addListener('topologyClosed', () => clientOpen = false); 
 client.addListener('topologyOpening', () => clientOpen = true);
@@ -25,7 +25,7 @@ async function requestOpen(){
   if(!clientOpen){
     await client.connect(); 
     console.log("Opened")
-    setTimeout(requestClose, 10000)
+    setTimeout(requestClose, 30000)
   }
   else{
     console.log("Rejected open request")
@@ -116,7 +116,6 @@ export async function addBlock(block) {
 
 //todo get all blocks with a userID of the one passed
 export async function getAllBlocks(userEmail) {
-  const session = getServerSession(authOptions);
   try {
     await client.connect();
     let filter = {
@@ -245,7 +244,6 @@ export async function getGradeSheet(gradesheetId){
   try{
     await client.connect(); 
     let collection = db.collection("gradesheets"); 
-
     const found = await collection.findOne({_id: new ObjectId(gradesheetId)}); 
     if(found){
       return {
@@ -265,7 +263,7 @@ export async function getGradeSheet(gradesheetId){
     console.log(`Failed to retrieve with gradesheetID: ${gradesheetId}\nFailed with error: ${ex}`);
     return null; 
   }finally{
-    await client.connect(); 
+    await client.close();  
   }
 }
 
@@ -274,7 +272,6 @@ export async function getGradeSheet(gradesheetId){
 export async function addGradeSheet(gradesheet){
   try {
     await client.connect(); 
-    await requestOpen(); 
     let collection = db.collection("gradesheets");
 
     const added = await collection.insertOne(gradesheet);
@@ -332,7 +329,7 @@ export async function updateGradeSheet(gradesheet){
     console.log("Update failed with error\n" + err);
     return false; 
   } finally {
-    await client.connect();
+    await client.close();
   }
 }
 
