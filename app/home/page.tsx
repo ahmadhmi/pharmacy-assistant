@@ -13,33 +13,8 @@ import { useSession } from "next-auth/react";
 import BlockCard from "../UI/Blocks/BlockCard";
 
 export default function Home() {
-  // const {blocks} = useBlocksContext();
-
-  // return (
-  //   <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4">
-  //     <div>
-  //       <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary">Quick Links</h2>
-  //       <div className="flex flex-col gap-2 shadow-xl py-4 px-2 rounded-lg">
-  //         <LinkBlock href="/home/blocks/AddBlock" Icon={VscArrowRight} IconSize={25}>
-  //           New Block
-  //         </LinkBlock>
-  //         <LinkBlock href="/home/blocks" Icon={VscArrowRight} IconSize={25}>Blocks</LinkBlock>
-  //         <LinkBlock href="/home/Labpage" Icon={VscArrowRight} IconSize={25}>Labs</LinkBlock>
-  //       </div>
-  //     </div>
-  //     <div>
-  //     <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary">Recent Blocks</h2>
-  //     <div className="flex flex-col gap-2 shadow-xl py-4 px-2 rounded-lg">
-  //     {blocks.slice(1,5).map(
-  //       (block:Block) => {
-  //         return <LinkBlock key={block.id} href={`/home/blocks/${block.id}`} Icon={VscArrowRight} IconSize={25}>{block.name}</LinkBlock>
-  //       }
-  //     )}
-  //       </div>
-  //     </div>
-  //   </div>
-
-  // );
+  
+ 
   const { data: session } = useSession();
   const { blocks } = useBlocksContext();
   // const blocks: Block[] = [
@@ -57,7 +32,6 @@ export default function Home() {
   //   },
   // ];
 
- 
 
   return (
     <div className="flex justify-center items-start text-slate-100 mt-10">
@@ -70,25 +44,27 @@ export default function Home() {
           <div className=" grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-20 w-full">
             {blocks.length == 0 ? (
               <p className="text-slate-800">
-                No blocks available currently. <Link href={"/home/blocks/AddBlock"} className="text-primary hover:text-neutral">Create one</Link>
+                No blocks available currently.{" "}
+                <Link
+                  href={"/home/blocks/AddBlock"}
+                  className="text-primary hover:text-neutral"
+                >
+                  Create one
+                </Link>
               </p>
             ) : (
               blocks.map((block: Block) => (
-                <BlockCard
-                  key={block.name}
-                  block={block}
-                  handleEditBlock={() => {
-                    redirect(`/home/blocks/${block._id}/editBlock`);
-                  }}
-                  handleViewBlock={() => {
-                    redirect(`/home/blocks/${block._id}`);
-                  }}
-                />
+                <div>
+                  <BlockCard
+                    key={block.name}
+                    block={block}
+                  />
+                </div>
               ))
             )}
           </div>
         </div>
-      </div>   
+      </div>
     </div>
   );
 }
