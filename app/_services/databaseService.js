@@ -369,7 +369,19 @@ export async function deleteGradeSheet(gradesheetID){
 //add student, add student with its studentId as ObjectId and return the newly added student
 
 export async function addStudent(student){
-
+  try {
+    await client.connect();
+    let collection = db.collection("students");
+    const insertResult = await collection.insertOne(student);
+    const newStudent = await collection.findOne({_id: insertResult.insertedId});
+    newStudent._id = newStudent._id.toString();
+    return newStudent;
+  } catch (error) {
+    console.log("Fained to add a student\n" + error.message);
+    return null;
+  } finally {
+    await client.close();
+  }
 }
 
 //delete student, return true or false
