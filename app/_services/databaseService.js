@@ -156,17 +156,13 @@ export async function getBlock(blockID){
   }
 }
 
-//todo
 export async function updateBlock(blockID, newBlock) {
-  //make sure the block in the database with the blockID in the block being passed contains the userID passed before updating
+  console.log(blockID + " " + newBlock)
   try {
     await client.connect();
     let collection = db.collection("blocks");
     const filter = {
       _id: new ObjectId(blockID),
-      users: {
-        $in: [userID],
-      },
     };
     const update = {
       $set: {

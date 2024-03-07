@@ -101,13 +101,12 @@ export async function PATCH(
   { params }: { params: { blockId: string } }
 ) {
   const session = await getServerSession(authOptions);
-
   try {
     const body = await request.json();
-    const oldBlock = await getBlock(body.block._id);
+    const oldBlock = await getBlock(body._id);
     if (session) {
       if (oldBlock && oldBlock.users.includes(session.user?.email)) {
-        const success = await updateBlock(params.blockId, body.block);
+        const success = await updateBlock(params.blockId, body);
         if (success) {
           return NextResponse.json(body.block, {
             status: 200,
