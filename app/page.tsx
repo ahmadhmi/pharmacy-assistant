@@ -36,7 +36,7 @@ export default function Login() {
       </div>
       <div>
         <LinkBlock
-          href={`/api/auth/signin?callbackUrl=${encodeURIComponent(callBackUrl)}`}
+          href={`/api/auth/signin`}
           Icon={VscArrowRight}
           IconSize={25}
           className="btn-wide btn-accent text-white"
