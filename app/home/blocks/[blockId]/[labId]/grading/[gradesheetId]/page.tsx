@@ -134,7 +134,7 @@ export default function Grade({ params }: Props) {
 
     useEffect(() => {
         fetchGradesheet();
-    }, [fetchGradesheet]);
+    });
 
     if (gradesheet) {
         return (

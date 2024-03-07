@@ -53,8 +53,8 @@ export default function Home() {
                 </Link>
               </p>
             ) : (
-              blocks.map((block: Block) => (
-                <div>
+              blocks.map((block: Block, index:number) => (
+                <div key={index}>
                   <BlockCard
                     key={block.name}
                     block={block}

@@ -197,7 +197,7 @@ export default function EditBlock({ params }: Props) {
               {students !== undefined && (
                 <div className="w-full mt-6">
                   {students.map((student, index) => (
-                    <div className="flex items-center">
+                    <div key={student._id} className="flex items-center">
                       <div
                         className="collapse collapse-arrow bg-base-200 my-3"
                         key={index}

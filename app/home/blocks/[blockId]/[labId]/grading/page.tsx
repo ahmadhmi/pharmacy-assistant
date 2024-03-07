@@ -90,7 +90,7 @@ export default function Grading({ params }: Props) {
 
     useEffect(() => {
         fetchBlock();
-    }, [fetchBlock]);
+    });
 
     if (lab) {
         return (
