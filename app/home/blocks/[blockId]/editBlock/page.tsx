@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { LabData } from "@/types/LabData";
 import { Student } from "@/interfaces/student";
 import { set } from "mongoose";
+import { MdDelete } from "react-icons/md";
 
 interface Props {
   params: { blockId: string };
@@ -24,15 +25,21 @@ export default function EditBlock({ params }: Props) {
   const [block, setBlock] = useState<Block>();
   const [blockName, setBlockName] = useState<string | undefined>();
 
-  const [students, setStudents] = useState<Student[]>([]);
+  const [students, setStudents] = useState<Student[] | undefined>([]);
+
+  const [user, setUser] = useState("");
+
+  const [users, setUsers] = useState<string[] | undefined>([]);
 
   const fetchBlock = async () => {
     const block = await axios.get<Block>(`/api/blocks/${params.blockId}`);
     setBlock(block.data);
     setBlockName(block.data.name);
+    setStudents(block.data.students);
+    setUsers(block.data.users);
   };
 
-  console.log(block);
+  //console.log(block);
 
   useEffect(() => {
     fetchBlock();
@@ -68,21 +75,69 @@ export default function EditBlock({ params }: Props) {
       firstName: firstName,
       lastName: lastName,
     };
-    setStudents([...students, newStudent]);
+    if (students?.some((student) => student._id === newStudent._id)) {
+      alert("Student with the same Student Id already exists");
+      return;
+    }
+    setStudents((prevStudents) => (prevStudents || []).concat(newStudent));
     setFirstName("");
     setLastName("");
     setStudentID("");
   };
 
+  const handleDeleteStudent = (index: number) => () => {
+    setStudents((prevStudents) =>
+      (prevStudents || []).filter((_, i) => i !== index)
+    );
+  };
+
+  const handleAddUser = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!user.match(emailPattern)) {
+      alert("Please enter a valid email address");
+      return;
+    }
+    if (users?.includes(user)) {
+      alert("User already exists");
+      return;
+    }
+    setUsers((prevUsers) => (prevUsers || []).concat(user));
+    setUser("");
+  };
+
+  const handleDeleteUser = (index: number) => () => {
+    setUsers((prevUsers) => (prevUsers || []).filter((_, i) => i !== index));
+  };
+
+  const handleEditBlock = async () => {
+    const newBlock: Block = {
+      _id: params.blockId,
+      name: blockName,
+      students: students || [],
+      users: users || [],
+    };
+    const userId = "65c519560592b6e63ca5a955";
+    await axios
+      .patch<Block>(`/api/blocks/${params.blockId}`, newBlock)
+      .then((response) => {
+        console.log("Block updated successfully: ", response.data);
+      })
+      .catch((error) => {
+        console.error("Error updating block: ", error);
+      });
+  };
+
   return (
     <section className="flex flex-col items-center sm:items-start w-full">
-      <div className="card w-full bg-base-100 shadow-xl bg-white">
+      <div className="card w-full shadow-xl bg-white">
         <div className="card-body">
           <div className="flex justify-between mb-8 w-full">
             <h1 className=" card-title text-2xl text-primary p-2 flex-1 rounded-lg">
               Editing {block?.name}
             </h1>
-            <button className="btn btn-primary">Save</button>
+            <button className="btn btn-primary" onClick={handleEditBlock}>
+              Save
+            </button>
           </div>
           <hr />
           <div className="card w-full bg-base-100 ">
@@ -140,24 +195,34 @@ export default function EditBlock({ params }: Props) {
                 </button>
               </form>
 
-              <div className="w-full mt-6">
-                {students.map((student) => (
-                  <div
-                    className="collapse collapse-arrow bg-base-200 my-3"
-                    key={student._id}
-                  >
-                    <input
-                      type="checkbox"
-                      name="my-accordion-2"
-                      placeholder="1"
-                    />
-                    <div className="collapse-title text-xl font-medium">
-                      {student.firstName} {student.lastName}
+              {students !== undefined && (
+                <div className="w-full mt-6">
+                  {students.map((student, index) => (
+                    <div className="flex items-center">
+                      <div
+                        className="collapse collapse-arrow bg-base-200 my-3"
+                        key={index}
+                      >
+                        <input
+                          type="checkbox"
+                          name="my-accordion-2"
+                          placeholder="1"
+                        />
+                        <div className="collapse-title text-xl font-medium">
+                          {student.firstName} {student.lastName}
+                        </div>
+                        <div className="collapse-content">{student._id}</div>
+                      </div>
+                      <button
+                        className="btn btn-outline btn-error"
+                        onClick={handleDeleteStudent(index)}
+                      >
+                        <MdDelete />
+                      </button>
                     </div>
-                    <div className="collapse-content">{student._id}</div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <hr />
@@ -169,17 +234,32 @@ export default function EditBlock({ params }: Props) {
                   required
                   type="text"
                   placeholder="Users"
+                  value={user}
+                  onChange={(e) => setUser(e.target.value?.toLowerCase())}
                   className="input input-bordered input-primary w-full max-w-xs my-2"
                 />
-                <button className="btn btn-primary my-2">Add Users</button>
+                <button
+                  className="btn btn-primary my-2"
+                  onClick={handleAddUser}
+                >
+                  Add Users
+                </button>
               </div>
-              <div className="p-4">
-                {block?.users?.map((user) => (
-                  <p className="flex flex-row items-center bg-gray-200 rounded-md p-2 mb-2">
-                    {user}
-                  </p>
-                ))}
-              </div>
+              {users !== undefined && (
+                <div className="p-4">
+                  {users.map((user, index) => (
+                    <div className="flex items-center" key={index}>
+                      <p className="bg-gray-200 rounded-md p-2 mb-2">{user}</p>
+                      <button
+                        className="btn btn-outline btn-error"
+                        onClick={handleDeleteUser(index)}
+                      >
+                        <MdDelete />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

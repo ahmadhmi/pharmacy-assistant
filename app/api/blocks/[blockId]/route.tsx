@@ -18,82 +18,115 @@ interface Props {
 
 export async function GET(request: NextRequest, { params }: Props) {
   try {
-    const session = await getServerSession(authOptions); 
+    const session = await getServerSession(authOptions);
 
-    if(session?.user){
-      const retrievedDoc = await getBlock(params.blockId); 
-      let retrievedBlock:Block; 
+    if (session?.user) {
+      const retrievedDoc = await getBlock(params.blockId);
+      let retrievedBlock: Block;
 
-      if(retrievedDoc){
+      if (retrievedDoc) {
         retrievedBlock = {
-          _id : new String(retrievedDoc._id), 
+          _id: new String(retrievedDoc._id),
           name: retrievedDoc.name,
           weeks: retrievedDoc.weeks,
           students: retrievedDoc.students,
           users: retrievedDoc.users,
+        };
+        if (
+          session.user.email &&
+          retrievedBlock.users.includes(session?.user.email)
+        ) {
+          return NextResponse.json(retrievedBlock, {
+            status: 200,
+          });
+        } else {
+          throw { error: "User does not have access to this block" };
         }
-        if (session.user.email && retrievedBlock.users.includes(session?.user.email)){
-          return NextResponse.json(
-            retrievedBlock,
-            {
-              status: 200
-            }
-          )
-        }else{
-          throw {error: "User does not have access to this block"}
-        }
-      }else{
-        throw {error: "No such block exists"}
+      } else {
+        throw { error: "No such block exists" };
       }
-    }else{
-      throw {error: "User is not authenticated and is not allowed to retrieve a block"};
+    } else {
+      throw {
+        error:
+          "User is not authenticated and is not allowed to retrieve a block",
+      };
     }
-
   } catch (ex: any) {
-    return NextResponse.json(
-      ex,
-      {
-        status: 404
-      }
-    )
+    return NextResponse.json(ex, {
+      status: 404,
+    });
   }
 }
 
+// export async function PATCH(
+//   request: NextRequest,
+//   { params }: { params: { userID: string } }
+// ) {
+//   const session = await getServerSession(authOptions)
+
+//   try {
+//     const body = await request.json();
+//     const oldBlock = await getBlock(body.block._id);
+//     if (session) {
+
+//       if(oldBlock && oldBlock.users.includes(session.user?.email)){
+//         const success = await updateBlock(params.userID, body.block);
+//         if(success){
+//           return NextResponse.json(body.block, {
+//             status: 200,
+//           });
+//         }else{
+//           throw {error: "Something went wrong when trying to update a block"}
+//         }
+
+//       }else{
+//         throw {error: `${session.user?.name} does not have access to this block or this block may not exist`}
+//       }
+
+//     } else {
+//       throw { error: "User is not authenticated" };
+//     }
+//   } catch (ex: any) {
+//     return NextResponse.json(
+//       ex,
+//       {
+//         status: 404,
+//       }
+//     );
+//   }
+// }
+
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { userID: string } }
+  { params }: { params: { blockId: string } }
 ) {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   try {
     const body = await request.json();
-    const oldBlock = await getBlock(body.block._id); 
+    const oldBlock = await getBlock(body.block._id);
     if (session) {
-
-      if(oldBlock && oldBlock.users.includes(session.user?.email)){
-        const success = await updateBlock(params.userID, body.block);
-        if(success){
+      if (oldBlock && oldBlock.users.includes(session.user?.email)) {
+        const success = await updateBlock(params.blockId, body.block);
+        if (success) {
           return NextResponse.json(body.block, {
             status: 200,
           });
-        }else{
-          throw {error: "Something went wrong when trying to update a block"}
+        } else {
+          throw { error: "Something went wrong when trying to update a block" };
         }
-
-      }else{
-        throw {error: `${session.user?.name} does not have access to this block or this block may not exist`}
+      } else {
+        throw {
+          error: `${session.user?.name} does not have access to this block or this block may not exist`,
+        };
       }
-
     } else {
       throw { error: "User is not authenticated" };
     }
   } catch (ex: any) {
-    return NextResponse.json(
-      ex,
-      {
-        status: 404,
-      }
-    );
+    return NextResponse.json(ex, {
+      status: 404,
+    });
   }
 }
 
