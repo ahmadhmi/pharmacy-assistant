@@ -369,12 +369,45 @@ export async function deleteGradeSheet(gradesheetID){
 //add student, add student with its studentId as ObjectId and return the newly added student
 
 export async function addStudent(student){
-
+  try {
+    await client.connect();
+    let collection = db.collection("students");
+    const insertResult = await collection.insertOne(student);
+    const newStudent = await collection.findOne({_id: insertResult.insertedId});
+    newStudent._id = newStudent._id.toString();
+    return newStudent;
+  } catch (error) {
+    console.log("Fained to add a student\n" + error.message);
+    return null;
+  } finally {
+    await client.close();
+  }
 }
 
 //delete student, return true or false
 
 export async function deleteStudent(studentId){
+  try {
+    await client.connect();
+    let collection = db.collection("students");
+    const filter = {
+        _id: new ObjectId(studentId),
+    };
+    
+    const result = await collection.deleteOne(filter);
 
+    if (result.deletedCount === 1) {
+        console.log("A student with specified ID is found and deleted")
+        return true;
+    } else {
+        console.log("No student found with the specified ID");
+        return false;
+    }
+} catch (error) {
+    console.log("Delete failed with error\n" + error.message);
+    return false;
+} finally {
+    await client.close();
+}
 }
 
