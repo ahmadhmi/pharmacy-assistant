@@ -162,7 +162,7 @@ export default function Grade({ params }: Props) {
                 </div>
                 {form == 0 ? (
                     <div className="flex flex-col gap-4 w-full">
-                        <ul className="flex flex-col items-center min-h-96 max-h-56 px-2 overflow-y-auto list-none scrollbar-thin scrollbar-track scrollbar-thumb-black">
+                        <ul className="flex flex-col items-center min-h-64 max-h-64 px-2 overflow-y-auto list-none scrollbar-thin scrollbar-track scrollbar-thumb-black">
                             {stateDefaultCriteria.length > 0 ? (
                                 stateDefaultCriteria.map((criteria) => (
                                     <li
@@ -247,7 +247,7 @@ export default function Grade({ params }: Props) {
                 }}
             >
                 <div
-                    className={`alert hover:alert-warning ${
+                    className={`alert hover:alert-warning flex flex-row ${
                         error === "Page is loading..."
                             ? "alert-info"
                             : "alert-error"
