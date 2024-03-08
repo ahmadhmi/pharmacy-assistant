@@ -11,17 +11,17 @@ import { useSession } from "next-auth/react";
 export default function Login() {
 
   const {status} = useSession(); 
-  // const searchParams = useSearchParams(); 
-  // const callBackUrl = searchParams.get('callbackUrl') || '/home/';
+  const searchParams = useSearchParams(); 
+  const callBackUrl = searchParams.get('callbackUrl') || '/home/';
 
-  // useEffect(
-  //   () => {
-  //     if (status === "authenticated"){
-  //       redirect("/home/", RedirectType.push)
-  //     }
-  //   },
-  //   [status]
-  // )
+  useEffect(
+    () => {
+      if (status === "authenticated"){
+        redirect("/home/", RedirectType.push)
+      }
+    },
+    [status]
+  )
 
 
   return (
@@ -36,7 +36,7 @@ export default function Login() {
       </div>
       <div>
         <LinkBlock
-          href={`/api/auth/signin`}
+          href={`/api/auth/signin?callbackUrl=${encodeURIComponent(callBackUrl)}`}
           Icon={VscArrowRight}
           IconSize={25}
           className="btn-wide btn-accent text-white"
