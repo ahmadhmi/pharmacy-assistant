@@ -16,7 +16,7 @@ const NavBar = () => {
     <div className="navbar bg-base-100 flex flex-row justify-between">
       <div className="flex flex-row gap-5">
         <Link href={status === "authenticated" ? "/home" : "/"}>
-          <Image src={logo.src} alt="logo" width={50} />
+          <Image src={logo.src} alt="logo" width={50} height={50} />
         </Link>
         <div className="text-xl tracking-wider">
         PharmaGrades
@@ -45,6 +45,8 @@ const AuthStatus = () => {
               <Image
                 alt="Tailwind CSS Navbar component"
                 src={session.user?.image!}
+                height={50}
+                width={50}
               /> :
               <VscAccount size={40}></VscAccount>}
             </div>

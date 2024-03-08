@@ -14,14 +14,14 @@ export default function Login() {
   const searchParams = useSearchParams(); 
   const callBackUrl = searchParams.get('callbackUrl') || '/home/';
 
-  // useEffect(
-  //   () => {
-  //     if (status === "authenticated"){
-  //       redirect("/home/", RedirectType.push)
-  //     }
-  //   },
-  //   [status]
-  // )
+  useEffect(
+    () => {
+      if (status === "authenticated"){
+        redirect("/home/", RedirectType.push)
+      }
+    },
+    [status]
+  )
 
 
   return (
