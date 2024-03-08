@@ -134,7 +134,7 @@ export default function Grading({ params }: Props) {
                 <div>
                     <h1 className="text-lg text-neutral mt-4">Completed Marking Sheets</h1>
                 </div>
-                <div className="overflow-y-auto max-h-96 my-2 px-2 scrollbar-thin scrollbar-track scrollbar-thumb-black mb-4 rounded-lg">
+                <div className="overflow-y-auto min-h-64 max-h-64 my-2 px-2 scrollbar-thin scrollbar-track scrollbar-thumb-black mb-4 rounded-lg">
                     {gradesheets ? (
                         Object.keys(gradesheets).map((key, index) => (
                             <div
@@ -165,7 +165,7 @@ export default function Grading({ params }: Props) {
                                                     </p>
                                                     <div>
                                                         <Link
-                                                            className="btn btn-xs btn-outline bg-black"
+                                                            className="btn btn-sm px-12 btn-outline bg-black"
                                                             href={`/home/blocks/${params.blockId}/${params.labId}/grading/${gradesheet._id}`}
                                                         >
                                                             Edit
@@ -267,7 +267,7 @@ export default function Grading({ params }: Props) {
                 }}
             >
                 <div
-                    className={`alert hover:alert-warning ${
+                    className={`alert hover:alert-warning flex flex-row ${
                         error === "Page is loading..."
                             ? "alert-info"
                             : "alert-error"
