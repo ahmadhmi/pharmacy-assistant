@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lab } from "@/interfaces/Lab";
 import { VscError, VscLoading } from "react-icons/vsc";
+import Link from "next/link";
 
 interface Props {
     params: {
@@ -24,6 +25,9 @@ export default function Grading({ params }: Props) {
     const router = useRouter();
     const [studentId, setId] = useState("");
     const [date, setDate] = useState(formatDate(new Date()));
+    const [gradesheets, setGradeSheets] = useState<
+        Record<string, Gradesheet[]>
+    >({});
     const [rx, setRx] = useState("");
     const [error, setError] = useState("Page is loading...");
     const [lab, setLab]: [Lab | undefined, Function] = useState();
@@ -35,7 +39,7 @@ export default function Grading({ params }: Props) {
         }
     }
 
-    async function fetchBlock() {
+    async function fetchLab() {
         try {
             const lab = (
                 await axios.get(`/api/blocks/${params.blockId}/${params.labId}`)
@@ -49,6 +53,30 @@ export default function Grading({ params }: Props) {
             } else {
                 setError("Something went wrong");
             }
+        }
+    }
+
+    async function fetchGradesheets() {
+        const data = (
+            await axios.get(
+                `/api/blocks/${params.blockId}/${params.labId}/grading`
+            )
+        ).data;
+        if (data) {
+            const result = data.reduce(
+                (
+                    groupedGradeSheets: Record<string, Gradesheet[]>,
+                    gradeSheet: Gradesheet
+                ) => {
+                    const studentID = gradeSheet.studentID;
+                    if (groupedGradeSheets[studentID] == null)
+                        groupedGradeSheets[studentID] = [];
+                    groupedGradeSheets[studentID].push(gradeSheet);
+                    return groupedGradeSheets;
+                },
+                {}
+            );
+            setGradeSheets(result);
         }
     }
 
@@ -89,8 +117,9 @@ export default function Grading({ params }: Props) {
     }
 
     useEffect(() => {
-        fetchBlock();
-    },[]);
+        fetchLab();
+        fetchGradesheets();
+    }, []);
 
     if (lab) {
         return (
@@ -102,6 +131,61 @@ export default function Grading({ params }: Props) {
                 >
                     {lab?.name ? `Grading: ${lab.name}` : "Grading:"}
                 </div>
+                <div>
+                    <h1 className="text-lg text-neutral mt-4">Completed Marking Sheets</h1>
+                </div>
+                <div className="overflow-y-auto max-h-96 my-2 px-2 scrollbar-thin scrollbar-track scrollbar-thumb-black mb-4 rounded-lg">
+                    {gradesheets ? (
+                        Object.keys(gradesheets).map((key, index) => (
+                            <div
+                                className="collapse collapse-arrow my-1 shadow-lg border-2 border-slate-50"
+                                key={key}
+                            >
+                                <input
+                                    type="checkbox"
+                                    name="my-accordion-2"
+                                    placeholder="1"
+                                />
+                                <div className="collapse-title text-xl font-medium text-neutral">
+                                    Student ID: {key}
+                                </div>
+                                <div className="collapse-content">
+                                    <div className="flex flex-row items-center justify-between my-2 text-neutral border-b-2 border-slate-400">
+                                        <div>Rx Number</div>
+                                    </div>
+                                    {gradesheets ? (
+                                        gradesheets[key].map(
+                                            (gradesheet, index) => (
+                                                <div
+                                                    className="flex flex-row items-center justify-between text-neutral py-2 border-b-2 border-slate-400"
+                                                    key={index}
+                                                >
+                                                    <p className="font-bold">
+                                                        {gradesheet.rx}
+                                                    </p>
+                                                    <div>
+                                                        <Link
+                                                            className="btn btn-xs btn-outline bg-black"
+                                                            href={`/home/blocks/${params.blockId}/${params.labId}/grading/${gradesheet._id}`}
+                                                        >
+                                                            Edit
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                            )
+                                        )
+                                    ) : (
+                                        <p className="text-sm text-black">
+                                            Wow such empty
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <></>
+                    )}
+                </div>
                 <form
                     className="grid grid-cols-1 grid-rows-2 gap-4"
                     onSubmit={(e) => handleStartGrading(e)}
@@ -111,15 +195,14 @@ export default function Grading({ params }: Props) {
                             <div className="label">
                                 <span className="label-text">Student ID</span>
                             </div>
-                            <input
-                                type="text"
-                                className="input-md rounded-md"
-                                placeholder="000888999"
-                                value={studentId}
-                                onChange={(e) => {
-                                    setId(e.currentTarget.value);
-                                }}
-                            ></input>
+                            <select
+                                defaultValue={"default"}
+                                className="select w-full max-w-xs"
+                            >
+                                <option disabled={true} value={"default"}>
+                                    Select One
+                                </option>
+                            </select>
                         </label>
                         <label className="form-control w-full">
                             <div className="label">
@@ -177,14 +260,24 @@ export default function Grading({ params }: Props) {
                 role="alert"
                 className="cursor-pointer"
                 onClick={() => {
-                    if(!lab){
+                    if (!lab) {
                         setError("");
                         router.push(`/home/`);
                     }
                 }}
             >
-                <div className={`alert hover:alert-warning ${error === "Page is loading..." ? "alert-info" : "alert-error"}`}>
-                    {error === "Page is loading..." ? <VscLoading size={30}></VscLoading> : <VscError size={30}></VscError>}
+                <div
+                    className={`alert hover:alert-warning ${
+                        error === "Page is loading..."
+                            ? "alert-info"
+                            : "alert-error"
+                    }`}
+                >
+                    {error === "Page is loading..." ? (
+                        <span className="loading loading-spinner loading-md"></span>
+                    ) : (
+                        <VscError size={30}></VscError>
+                    )}
                     <p className="break-words">{error}</p>
                 </div>
             </div>

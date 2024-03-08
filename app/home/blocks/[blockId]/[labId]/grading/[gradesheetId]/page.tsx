@@ -105,8 +105,9 @@ export default function Grade({ params }: Props) {
         });
     }
 
-    function saveGradeSheet(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
+    function handleAddCriteria() {}
+
+    function saveGradeSheet() {
         const newGradesheet = {
             ...gradesheet,
             criteria: stateDefaultCriteria,
@@ -124,17 +125,12 @@ export default function Grade({ params }: Props) {
             router.push(
                 `/home/blocks/${params.blockId}/${params.labId}/grading`
             );
-            // setTimeout(
-            //     () =>
-            //        ,
-            //     2000
-            // );
         }
     }
 
     useEffect(() => {
         fetchGradesheet();
-    },[]);
+    }, []);
 
     if (gradesheet) {
         return (
@@ -165,15 +161,12 @@ export default function Grade({ params }: Props) {
                     </button>
                 </div>
                 {form == 0 ? (
-                    <form
-                        className="flex flex-col gap-4 w-full"
-                        onSubmit={(e) => saveGradeSheet(e)}
-                    >
-                        <ul className="flex flex-col items-center min-h-56 max-h-56 overflow-y-auto list-none">
+                    <div className="flex flex-col gap-4 w-full">
+                        <ul className="flex flex-col items-center min-h-96 max-h-56 px-2 overflow-y-auto list-none scrollbar-thin scrollbar-track scrollbar-thumb-black">
                             {stateDefaultCriteria.length > 0 ? (
                                 stateDefaultCriteria.map((criteria) => (
                                     <li
-                                        className="w-full flex flex-row justify-between px-4 py-2 shadow-lg my-2 rounded"
+                                        className="w-full flex flex-row justify-between px-4 py-2 shadow-lg my-2 rounded-lg cursor-pointer hover:bg-neutral"
                                         key={criteria.name}
                                         onClick={() =>
                                             updateRadio(
@@ -185,7 +178,7 @@ export default function Grade({ params }: Props) {
                                             )
                                         }
                                     >
-                                        <h2 className="text-black text-md">
+                                        <h2 className="text-base-content text-md">
                                             {criteria.name}
                                         </h2>
                                         <input
@@ -199,12 +192,24 @@ export default function Grade({ params }: Props) {
                                 ))
                             ) : (
                                 <li>
-                                    <VscCheck size={100} color="green"></VscCheck>
-                                    <h2 className="text-lg text-black">Submitted</h2>
+                                    <VscCheck
+                                        size={100}
+                                        color="green"
+                                    ></VscCheck>
+                                    <h2 className="text-lg text-black">
+                                        Submitted
+                                    </h2>
                                 </li>
                             )}
+                            {stateDefaultCriteria.length > 0? <button
+                                className="btn"
+                                onClick={() => {
+                                    handleAddCriteria();
+                                }}
+                            >
+                                Add Criteria
+                            </button>: <></>}
                         </ul>
-                        <button className="btn">Add Criteria</button>
                         <textarea
                             className="min-h-40 rounded p-2"
                             placeholder="Comments..."
@@ -213,8 +218,15 @@ export default function Grade({ params }: Props) {
                                 setComment(e.currentTarget.value);
                             }}
                         ></textarea>
-                        <button className="btn">Submit</button>
-                    </form>
+                        <button
+                            className="btn w-full"
+                            onClick={() => {
+                                saveGradeSheet();
+                            }}
+                        >
+                            Submit
+                        </button>
+                    </div>
                 ) : (
                     <form></form>
                 )}
@@ -241,7 +253,11 @@ export default function Grade({ params }: Props) {
                             : "alert-error"
                     }`}
                 >
-                    {error === "Page is loading..." ? <VscLoading size={30}></VscLoading> : <VscError size={30}></VscError>}
+                    {error === "Page is loading..." ? (
+                        <span className="loading loading-spinner loading-md"></span>
+                    ) : (
+                        <VscError size={30}></VscError>
+                    )}
                     <p className="break-words">{error}</p>
                 </div>
             </div>

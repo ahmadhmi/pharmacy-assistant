@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { ScrollBar } from "./app/_utils/scrollbar";
 
 const config: Config = {
   content: [
@@ -15,6 +16,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("daisyui")],
+  plugins: [require("daisyui"), ScrollBar],
 };
 export default config;
