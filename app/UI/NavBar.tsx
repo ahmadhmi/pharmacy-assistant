@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import Skeleton from "@/app/UI/Skeleton";
 import { RedirectType, redirect } from "next/navigation";
 import { VscAccount } from "react-icons/vsc";
+import Image from "next/image";
 
 const NavBar = () => {
   const { status } = useSession();
@@ -15,7 +16,7 @@ const NavBar = () => {
     <div className="navbar bg-base-100 flex flex-row justify-between">
       <div className="flex flex-row gap-5">
         <Link href={status === "authenticated" ? "/home" : "/"}>
-          <img src={logo.src} alt="logo" width="50px" />
+          <Image src={logo.src} alt="logo" width={50} height={50} />
         </Link>
         <div className="text-xl tracking-wider">
         PharmaGrades
@@ -41,9 +42,11 @@ const AuthStatus = () => {
           >
             <div className="w-10 rounded-full">
               {session.user?.image?  
-              <img
+              <Image
                 alt="Tailwind CSS Navbar component"
                 src={session.user?.image!}
+                height={50}
+                width={50}
               /> :
               <VscAccount size={40}></VscAccount>}
             </div>

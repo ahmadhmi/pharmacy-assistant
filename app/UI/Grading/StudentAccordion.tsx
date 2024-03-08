@@ -13,7 +13,7 @@ export default function StudentAccordion({studentLab} : Props) {
 
   // reduce student lab gradesheets to get gradesheets in arrays, grouped by student ID
 
-  const gradesheetsByStudents: Record<string, Gradesheet[]> = studentLab.gradesheets.reduce(
+  const gradesheetsByStudents: Record<string, Gradesheet[]> | undefined = studentLab.gradesheets?.reduce(
     (groupedGradesheets:Record<string, Gradesheet[]>, gradesheet) => {
       const studentID = gradesheet.studentID;
   

@@ -52,7 +52,7 @@ export default function BlocksContextProvider({children}){
                 getBlocks()
             }
         },
-        [status]
+        [data?.user]
     )
 
 

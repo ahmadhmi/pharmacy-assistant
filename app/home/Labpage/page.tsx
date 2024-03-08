@@ -50,7 +50,7 @@ export default function LabPage() {
             </div>
             <div className="collapse-content bg-primary">
               {item.RxNum.map((items, index) => (
-                <div className="flex flex-row items-center justify-between text-black my-2 ">
+                <div className="flex flex-row items-center justify-between text-black my-2 " key={index}>
                   <input
                     title="checkbox"
                     type="checkbox"

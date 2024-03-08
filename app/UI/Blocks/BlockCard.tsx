@@ -5,6 +5,7 @@ import Link from "next/link";
 
 interface Props {
   block: Block;
+
 }
 
 const BlockCard = ({ block }: Props) => {
