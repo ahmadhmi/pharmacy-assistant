@@ -77,12 +77,12 @@ export async function POST(request: NextRequest, { params }: Props) {
 
 export async function GET(request: NextRequest, { params }: Props) {
   const session = await getServerSession(authOptions);
-  const userEmail = session?.user?.email;
-  const block = await getBlock(params.blockId);
-  const gradesheets = await getAllGradeSheets(params.labId);
-  let ifContains = false;
   try {
     //check the block exist? and check the user is right user
+    const userEmail = session?.user?.email;
+    const block = await getBlock(params.blockId);
+    const gradesheets = await getAllGradeSheets(params.labId);
+    let ifContains = false;
     if (block && block.users.includes(userEmail)) {
       let labs: Lab[] = [];
       for (const week of block.weeks) {
