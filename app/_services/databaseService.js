@@ -388,30 +388,29 @@ export async function addStudent(blockId, student) {
 }
 
 //delete student, return true or false
-
-export async function deleteStudent(studentId){
+export async function deleteStudent(blockId, studentId) {
   try {
     await client.connect();
-    let collection = db.collection("students");
-    const filter = {
-        _id: new ObjectId(studentId),
-    };
-    
-    const result = await collection.deleteOne(filter);
+    let collection = db.collection("blocks");
 
-    if (result.deletedCount === 1) {
-        console.log("A student with specified ID is found and deleted")
-        return true;
+    const result = await collection.updateOne(
+      { _id: new ObjectId(blockId) },
+      { $pull: { students: {_id: new ObjectId(studentId) }}}
+    );
+
+    if (result.modifiedCount === 1) {
+      console.log("Successfully the student has been deleted");
+      return true;
     } else {
-        console.log("No student found with the specified ID");
-        return false;
+      console.log("No student found with the specified ID");
+      return false;
     }
-} catch (error) {
-    console.log("Delete failed with error\n" + error.message);
+  } catch (error) {
+    console.log("Delete failed with an error\n" + error.message);
     return false;
-} finally {
+  } finally {
     await client.close();
-}
+  }
 }
 
 //add week to a specified document, return the newly added week with its id
