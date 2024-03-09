@@ -368,7 +368,7 @@ export async function addStudent(student){
     newStudent._id = newStudent._id.toString();
     return newStudent;
   } catch (error) {
-    console.log("Fained to add a student\n" + error.message);
+    console.log("Failed to add a student\n" + error.message);
     return null;
   } finally {
     await client.close();
@@ -403,33 +403,57 @@ export async function deleteStudent(studentId){
 }
 
 //add week to a specified document, return the newly added week with its id
-export async function addWeek(blockID, week) {
+export async function addWeek(blockId, week) {
   try {
     await client.connect();
     let collection = db.collection("blocks");
       
-    const newWeek = {_id: new ObjectId(), ...week};
+    const newWeek = { _id: new ObjectId(), ...week };
 
     const result = await collection.updateOne(
-      {_id: new ObjectId(blockID)}, //not sure if blockID is string or not
-      { $push: {weeks: newWeek}}
+      { _id: new ObjectId(blockId) }, //not sure if blockID is string or not
+      { $push: {weeks: newWeek} }
     );
 
     if (result.modifiedCount === 1) {
-      console.log("Successfully a new week has been inserted")
+      console.log("Successfully a new week has been inserted");
       newWeek._id = newWeek._id.toString();
       return newWeek;
     } else {
       console.log("No week has been inserted");
     }
   } catch (error) {
-    console.log("Failed to add with error\n" + error);
+    console.log("Failed to add with error\n" + error.message);
   } finally {
     await client.close();
   }
 }
 
 //delete week from a specified document, return true or false
-export async function deleteWeek() {
+export async function deleteWeek(blockId, weekId) {
+  try {
+    await client.connect();
+    let collection = db.collection("blocks");
+    // const filter = {
+    //   _id: new ObjectId(weekId),
+    // };
 
+    const result = await collection.updateOne(
+      { _id: new ObjectId(blockId) },
+      { $pull: { weeks: { _id: new ObjectId(weekId) }}}
+    );
+
+    if (result.modifiedCount === 1) {
+      console.log("Successfully the week has been deleted");
+      return true;
+    } else {
+      console.log("No week found with the specified ID");
+      return false;
+    }
+  } catch (error) {
+    console.log("Delete failed with error\n" + error.message);
+    return false;
+  } finally {
+    await client.close();
+  }
 }
