@@ -359,16 +359,28 @@ export async function deleteGradeSheet(gradesheetID){
 
 //add student, add student with its studentId as ObjectId and return the newly added student
 
-export async function addStudent(student){
+export async function addStudent(blockId, student) {
   try {
     await client.connect();
-    let collection = db.collection("students");
-    const insertResult = await collection.insertOne(student);
-    const newStudent = await collection.findOne({_id: insertResult.insertedId});
-    newStudent._id = newStudent._id.toString();
-    return newStudent;
+    let collection = db.collection("blocks");
+
+    const newStudent = { _id: new ObjectId(), ...student}; 
+
+    const result = await collection.updateOne(
+      { _id: new ObjectId(blockId) },
+      { $push: { students: newStudent } }
+    );
+
+    if (result.modifiedCount === 1) {
+      console.log("Successfully a new student has been inserted");
+      newStudent._id = newStudent._id.toString();
+      return newStudent;
+    } else {
+      console.log("No student has been inserted");
+      return null;
+    }
   } catch (error) {
-    console.log("Failed to add a student\n" + error.message);
+    console.log("Failed to add with error\n" + error.message);
     return null;
   } finally {
     await client.close();
@@ -434,9 +446,6 @@ export async function deleteWeek(blockId, weekId) {
   try {
     await client.connect();
     let collection = db.collection("blocks");
-    // const filter = {
-    //   _id: new ObjectId(weekId),
-    // };
 
     const result = await collection.updateOne(
       { _id: new ObjectId(blockId) },
