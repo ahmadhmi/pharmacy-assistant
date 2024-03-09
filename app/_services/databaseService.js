@@ -402,3 +402,34 @@ export async function deleteStudent(studentId){
 }
 }
 
+//add week to a specified document, return the newly added week with its id
+export async function addWeek(blockID, week) {
+  try {
+    await client.connect();
+    let collection = db.collection("blocks");
+      
+    const newWeek = {_id: new ObjectId(), ...week};
+
+    const result = await collection.updateOne(
+      {_id: new ObjectId(blockID)}, //not sure if blockID is string or not
+      { $push: {weeks: newWeek}}
+    );
+
+    if (result.modifiedCount === 1) {
+      console.log("Successfully a new week has been inserted")
+      newWeek._id = newWeek._id.toString();
+      return newWeek;
+    } else {
+      console.log("No week has been inserted");
+    }
+  } catch (error) {
+    console.log("Failed to add with error\n" + error);
+  } finally {
+    await client.close();
+  }
+}
+
+//delete week from a specified document, return true or false
+export async function deleteWeek() {
+
+}
