@@ -364,6 +364,18 @@ export async function addStudent(blockId, student) {
     await client.connect();
     let collection = db.collection("blocks");
 
+    // this checks if there is already a student with the same name
+    const existingStudent = await collection.findOne({
+      _id: new ObjectId(blockId),
+      "students.firstName": student.firstName,
+      "students.lastName": student.lastName
+    });
+
+    if (existingStudent) {
+      console.log("A student with the same name already exists");
+      return null;
+    }  
+
     const newStudent = { _id: new ObjectId(), ...student}; 
 
     const result = await collection.updateOne(
