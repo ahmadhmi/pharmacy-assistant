@@ -33,7 +33,7 @@ export default function Home() {
   // ];
 
   // TEST FOR ADDSTUDENT()
-  // const test1 = async () => {
+  // const addStudentTest = async () => {
   //   try {
   //     const blockId = "65c279735ef05b91db6717ad";
   //     const studentData = {
@@ -60,7 +60,28 @@ export default function Home() {
   //     console.error("There was an error", error);
   //   }
   // }
-  // test1();
+  // addStudentTest();
+
+  // const deleteStudentTest = async () => {
+  //   try {
+  //     const blockId = "65c279735ef05b91db6717ad";
+  //     const studentId = "65ed79bb2281908cb4362d53";
+
+  //     const response = await fetch(`http://localhost:3000/api/blocks/${blockId}/students/${studentId}`, {
+  //       method: "DELETE",
+  //      });
+
+  //     if (!response.ok) {
+  //       const errorData = await response.json();
+  //       console.error("failed to delete", errorData.error);
+  //     } else {
+  //       console.log("Student deleted");
+  //     }
+  //   } catch (error) {
+  //     console.error("error occurred", error);
+  //   }
+  // }
+  // deleteStudentTest();
 
   return (
     <div className="flex justify-center items-start text-slate-100 mt-10">
