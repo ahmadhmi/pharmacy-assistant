@@ -482,3 +482,56 @@ export async function deleteWeek(blockId, weekId) {
     //await client.close();
   }
 }
+
+// add new lab under a specified week, return newly added lab with its id
+export async function addLab(blockId, weekId, lab) {
+  try {
+    //await client.connect();
+    let collection = db.collection("blocks");
+    const newLab = { _id: new ObjectId(), ...lab };
+    const result = await collection.updateOne(
+      { _id: newObjectId(blockId), "weeks._id": newObjectId(weekId) },
+      { $push: { "weeks.$.labs": newLab } }
+    );
+
+    if (result.modifiedCount === 1) {
+      console.log("Successfully a new lab has been inserted");
+      newLab._id = newLab._id.toString();
+      return newLab;
+    } else {
+      console.log("No lab has been inserted");
+      return null;
+    }
+  } catch (error) {
+    console.log("Failed to add with error\n" + error.message);
+    return null;
+  } finally {
+    //await client.close();
+  }
+}
+
+// delete a lab with a specified id, return true or false
+export async function deleteLab(blockId, weekId, labId) {
+  try {
+    //await client.connect();
+    let collection = db.collection("blocks");
+
+    const result = await collection.updateOne(
+      { _id: new ObjectId(blockId), "weeks._id": new ObjectId(weekId)},
+      { $pull: { "weeks.$.labs": { _id: new ObjectId(labId)}}}
+    );
+
+    if (result.modifiedCount === 1) {
+      console.log("Successfully the lab has been deleted");
+      return true;
+    } else {
+      console.log("No lab found with the specified ID");
+      return false;
+    }
+  } catch (error) {
+    console.log("Delete failed with an error\n" + error.message);
+    return false;
+  } finally {
+    //await client.close();
+  }
+}
