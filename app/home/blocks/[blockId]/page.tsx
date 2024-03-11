@@ -4,6 +4,8 @@ import WeekAccordion from "@/app/UI/Blocks/WeekAccordion";
 import { Block } from "@/interfaces/block";
 import { Week } from "@/interfaces/week";
 import axios from "axios";
+import { error } from "console";
+import { redirect } from "next/dist/server/api-utils";
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,10 +22,20 @@ export default function BlockPage({ params }: Props) {
   const [addedWeek, setAddedWeek] = useState("");
   const [addedLab, setAddedLab] = useState("");
   const [selectedWeek, setSelectedWeek] = useState<Week | undefined>();
+  const [errorOcurred, setErrorOcurred] = useState(false);
+  const [labErrorOccurred, setLabErrorOccurred] = useState(false); // State to track lab errors
 
   const fetchBlock = async () => {
     const block = await axios.get<Block>(`/api/blocks/${params.blockId}`);
     setBlock(block.data);
+  };
+  const updateBlock = async () => {
+    await axios.patch<Block>(`/api/blocks/${params.blockId}`, block);
+  };
+  
+
+  const patchBlock = async () => {
+    await axios.patch(`/api/blocks/${params.blockId}`, block);
   };
 
   const createWeekModal = document.getElementById(
@@ -32,62 +44,90 @@ export default function BlockPage({ params }: Props) {
   const createLabModal = document.getElementById(
     "create_lab_modal"
   ) as HTMLDialogElement;
+
   useEffect(() => {
     fetchBlock();
   }, []);
+
   const handleAddWeek = (event: FormEvent) => {
-    event.preventDefault();
-    console.log(addedWeek);
-    if (block && block.weeks) {
-      setBlock({
-        ...block,
-        weeks: [...block.weeks, { name: addedWeek }],
-      });
-    } else if (block && addedWeek) {
-      setBlock({
-        ...block,
-        weeks: [{ name: addedWeek }],
-      });
+    event.preventDefault(); // Prevent default form submission behavior
+
+    if (!block) return; // Exit if block is undefined
+
+    const weekExists = block.weeks?.some((week) => week.name === addedWeek);
+
+    if (weekExists) {
+      setErrorOcurred(true); // Set error state to display the error message
+      console.log("Week already exists");
+    } else {
+      const updatedWeeks = [...(block.weeks || []), { name: addedWeek }];
+      setBlock({ ...block, weeks: updatedWeeks });
+      setAddedWeek(""); // Reset the input field only if the week is added
+      setErrorOcurred(false); // Reset error state
+      createWeekModal?.close(); // Close modal only if the week is added
     }
-    setAddedWeek("");
-    createWeekModal?.close();
-    console.log(addedWeek);
-    console.log(block);
   };
   const handleCreateLab = (week: Week) => {
     setSelectedWeek(week);
     createLabModal?.showModal();
     console.log(week);
   };
-  const handleAddLab = (event: FormEvent) => {
-    event.preventDefault();
-    setBlock((prevBlock: Block | undefined) => {
-      // Creating a deep copy of the block, especially the week array and its contents to avoid mutating the state directly.
-      const updatedBlock: Block = {
-        ...prevBlock,
-        weeks: prevBlock!.weeks!.map((week: Week) => {
-          if (week.name === selectedWeek?.name && week.labs) {
-            return {
-              ...week,
-              labs: [...week.labs!, { name: addedLab }], // Add the new lab to the labs array of week 2
-            };
-          } else if (week.name === selectedWeek?.name && !week.labs) {
-            return {
-              ...week,
-              labs: [{ name: addedLab }], // Add the new lab to the labs array of week 2
-            };
-          }
-          return week;
-        }),
-        users: prevBlock!.users || [], // Add a default value of an empty array for the users property
-      };
 
-      return updatedBlock;
+  const handleAddLab = (event: FormEvent) => {
+    event.preventDefault(); // Prevent the form from submitting
+
+    if (!block || !selectedWeek) return; // Exit if block or selectedWeek is undefined
+
+    let labExists = false;
+    for (const week of block.weeks || []) {
+      if (week.labs?.some((lab) => lab.name === addedLab)) {
+        labExists = true;
+        break;
+      }
+    }
+
+    if (labExists) {
+      setLabErrorOccurred(true); // Set error state to display the error message
+      console.log("Lab already exists in one of the weeks");
+    } else {
+      // Add lab to the selected week
+      setBlock((prevBlock: Block | undefined) => {
+        const updatedBlock: Block = {
+          ...prevBlock,
+          weeks: prevBlock!.weeks!.map((week: Week) => {
+            if (week.name === selectedWeek?.name) {
+              return {
+                ...week,
+                labs: [...(week.labs || []), { name: addedLab }],
+              };
+            }
+            return week;
+          }),
+          users: prevBlock?.users || [], // Ensure users property is always assigned an empty array if it is undefined
+        };
+        return updatedBlock;
+      });
+
+      setAddedLab(""); // Reset the input field only if the lab is added
+      setLabErrorOccurred(false); // Reset error state
+      createLabModal?.close(); // Close modal only if the lab is added
+    }
+  };
+  const handleDeleteLab = (week: Week) => {
+    if (!block) return; // Exit if block is undefined
+
+    const updatedWeeks = block.weeks?.map((w) => {
+      if (w.name === week.name) {
+        w.labs?.pop();
+      }
+      return w;
     });
-    setSelectedWeek(undefined);
-    setAddedLab("");
-    console.log(block);
-    createLabModal?.close();
+
+    setBlock({ ...block, weeks: updatedWeeks });
+  }
+
+  const handleViewLab = (week: Week) => {
+    console.log("View lab", week);
   };
   return (
     <div className="flex justify-center items-start text-slate-100 mt-10">
@@ -130,6 +170,8 @@ export default function BlockPage({ params }: Props) {
                     key={week.name}
                     week={week}
                     handleAddLab={() => handleCreateLab(week)}
+                    handleDeleteLab={() => handleDeleteLab(week)}
+                    handleViewLab={() => handleViewLab(week)}
                   />
                 ))}
               </div>
@@ -146,19 +188,26 @@ export default function BlockPage({ params }: Props) {
               <h3 className="font-bold text-lg">Enter the name of the week:</h3>
               <form
                 onSubmit={handleAddWeek}
-                className="py-4 flex justify-between gap-2"
+                className="py-4 flex flex-col justify-between gap-2 "
               >
-                <input
-                  type="text"
-                  placeholder="Week Name"
-                  className="input input-bordered input-primary w-full max-w-xs"
-                  required
-                  value={addedWeek}
-                  onChange={(e) => setAddedWeek(e.target.value)}
-                />
-                <button type="submit" className="btn btn-primary">
-                  Create
-                </button>
+                <div className="flex justify-between gap-2 ">
+                  <input
+                    type="text"
+                    placeholder="Week Name"
+                    className="input input-bordered input-primary w-full max-w-xs"
+                    required
+                    value={addedWeek}
+                    onChange={(e) => setAddedWeek(e.target.value)}
+                  />
+                  <button type="submit" className="btn btn-primary">
+                    Create
+                  </button>
+                </div>
+                {errorOcurred && (
+                  <p className="text-red-700">
+                    Week with this name already exists!
+                  </p>
+                )}
               </form>
             </div>
           </dialog>
@@ -173,19 +222,26 @@ export default function BlockPage({ params }: Props) {
               <h3 className="font-bold text-lg">Enter the name of the lab:</h3>
               <form
                 onSubmit={handleAddLab}
-                className="py-4 flex justify-between gap-2"
+                className="py-4 flex flex-col justify-between gap-2"
               >
-                <input
-                  type="text"
-                  placeholder="Lab Name"
-                  className="input input-bordered input-primary w-full max-w-xs"
-                  required
-                  value={addedLab}
-                  onChange={(e) => setAddedLab(e.target.value)}
-                />
-                <button type="submit" className="btn btn-primary">
-                  Create
-                </button>
+                <div className="flex justify-between gap-2 ">
+                  <input
+                    type="text"
+                    placeholder="Lab Name"
+                    className="input input-bordered input-primary w-full max-w-xs"
+                    required
+                    value={addedLab}
+                    onChange={(e) => setAddedLab(e.target.value)}
+                  />
+                  <button type="submit" className="btn btn-primary">
+                    Create
+                  </button>
+                </div>
+                {labErrorOccurred && (
+                  <p className="text-red-700">
+                    Lab with this name already exists!
+                  </p>
+                )}
               </form>
             </div>
           </dialog>

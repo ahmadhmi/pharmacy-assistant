@@ -5,9 +5,11 @@ import { FaRegTrashCan } from "react-icons/fa6";
 interface Props {
   week: Week;
   handleAddLab: () => void;
+  handleDeleteLab: () => void;
+  handleViewLab: () => void;
 }
 
-const WeekAccordion = ({ week, handleAddLab }: Props) => {
+const WeekAccordion = ({ week, handleAddLab, handleDeleteLab, handleViewLab }: Props) => {
   return (
     <div key={week.name} className="collapse collapse-arrow bg-base-200">
       <input type="radio" name="my-accordion-2" defaultChecked />
@@ -41,8 +43,8 @@ const WeekAccordion = ({ week, handleAddLab }: Props) => {
             <div key={lab._id} className="flex justify-between items-center border p-5 rounded-lg mb-4">
               <h3 className="text-xl font-semibold">{lab.name}</h3>
               <div className="flex gap-3">
-                <button className="btn btn-primary w-20">View</button>
-                <button className="btn btn-active bg-red-700 w-12">
+                <button className="btn btn-primary w-20" onClick={handleViewLab}>View</button>
+                <button className="btn btn-active bg-red-700 w-12" onClick={handleDeleteLab}>
                   <FaRegTrashCan size={15} />
                 </button>
               </div>
