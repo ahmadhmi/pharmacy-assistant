@@ -7,62 +7,55 @@ import { useEffect, useState } from "react";
 import { group } from "console";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-const Data: LabData[] = [
-  {
-    student: "Qiaomu Lei 1",
-    RxNum: ["123131", "132131", "123131"],
+import {
+  Page,
+  Text,
+  Document,
+  StyleSheet,
+  PDFDownloadLink,
+} from "@react-pdf/renderer";
+import { Gradesheet } from "@/interfaces/gradesheet";
+const styles = StyleSheet.create({
+  body: {
+    paddingTop: 35,
+    paddingBottom: 65,
+    paddingHorizontal: 35,
   },
-  {
-    student: "john Dao",
-    RxNum: ["123123123"],
+  title: {
+    fontSize: 24,
+    textAlign: "center",
   },
-  {
-    student: "john Dao",
-    RxNum: ["123123123"],
+  text: {
+    margin: 12,
+    fontSize: 14,
+    textAlign: "justify",
   },
-  {
-    student: "john Dao",
-    RxNum: ["123123123"],
+  image: {
+    marginVertical: 15,
+    marginHorizontal: 100,
   },
-  {
-    student: "john Dao",
-    RxNum: ["123123123"],
+  header: {
+    fontSize: 12,
+    marginBottom: 20,
+    textAlign: "center",
+    color: "grey",
   },
-  {
-    student: "john Dao",
-    RxNum: ["123123123"],
-  },
-  {
-    student: "john Dao",
-    RxNum: ["123123123"],
-  },
-  {
-    student: "john Dao",
-    RxNum: ["123123123"],
-  },
-];
+});
+
 interface Props {
   params: {
     blockId: string;
     labId: string;
   };
 }
-interface gradeSheet {
-  comment: string;
-  criteria: object;
-  date: Date;
-  labId: string;
-  rx: string;
-  studentID: string;
-  studentName: string;
-  _id: string;
-}
 
 export default function LabPage({ params }: Props) {
   const [gradeSheets, setGradeSheets] = useState([]);
   const { data: session, status } = useSession();
-  const [labData, setLabData] = useState<
-    Record<string, gradeSheet[]>>({});
+  const [labData, setLabData] = useState<Record<string, Gradesheet[]>>({});
+  const [isChecked, setIsChecked] = useState(false);
+  const [checkBoxValue, setCheckBoxValue]: [string[], Function] = useState([]);
+  const [allSheets, setAllSheets]: [Gradesheet[], Function] = useState([]);
   async function fetchGradingSheets() {
     const data =
       // await axios.get(`/api/blocks/${params.blockId}/${params.labId}/grading`)
@@ -72,11 +65,11 @@ export default function LabPage({ params }: Props) {
           `/api/blocks/${params.blockId}/${params.labId}/grading`
         )
       ).data;
-      if (data) {
+    if (data) {
       const result = data.reduce(
         (
-          groupedGradeSheets: Record<string, gradeSheet[]>,
-          gradeSheet: gradeSheet
+          groupedGradeSheets: Record<string, Gradesheet[]>,
+          gradeSheet: Gradesheet
         ) => {
           const studentID = gradeSheet.studentID;
           if (groupedGradeSheets[studentID] == null)
@@ -87,21 +80,68 @@ export default function LabPage({ params }: Props) {
         {}
       );
       setLabData(result);
+      setAllSheets(data);
     }
   }
-
 
   useEffect(() => {
     fetchGradingSheets();
   },[]);
 
+  const PDFFile = () => {
+    return (
+      <Document>
+        <Page style={styles.header}>
+          {checkBoxValue.map((items, index) => {
+            const sheet: Gradesheet | undefined = allSheets.find(
+              (sheet) => sheet._id === items
+            );
+            return (
+              <Text key={index}>
+                <Text>
+                  {sheet
+                    ? sheet.criteria?.map((items, index) => {
+                        return (
+                          <Text key={index}>
+                            {items.name}
+                            <Text key={index}>{items.pass.toString()}</Text>
+                          </Text>
+                        );
+                      })
+                    : "Not found"}
+                </Text>
+
+                <Text>{sheet ? sheet.rx : "Not found"}</Text>
+              </Text>
+            );
+          })}
+        </Page>
+      </Document>
+    );
+  };
+
+  const handleChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.checked);
+    setIsChecked(e.target.checked);
+    if (e.target.checked === false) {
+      setCheckBoxValue((checkValue: string[]) =>
+        checkValue.filter((checkValue) => checkValue !== e.target.name)
+      );
+    } else
+      setCheckBoxValue((checkValue: string[]) => [
+        ...checkValue,
+        e.target.name,
+      ]);
+
+    console.log(allSheets);
+  };
 
   return (
     <section className="display-flex justify-center h-screen w-100% px-8 py-10">
       <h1 className="text-center mb-6 text-3xl">Lab Page</h1>
       <div className="border-y overflow-y-auto" style={{ height: "80%" }}>
         {labData ? (
-          Object.keys(labData).map((key, index) => (
+          Object.keys(labData).map((key) => (
             <div className="collapse collapse-arrow bg-base-200 my-3" key={key}>
               <input type="checkbox" name="my-accordion-2" placeholder="1" />
               <div className="collapse-title text-xl font-medium">{key}</div>
@@ -114,7 +154,10 @@ export default function LabPage({ params }: Props) {
                     <input
                       title="checkbox"
                       type="checkbox"
-                      defaultChecked
+                      name={gradesheet._id}
+                      value={gradesheet._id}
+                      defaultChecked={isChecked}
+                      onChange={handleChecked}
                       className=" checkbox border-black"
                     />
                     <p className="font-bold">{gradesheet.rx}</p>
@@ -135,13 +178,14 @@ export default function LabPage({ params }: Props) {
         )}
       </div>
       <div className=" flex justify-center w-100% mt-4 gap-3">
-        <MyButton text="Export" />
-        <Link
-          href={`/home/blocks/${params.blockId}/${params.labId}/grading/`}
-        ><MyButton text="Grading" />
-          
+        <PDFDownloadLink document={<PDFFile />}>
+          {" "}
+          <MyButton text="Export" />
+        </PDFDownloadLink>
+
+        <Link href={`/home/blocks/${params.blockId}/${params.labId}/grading/`}>
+          <MyButton text="Grading" />
         </Link>
-        
       </div>
     </section>
   );
