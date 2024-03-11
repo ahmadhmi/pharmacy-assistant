@@ -101,6 +101,8 @@ export async function GET(request: NextRequest, { params }: Props) {
       }
 
       return NextResponse.json(gradesheets, { status: 200 });
+    }else{
+      throw {error: `${session?.user?.name} does not have access to this block or it does not exist`}
     }
   } catch (ex: any) {
     return NextResponse.json(ex, {

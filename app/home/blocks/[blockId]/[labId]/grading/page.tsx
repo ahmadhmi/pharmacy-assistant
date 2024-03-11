@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { Lab } from "@/interfaces/Lab";
 import { VscError, VscLoading } from "react-icons/vsc";
 import Link from "next/link";
+import { Block } from "@/interfaces/block";
+import { Student } from "@/interfaces/student";
 
 interface Props {
     params: {
@@ -28,6 +30,7 @@ export default function Grading({ params }: Props) {
     const [gradesheets, setGradeSheets] = useState<
         Record<string, Gradesheet[]>
     >({});
+    const [block, setBlock]:[Block | undefined, Function] = useState(); 
     const [rx, setRx] = useState("");
     const [error, setError] = useState("Page is loading...");
     const [lab, setLab]: [Lab | undefined, Function] = useState();
@@ -36,6 +39,17 @@ export default function Grading({ params }: Props) {
         const Numbers = /^[0-9]+$/;
         if (id.match(Numbers)) {
             setId(id);
+        }
+    }
+
+    async function fetchBlock(){
+        try{
+            const block = (await (axios.get(`/api/blocks/${params.blockId}`))).data; 
+            if(block){
+                setBlock(block); 
+            }
+        }catch(error:any){
+            setError(error.response.data.error); 
         }
     }
 
@@ -87,8 +101,11 @@ export default function Grading({ params }: Props) {
             alert("The studentID should be all in numbers");
             return;
         }
+        const student = block?.students?.find((student:Student) => student._id === studentId); 
+        const studentName = `${student?.firstName} ${student?.lastName}`;
         const newGradesheet: Gradesheet = {
             studentID: studentId,
+            studentName: studentName,
             date: new Date(date),
             rx: rx,
         };
@@ -117,6 +134,7 @@ export default function Grading({ params }: Props) {
     }
 
     useEffect(() => {
+        fetchBlock(); 
         fetchLab();
         fetchGradesheets();
     }, []);
@@ -147,7 +165,7 @@ export default function Grading({ params }: Props) {
                                     placeholder="1"
                                 />
                                 <div className="collapse-title text-xl font-medium text-neutral">
-                                    Student ID: {key}
+                                    {gradesheets[key][0].studentName} {key}
                                 </div>
                                 <div className="collapse-content">
                                     <div className="flex flex-row items-center justify-between my-2 text-neutral border-b-2 border-slate-400">
@@ -197,8 +215,12 @@ export default function Grading({ params }: Props) {
                             </div>
                             <select
                                 defaultValue={"default"}
+                                onChange={(e) => setId(e.currentTarget.value)}
                                 className="select w-full max-w-xs"
                             >
+                                {block?.students?.map((student:Student) => 
+                                    <option key={student._id} value={student._id}>{`${student.firstName} ${student.lastName} — ${student._id}`}</option>
+                                )}
                                 <option disabled={true} value={"default"}>
                                     Select One
                                 </option>

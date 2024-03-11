@@ -18,7 +18,7 @@ export default function BlocksContextProvider({children}){
 
     async function getBlocks(){
 
-        const response = await axios.get("http://localhost:3000/api/blocks/"); 
+        const response = await axios.get("/api/blocks"); 
 
         let blocks = []
         if(response.data){
@@ -38,7 +38,7 @@ export default function BlocksContextProvider({children}){
     async function addBlock(block){
         console.log(block); 
         try{
-            const response = await axios.post("http://localhost:3000/api/blocks", block); 
+            const response = await axios.post("/api/blocks", block); 
             setBlocks([...blocks, response.data]);
         }catch(ex){
             console.log(ex); 
