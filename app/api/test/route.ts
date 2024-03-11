@@ -107,7 +107,7 @@ export async function GET(){
 //         }
 
 //         const body = await request.json();
-//         const newLab = await addLab(params.blockId, body.lab);
+//         const newLab = await addLab(params.blockId, params.weekId, body.lab);
 //         return NextResponse.json(newLab, {
 //             status: 200,
 //         });
