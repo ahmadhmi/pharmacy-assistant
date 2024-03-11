@@ -8,5 +8,8 @@ export interface Gradesheet{
     date:Date, 
     rx:String,
     criteria?: criteria[],
+    score?:number,
+    maxScore?:number,
+    pass?:boolean,
     comment?:string,
 }

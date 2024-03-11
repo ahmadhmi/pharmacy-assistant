@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useEffect } from "react";
+import React, { FormEvent, MutableRefObject, useEffect, useRef } from "react";
 import { useState } from "react";
 import axios from "axios";
 import { Gradesheet } from "@/interfaces/gradesheet";
@@ -64,6 +64,10 @@ export default function Grade({ params }: Props) {
         useState(defaultCriteria);
     const [comment, setComment] = useState("");
     const [error, setError] = useState("Page is loading...");
+    const [criterionName, setCriterionName] = useState("");
+    const [score, setScore] = useState(0);
+    const [maxScore, setMaxScore] = useState(0);
+    const [pass, setPass] = useState(false); 
 
     async function fetchGradesheet() {
         let response;
@@ -82,12 +86,21 @@ export default function Grade({ params }: Props) {
                 );
             }
         }
-
         if (response?.data) {
             setGradesheet(response.data);
         }
         if (response?.data?.criteria) {
             setStateDefaultCriteria(response.data.criteria);
+        }
+        if (response?.data.score) {
+            setScore(response.data.score);
+        }
+        if (response?.data.maxScore) {
+            setForm(1);
+            setMaxScore(response.data.maxScore);
+        }
+        if(response?.data.pass){
+            setPass(response.data.pass)
         }
         if (response?.data?.comment) {
             setComment(response.data.comment);
@@ -105,26 +118,68 @@ export default function Grade({ params }: Props) {
         });
     }
 
-    function handleAddCriteria() {}
+    function handleOpenAddCriteria() {
+        const modal = document.getElementById("add_criteria_modal");
+        if (modal instanceof HTMLDialogElement) {
+            modal.showModal();
+        }
+    }
 
-    function saveGradeSheet() {
-        const newGradesheet = {
-            ...gradesheet,
-            criteria: stateDefaultCriteria,
-            comment: comment,
-        };
+    function handleAddCriteria() {
+        if (criterionName === "") {
+            alert("Please give the new criterion a name");
+        } else {
+            setStateDefaultCriteria((prevCriteria) => [
+                ...prevCriteria,
+                {
+                    name:
+                        criterionName[0].toUpperCase() +
+                        criterionName.slice(1).toLowerCase(),
+                    pass: false,
+                },
+            ]);
+            setCriterionName("");
+        }
+    }
+
+    async function saveGradeSheet() {
+        let newGradesheet;
+        if (form == 0) {
+            newGradesheet = {
+                ...gradesheet,
+                criteria: stateDefaultCriteria,
+                score: null,
+                maxScore: null,
+                pass: null,
+                comment: comment,
+            };
+        } else {
+            newGradesheet = {
+                ...gradesheet,
+                criteria: null,
+                score: score,
+                maxScore: maxScore,
+                pass: pass,
+                comment: comment,
+            };
+        }
+
         setGradesheet(newGradesheet);
 
         if (newGradesheet) {
-            const updated = axios.put(
+            const updated = await axios.put(
                 `/api/blocks/${params.blockId}/${params.labId}/grading/${params.gradesheetId}`,
                 newGradesheet
             );
-            setComment("");
-            setStateDefaultCriteria([]);
-            router.push(
-                `/home/blocks/${params.blockId}/${params.labId}/grading`
-            );
+            if (updated) {
+                setComment("");
+                setStateDefaultCriteria([]);
+                router.push(
+                    `/home/blocks/${params.blockId}/${params.labId}/grading`
+                );
+            } else {
+                alert("Failed to submit");
+            }
         }
     }
 
@@ -136,8 +191,35 @@ export default function Grade({ params }: Props) {
         return (
             <section className="flex flex-col items-center gap-4">
                 <div className="">
-                    <h2 className="badge w-full p-4 badge-primary rounded-md text-white text-lg">{`Student: ${gradesheet?.studentID} — Rx: ${gradesheet?.rx}`}</h2>
+                    <h2 className="badge w-full p-4 badge-primary rounded-md text-white sm:text-lg">{`Student: ${
+                        gradesheet?.studentName || gradesheet?.studentID
+                    } — Rx: ${gradesheet?.rx}`}</h2>
                 </div>
+                <dialog id="add_criteria_modal" className="modal">
+                    <div className="modal-box">
+                        <h3 className="font-bold text-lg">Add Criterion</h3>
+                        <form method="dialog">
+                            <input
+                                type="text"
+                                placeholder="Eg. Professionalism"
+                                className="input input-md w-full"
+                                value={criterionName}
+                                onChange={(e) => {
+                                    setCriterionName(e.currentTarget.value);
+                                }}
+                            ></input>
+                            <div className="modal-action w-full">
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleAddCriteria}
+                                >
+                                    Add
+                                </button>
+                                <button className="btn btn-error">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </dialog>
                 <div className="flex flex-row gap-2">
                     <button
                         className={`btn ${
@@ -162,34 +244,36 @@ export default function Grade({ params }: Props) {
                 </div>
                 {form == 0 ? (
                     <div className="flex flex-col gap-4 w-full">
-                        <ul className="flex flex-col items-center min-h-64 max-h-64 px-2 overflow-y-auto list-none scrollbar-thin scrollbar-track scrollbar-thumb-black">
+                        <ul className="flex flex-col items-center min-h-64 max-h-72 px-2 overflow-y-auto list-none scrollbar-thin scrollbar-track scrollbar-thumb-black">
                             {stateDefaultCriteria.length > 0 ? (
-                                stateDefaultCriteria.map((criteria) => (
-                                    <li
-                                        className="w-full flex flex-row justify-between px-4 py-2 shadow-lg my-2 rounded-lg cursor-pointer hover:bg-neutral"
-                                        key={criteria.name}
-                                        onClick={() =>
-                                            updateRadio(
-                                                stateDefaultCriteria.filter(
-                                                    (stateCriteria) =>
-                                                        stateCriteria.name ===
-                                                        criteria.name
-                                                )[0]
-                                            )
-                                        }
-                                    >
-                                        <h2 className="text-base-content text-md">
-                                            {criteria.name}
-                                        </h2>
-                                        <input
-                                            className="radio radio-primary"
-                                            type="radio"
-                                            checked={criteria.pass}
-                                            onChange={() => null}
-                                            title="radio"
-                                        ></input>
-                                    </li>
-                                ))
+                                stateDefaultCriteria.map(
+                                    (criteria: criteria) => (
+                                        <li
+                                            className="w-full flex flex-row justify-between px-4 py-2 shadow-lg my-2 rounded-lg cursor-pointer hover:bg-neutral"
+                                            key={criteria.name}
+                                            onClick={() =>
+                                                updateRadio(
+                                                    stateDefaultCriteria.filter(
+                                                        (stateCriteria) =>
+                                                            stateCriteria.name ===
+                                                            criteria.name
+                                                    )[0]
+                                                )
+                                            }
+                                        >
+                                            <h2 className="text-base-content text-md">
+                                                {criteria.name}
+                                            </h2>
+                                            <input
+                                                className="radio radio-primary"
+                                                type="radio"
+                                                checked={criteria.pass}
+                                                onChange={() => null}
+                                                title="radio"
+                                            ></input>
+                                        </li>
+                                    )
+                                )
                             ) : (
                                 <li>
                                     <VscCheck
@@ -201,35 +285,89 @@ export default function Grade({ params }: Props) {
                                     </h2>
                                 </li>
                             )}
-                            {stateDefaultCriteria.length > 0? <button
-                                className="btn"
-                                onClick={() => {
-                                    handleAddCriteria();
-                                }}
-                            >
-                                Add Criteria
-                            </button>: <></>}
+                            {stateDefaultCriteria.length > 0 ? (
+                                <button
+                                    className="btn w-full"
+                                    onClick={() => {
+                                        handleOpenAddCriteria();
+                                    }}
+                                >
+                                    Add Criteria
+                                </button>
+                            ) : (
+                                <></>
+                            )}
                         </ul>
-                        <textarea
-                            className="min-h-40 rounded p-2"
-                            placeholder="Comments..."
-                            value={comment}
-                            onChange={(e) => {
-                                setComment(e.currentTarget.value);
-                            }}
-                        ></textarea>
-                        <button
-                            className="btn w-full"
-                            onClick={() => {
-                                saveGradeSheet();
-                            }}
-                        >
-                            Submit
-                        </button>
                     </div>
                 ) : (
-                    <form></form>
+                    <div className="flex flex-col gap-4 w-full">
+                        <div className="flex flex-col md:flex-row gap-4 justify-center items-center w-full">
+                            <label className="form-control">
+                                <div className="label">
+                                    <span className="label-text">
+                                        Achieved Marks
+                                    </span>
+                                </div>
+                                <input
+                                    type="number"
+                                    className="input-md max-w-xs rounded-md"
+                                    value={score}
+                                    onChange={(e) => {
+                                        console.log(e.currentTarget.value);
+                                        setScore(
+                                            parseInt(e.currentTarget.value)
+                                        );
+                                    }}
+                                ></input>
+                            </label>
+                            <label className="form-control">
+                                <div className="label">
+                                    <span className="label-text">
+                                        Maximum Marks Possible
+                                    </span>
+                                </div>
+                                <input
+                                    type="number"
+                                    className="input-md max-w-xs rounded-md"
+                                    value={maxScore}
+                                    onChange={(e) => {
+                                        setMaxScore(
+                                            parseInt(e.currentTarget.value)
+                                        );
+                                    }}
+                                ></input>
+                            </label>
+                        </div>
+                        <div>
+                            <label className="label cursor-pointer flex justify-center gap-4">
+                                <span className={`label-text p-4 ${!pass? "badge badge-error text-white" : "badge badge-ghost"}`}>Fail</span>
+                                <input
+                                    type="checkbox"
+                                    className="toggle toggle-primary"
+                                    checked={pass}
+                                    onChange={(e) => setPass(e.target.checked)}
+                                />
+                                <span className={`label-text p-4 ${pass? "badge badge-primary text-white" : "badge badge-ghost"}`}>Pass</span>
+                            </label>
+                        </div>
+                    </div>
                 )}
+                <textarea
+                    className="min-h-40 rounded p-2 w-full"
+                    placeholder="Comments..."
+                    value={comment}
+                    onChange={(e) => {
+                        setComment(e.currentTarget.value);
+                    }}
+                ></textarea>
+                <button
+                    className="btn w-full"
+                    onClick={() => {
+                        saveGradeSheet();
+                    }}
+                >
+                    Submit
+                </button>
             </section>
         );
     } else {

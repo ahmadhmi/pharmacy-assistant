@@ -40,7 +40,7 @@ export async function GET(request: NextRequest, { params }: Props) {
             status: 200,
           });
         } else {
-          throw { error: "User does not have access to this block" };
+          throw { error: `${session.user.name} does not have access to this block or the block does not exist` };
         }
       } else {
         throw { error: "No such block exists" };

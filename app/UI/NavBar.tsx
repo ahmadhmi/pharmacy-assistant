@@ -44,7 +44,7 @@ const AuthStatus = () => {
               {session.user?.image?  
               <Image
                 alt="Tailwind CSS Navbar component"
-                src={session.user?.image!}
+                src={session.user?.image}
                 height={50}
                 width={50}
               /> :

@@ -7,11 +7,8 @@ import authOptions from "@/app/auth/authOptions";
 //const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
 const url = process.env.MONGODB_URI;
 const client = new MongoClient(url);
+await client.connect(); 
 var db = client.db(process.env.MONGO_CONNECTION_DATABASE);
-// var clientOpen = false;
-// client.addListener('topologyClosed', () => clientOpen = false); 
-// client.addListener('topologyOpening', () => clientOpen = true);
-
 
 // async function requestClose(){
 //     await client.close(); 
@@ -47,7 +44,7 @@ var db = client.db(process.env.MONGO_CONNECTION_DATABASE);
 export async function addUser(user) {
   try {
     //connecting to the database
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("users");
 
     //check if user exists
@@ -71,7 +68,7 @@ export async function addUser(user) {
   } catch (err) {
     console.log("Tried to add a user, error encountered\n" + err.log);
   } finally {
-    await client.close();
+   // await client.close();
   }
 }
 
@@ -99,7 +96,7 @@ export async function getUserID(email) {
 export async function addBlock(block) {
   try {
     const session = await getServerSession(authOptions);
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("blocks");
     console.log(block);
     block.users.push(session.user.email);
@@ -110,14 +107,14 @@ export async function addBlock(block) {
   } catch {
     console.log("Tried to add a block, error encountered\n" + err.log);
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
 //todo get all blocks with a userID of the one passed
 export async function getAllBlocks(userEmail) {
   try {
-    await client.connect();
+    //await client.connect();
     let filter = {
       users: {
         $in: [String(userEmail.toLowerCase())],
@@ -131,14 +128,15 @@ export async function getAllBlocks(userEmail) {
   } catch (ex) {
     return [];
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
 export async function getBlock(blockID){
   let retrievedDoc = null; 
   try{
-    await client.connect(); 
+    let db = client.db(process.env.MONGO_CONNECTION_DATABASE);
+    //await client.connect(); 
     let filter = {
       _id: new ObjectId(blockID)
     }
@@ -149,7 +147,7 @@ export async function getBlock(blockID){
     console.log(`Error in retrieving block ID: ${blockID}`);
     return null;
   }finally{
-    await client.close(); 
+    //await client.close(); 
     return retrievedDoc;
   }
 }
@@ -157,7 +155,7 @@ export async function getBlock(blockID){
 export async function updateBlock(blockID, newBlock) {
   console.log(blockID + " " + newBlock)
   try {
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("blocks");
     const filter = {
       _id: new ObjectId(blockID),
@@ -188,7 +186,7 @@ export async function updateBlock(blockID, newBlock) {
     console.log("Update block failed with error\n" + err);
     return false;
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
@@ -196,7 +194,7 @@ export async function updateBlock(blockID, newBlock) {
 export async function deleteBlock(userID, blockID) {
   //make sure the block in the database with the blockID passed contains the userID passed before deleting
   try {
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("blocks");
     const filter = {
       _id: new ObjectId(blockID),
@@ -214,7 +212,7 @@ export async function deleteBlock(userID, blockID) {
   } catch (err) {
     console.log("Delete failed with error\n" + err);
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
@@ -223,7 +221,7 @@ export async function deleteBlock(userID, blockID) {
 //get all gradesheets, return a gradesheet array, filled or empty for a lab provided a labId
 export async function getAllGradeSheets(labId){
   try {
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("gradesheets");
     let filter = {
       labId: labId,
@@ -235,14 +233,14 @@ export async function getAllGradeSheets(labId){
     console.log("Error occurred while fetching grade sheets: " + error);
     return [];
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
 //get singular gradesheet, return a single gradesheet or null for a lab provided a gradeSheetId
 export async function getGradeSheet(gradesheetId){
   try{
-    await client.connect(); 
+    //await client.connect(); 
     let collection = db.collection("gradesheets"); 
     const found = await collection.findOne({_id: new ObjectId(gradesheetId)}); 
     if(found){
@@ -254,6 +252,9 @@ export async function getGradeSheet(gradesheetId){
         date:found.date, 
         rx:found.rx,
         criteria: found.criteria,
+        score: found.score,
+        maxScore: found.maxScore,
+        pass: found.pass,
         comment:found.comment,
       }
     }else{
@@ -263,7 +264,7 @@ export async function getGradeSheet(gradesheetId){
     console.log(`Failed to retrieve with gradesheetID: ${gradesheetId}\nFailed with error: ${ex}`);
     return null; 
   }finally{
-    await client.close();  
+    //await client.close();  
   }
 }
 
@@ -271,7 +272,7 @@ export async function getGradeSheet(gradesheetId){
 
 export async function addGradeSheet(gradesheet){
   try {
-    await client.connect(); 
+    //await client.connect(); 
     let collection = db.collection("gradesheets");
 
     const added = await collection.insertOne(gradesheet);
@@ -279,6 +280,7 @@ export async function addGradeSheet(gradesheet){
     const newGradesheet = {
       _id: found._id.toString(),
       studentID:found.studentID, 
+      studentName: found.studentName, 
       labId:found.labId, 
       date:found.date, 
       rx:found.rx,
@@ -288,7 +290,7 @@ export async function addGradeSheet(gradesheet){
     console.log("failed to insert a gradesheet\n" + error);
     return null; 
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
@@ -296,7 +298,7 @@ export async function addGradeSheet(gradesheet){
 
 export async function updateGradeSheet(gradesheet){
   try {
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("gradesheets");
     const filter = {
       _id: new ObjectId(gradesheet._id),
@@ -309,6 +311,9 @@ export async function updateGradeSheet(gradesheet){
         date: gradesheet.date, 
         rx: gradesheet.rx,
         criteria: gradesheet.criteria,
+        score: gradesheet.score,
+        maxScore: gradesheet.maxScore,
+        pass: gradesheet.pass, 
         comment: gradesheet.comment,
       },
     };
@@ -329,7 +334,7 @@ export async function updateGradeSheet(gradesheet){
     console.log("Update failed with error\n" + err);
     return false; 
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
@@ -337,7 +342,7 @@ export async function updateGradeSheet(gradesheet){
 
 export async function deleteGradeSheet(gradesheetID){
   try {
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("gradesheets");
 
     const filter = {
@@ -353,7 +358,7 @@ export async function deleteGradeSheet(gradesheetID){
   } catch (error) {
     console.log("Delete failed with error\n" + error);
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
@@ -361,7 +366,7 @@ export async function deleteGradeSheet(gradesheetID){
 
 export async function addStudent(blockId, student) {
   try {
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("blocks");
 
     // this checks if there is already a student with the same name
@@ -395,14 +400,14 @@ export async function addStudent(blockId, student) {
     console.log("Failed to add with error\n" + error.message);
     return null;
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
 //delete student, return true or false
 export async function deleteStudent(blockId, studentId) {
   try {
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("blocks");
 
     const result = await collection.updateOne(
@@ -421,14 +426,14 @@ export async function deleteStudent(blockId, studentId) {
     console.log("Delete failed with an error\n" + error.message);
     return false;
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
 //add week to a specified document, return the newly added week with its id
 export async function addWeek(blockId, week) {
   try {
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("blocks");
       
     const newWeek = { _id: new ObjectId(), ...week };
@@ -448,14 +453,14 @@ export async function addWeek(blockId, week) {
   } catch (error) {
     console.log("Failed to add with error\n" + error.message);
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
 //delete week from a specified document, return true or false
 export async function deleteWeek(blockId, weekId) {
   try {
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("blocks");
 
     const result = await collection.updateOne(
@@ -474,6 +479,6 @@ export async function deleteWeek(blockId, weekId) {
     console.log("Delete failed with error\n" + error.message);
     return false;
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
