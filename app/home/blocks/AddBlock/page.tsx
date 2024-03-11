@@ -65,7 +65,7 @@ export default function AddBlock() {
       <div className="flex flex-col shadow-lg border-t-4 w-full p-2 my-4 min-h-72 max-h-72 gap-2 overflow-y-auto">
         {emails.length > 0? emails.map((email) => {
           return (
-          <div className="flex flex-row justify-between items-center badge badge-primary w-full rounded-md p-4">
+          <div key={email} className="flex flex-row justify-between items-center badge badge-primary w-full rounded-md p-4">
             <p className="text-lg">{email}</p>
             <button className=""><VscTrash size={20}></VscTrash></button>
           </div>

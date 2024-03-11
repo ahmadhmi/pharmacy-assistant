@@ -40,7 +40,7 @@ const WeekAccordion = ({ week, handleAddLab, handleDeleteLab, handleViewLab }: P
             //     </div>
             //   </div>
             // </div>
-            <div className="flex justify-between items-center border p-5 rounded-lg mb-4">
+            <div key={lab._id} className="flex justify-between items-center border p-5 rounded-lg mb-4">
               <h3 className="text-xl font-semibold">{lab.name}</h3>
               <div className="flex gap-3">
                 <button className="btn btn-primary w-20" onClick={handleViewLab}>View</button>

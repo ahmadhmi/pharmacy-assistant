@@ -77,12 +77,12 @@ export async function POST(request: NextRequest, { params }: Props) {
 
 export async function GET(request: NextRequest, { params }: Props) {
   const session = await getServerSession(authOptions);
-  const userEmail = session?.user?.email;
-  const block = await getBlock(params.blockId);
-  const gradesheets = await getAllGradeSheets(params.labId);
-  let ifContains = false;
   try {
     //check the block exist? and check the user is right user
+    const userEmail = session?.user?.email;
+    const block = await getBlock(params.blockId);
+    const gradesheets = await getAllGradeSheets(params.labId);
+    let ifContains = false;
     if (block && block.users.includes(userEmail)) {
       let labs: Lab[] = [];
       for (const week of block.weeks) {
@@ -101,6 +101,8 @@ export async function GET(request: NextRequest, { params }: Props) {
       }
 
       return NextResponse.json(gradesheets, { status: 200 });
+    }else{
+      throw {error: `${session?.user?.name} does not have access to this block or it does not exist`}
     }
   } catch (ex: any) {
     return NextResponse.json(ex, {

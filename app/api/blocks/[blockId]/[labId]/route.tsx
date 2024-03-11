@@ -18,6 +18,7 @@ export async function GET(request: NextRequest, { params }: Props) {
         if (!session) {
             throw { error: "User is not authenticated" };
         }
+
         const block = await getBlock(params.blockId);
         if (block && block.users.includes(session.user?.email)) {
             // check if block contains labId provided
