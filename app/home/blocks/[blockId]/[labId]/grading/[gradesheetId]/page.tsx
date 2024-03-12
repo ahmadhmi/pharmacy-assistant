@@ -11,7 +11,6 @@ import { VscCheck, VscError, VscLoading } from "react-icons/vsc";
 interface Props {
     params: {
         blockId: string;
-        weekId:string;
         weekId:string,
         labId: string;
         gradesheetId: string;
