@@ -11,6 +11,7 @@ import { VscCheck, VscError, VscLoading } from "react-icons/vsc";
 interface Props {
     params: {
         blockId: string;
+        weekId:string,
         labId: string;
         gradesheetId: string;
     };
@@ -73,7 +74,7 @@ export default function Grade({ params }: Props) {
         let response;
         try {
             response = await axios.get(
-                `/api/blocks/${params.blockId}/${params.labId}/grading/${params.gradesheetId}`
+                `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/${params.gradesheetId}`
             );
         } catch (ex: any) {
             if (ex.response.data.error) {
@@ -168,7 +169,7 @@ export default function Grade({ params }: Props) {
 
         if (newGradesheet) {
             const updated = await axios.put(
-                `/api/blocks/${params.blockId}/${params.labId}/grading/${params.gradesheetId}`,
+                `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/${params.gradesheetId}`,
                 newGradesheet
             );
             if (updated) {
@@ -340,14 +341,14 @@ export default function Grade({ params }: Props) {
                         </div>
                         <div>
                             <label className="label cursor-pointer flex justify-center gap-4">
-                                <span className={`label-text p-4 ${!pass? "badge badge-error text-white" : "badge badge-ghost"}`}>Fail</span>
+                                <span className={`label-text text-lg p-4 ${!pass? "badge badge-error text-white" : "badge badge-ghost"}`}>Fail</span>
                                 <input
                                     type="checkbox"
                                     className="toggle toggle-primary"
                                     checked={pass}
                                     onChange={(e) => setPass(e.target.checked)}
                                 />
-                                <span className={`label-text p-4 ${pass? "badge badge-primary text-white" : "badge badge-ghost"}`}>Pass</span>
+                                <span className={`label-text text-lg p-4 ${pass? "badge badge-primary text-white" : "badge badge-ghost"}`}>Pass</span>
                             </label>
                         </div>
                     </div>

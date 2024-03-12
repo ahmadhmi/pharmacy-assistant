@@ -141,6 +141,11 @@ export default function BlockPage({ params }: Props) {
                 <li>
                   <a onClick={() => createWeekModal?.showModal()}>Add Week</a>
                 </li>
+                <li>
+                  <Link href={`/home/blocks/${params.blockId}/editBlock`}>
+                    Edit Block
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
