@@ -12,6 +12,7 @@ import { Student } from "@/interfaces/student";
 interface Props {
     params: {
         blockId: string;
+        weekId:string,
         labId: string;
     };
 }
@@ -56,7 +57,7 @@ export default function Grading({ params }: Props) {
     async function fetchLab() {
         try {
             const lab = (
-                await axios.get(`/api/blocks/${params.blockId}/${params.labId}`)
+                await axios.get(`/api/blocks/${params.blockId}/${params.weekId}/${params.labId}`)
             ).data;
             if (lab) {
                 setLab(lab);
@@ -73,7 +74,7 @@ export default function Grading({ params }: Props) {
     async function fetchGradesheets() {
         const data = (
             await axios.get(
-                `/api/blocks/${params.blockId}/${params.labId}/grading`
+                `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
             )
         ).data;
         if (data) {
@@ -112,7 +113,7 @@ export default function Grading({ params }: Props) {
         let response;
         try {
             response = await axios.post(
-                `/api/blocks/${params.blockId}/${params.labId}/grading`,
+                `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`,
                 newGradesheet
             );
         } catch (ex: any) {
@@ -152,7 +153,7 @@ export default function Grading({ params }: Props) {
                 <div>
                     <h1 className="text-lg text-neutral mt-4">Completed Marking Sheets</h1>
                 </div>
-                <div className="overflow-y-auto min-h-64 max-h-64 my-2 px-2 scrollbar-thin scrollbar-track scrollbar-thumb-black mb-4 rounded-lg">
+                <div className="overflow-y-auto min-h-64 max-h-72 my-2 px-2 scrollbar-thin scrollbar-track scrollbar-thumb-black mb-4 rounded-lg">
                     {gradesheets ? (
                         Object.keys(gradesheets).map((key, index) => (
                             <div
@@ -164,8 +165,8 @@ export default function Grading({ params }: Props) {
                                     name="my-accordion-2"
                                     placeholder="1"
                                 />
-                                <div className="collapse-title text-xl font-medium text-neutral">
-                                    {gradesheets[key][0].studentName} {key}
+                                <div className="collapse-title flex justify-between items-center text-xl font-medium text-neutral">
+                                    <h2>{gradesheets[key][0].studentName} {key}</h2><div className="badge badge-primary text-lg">{gradesheets[key].length}</div>
                                 </div>
                                 <div className="collapse-content">
                                     <div className="flex flex-row items-center justify-between my-2 text-neutral border-b-2 border-slate-400">
