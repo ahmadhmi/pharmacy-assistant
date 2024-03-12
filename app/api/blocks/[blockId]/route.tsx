@@ -108,7 +108,7 @@ export async function PATCH(
       if (oldBlock && oldBlock.users.includes(session.user?.email)) {
         const success = await updateBlock(params.blockId, body);
         if (success) {
-          return NextResponse.json(body.block, {
+          return NextResponse.json(body, {
             status: 200,
           });
         } else {
