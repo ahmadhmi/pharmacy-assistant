@@ -29,10 +29,6 @@ export default function BlockPage({ params }: Props) {
     const block = await axios.get<Block>(`/api/blocks/${params.blockId}`);
     setBlock(block.data);
   };
-  const updateBlock = async () => {
-    await axios.patch<Block>(`/api/blocks/${params.blockId}`, block);
-  };
-  
 
   const patchBlock = async () => {
     await axios.patch(`/api/blocks/${params.blockId}`, block);
@@ -62,6 +58,7 @@ export default function BlockPage({ params }: Props) {
     } else {
       const updatedWeeks = [...(block.weeks || []), { name: addedWeek }];
       setBlock({ ...block, weeks: updatedWeeks });
+      patchBlock();
       setAddedWeek(""); // Reset the input field only if the week is added
       setErrorOcurred(false); // Reset error state
       createWeekModal?.close(); // Close modal only if the week is added
@@ -107,7 +104,7 @@ export default function BlockPage({ params }: Props) {
         };
         return updatedBlock;
       });
-
+      patchBlock();
       setAddedLab(""); // Reset the input field only if the lab is added
       setLabErrorOccurred(false); // Reset error state
       createLabModal?.close(); // Close modal only if the lab is added
@@ -124,7 +121,8 @@ export default function BlockPage({ params }: Props) {
     });
 
     setBlock({ ...block, weeks: updatedWeeks });
-  }
+    patchBlock();
+  };
 
   const handleViewLab = (week: Week) => {
     console.log("View lab", week);
@@ -147,6 +145,11 @@ export default function BlockPage({ params }: Props) {
               >
                 <li>
                   <a onClick={() => createWeekModal?.showModal()}>Add Week</a>
+                </li>
+                <li>
+                  <Link href={`/home/blocks/${params.blockId}/editBlock`}>
+                    Edit Block
+                  </Link>
                 </li>
               </ul>
             </div>
