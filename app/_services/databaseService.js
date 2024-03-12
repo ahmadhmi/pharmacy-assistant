@@ -436,7 +436,11 @@ export async function addWeek(blockId, week) {
     //await client.connect();
     let collection = db.collection("blocks");
       
-    const newWeek = { _id: new ObjectId(), ...week };
+    const newWeek = { 
+      _id: new ObjectId(), 
+      ...week, 
+      labs: []
+    };
 
     const result = await collection.updateOne(
       { _id: new ObjectId(blockId) }, //not sure if blockID is string or not
