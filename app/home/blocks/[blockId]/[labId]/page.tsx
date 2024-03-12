@@ -46,6 +46,7 @@ interface Props {
   params: {
     blockId: string;
     weekId:string;
+    weekId:string,
     labId: string;
   };
 }
@@ -63,6 +64,7 @@ export default function LabPage({ params }: Props) {
       (
         await axios.get(
           //`/api/blocks/65cbe1af929966312830eea0/65e6c4517fdb6a053a93de8a/grading`
+          `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
           `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
         )
       ).data;
@@ -139,6 +141,53 @@ export default function LabPage({ params }: Props) {
 
   return (
     <section className="display-flex justify-center h-screen w-100% px-8 py-10">
+      <div className="flex justify-between items-center py-2">
+        <h1 className="text-center text-3xl">Lab Page</h1>
+        <div className="flex gap-2">
+          <Link className="btn bnt-neutral" href={`${params.labId}/criteria`}>
+            Edit Criteria
+          </Link>
+        </div>
+      </div>
+
+      <div className="border-y overflow-y-auto" style={{ height: "80%" }}>
+        {labData ? (
+          Object.keys(labData).map((key) => (
+            <div className="collapse collapse-arrow bg-base-200 my-3" key={key}>
+              <input type="checkbox" name="my-accordion-2" placeholder="1" />
+              <div className="collapse-title text-xl font-medium">{key}</div>
+              <div className="collapse-content bg-primary">
+                {labData[key].map((gradesheet, index) => (
+                  <div
+                    className="flex flex-row items-center justify-between text-black my-2 "
+                    key={index}
+                  >
+                    <input
+                      title="checkbox"
+                      type="checkbox"
+                      name={gradesheet._id}
+                      value={gradesheet._id}
+                      defaultChecked={isChecked}
+                      onChange={handleChecked}
+                      className=" checkbox border-black"
+                    />
+                    <p className="font-bold">{gradesheet.rx}</p>
+                    <div>
+                      <Link
+                        href={`/home/blocks/${params.blockId}/${params.labId}/grading/${gradesheet._id}`}
+                      >
+                        <button className="btn btn-sm">Edit</button>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          <></>
+        )}
+      </div>
       <h1 className="text-center mb-6 text-3xl">Lab Page</h1>
       <Suspense fallback={<p>loading the table...</p>}>
         {" "}
