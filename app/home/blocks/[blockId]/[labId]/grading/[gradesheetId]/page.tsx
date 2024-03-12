@@ -11,6 +11,7 @@ import { VscCheck, VscError, VscLoading } from "react-icons/vsc";
 interface Props {
     params: {
         blockId: string;
+        weekId:string;
         labId: string;
         gradesheetId: string;
     };
@@ -168,7 +169,7 @@ export default function Grade({ params }: Props) {
 
         if (newGradesheet) {
             const updated = await axios.put(
-                `/api/blocks/${params.blockId}/${params.labId}/grading/${params.gradesheetId}`,
+                `/api/blocks/${params.blockId}/${params.labId}/${params.weekId}/grading/${params.gradesheetId}`,
                 newGradesheet
             );
             if (updated) {
