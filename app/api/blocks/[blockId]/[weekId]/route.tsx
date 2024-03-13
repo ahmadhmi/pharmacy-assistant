@@ -34,7 +34,7 @@ export async function POST(request: NextRequest, { params }: Props) {
             status: 200,
         })
     } catch (ex: any) {
-        return NextResponse.json(ex, {
+        return NextResponse.json({ error: ex.message || 'Unknown error occurred' }, {
             status: 500,
         })
     }
