@@ -39,7 +39,7 @@ export default function EditBlock({ params }: Props) {
     setUsers(block.data.users);
   };
 
-  //console.log(block);
+  console.log(block);
 
   useEffect(() => {
     fetchBlock();
@@ -121,6 +121,7 @@ export default function EditBlock({ params }: Props) {
       .patch<Block>(`/api/blocks/${params.blockId}`, newBlock)
       .then((response) => {
         console.log("Block updated successfully: ", response.data);
+        alert("Block updated successfully");
       })
       .catch((error) => {
         console.error("Error updating block: ", error);
@@ -133,11 +134,41 @@ export default function EditBlock({ params }: Props) {
         <div className="card-body">
           <div className="flex justify-between mb-8 w-full">
             <h1 className=" card-title text-2xl text-primary p-2 flex-1 rounded-lg">
-              Editing {block?.name}
+              Editing {blockName}
             </h1>
-            <button className="btn btn-primary" onClick={handleEditBlock}>
+            <button
+              className="btn btn-primary"
+              onClick={() =>
+                (
+                  document.getElementById("my_modal") as HTMLDialogElement
+                ).showModal()
+              }
+            >
               Save
             </button>
+            <dialog id="my_modal" className="modal">
+              <div className="modal-box">
+                <form method="dialog">
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                    ✕
+                  </button>
+                </form>
+                <h3 className="font-bold text-lg">
+                  Please confirm to update the block?
+                </h3>
+                <form method="dialog">
+                  <button
+                    className="btn btn-info mt-2"
+                    onClick={handleEditBlock}
+                  >
+                    Confirm
+                  </button>
+                </form>
+                <p className="text-xs py-4">
+                  Press ESC key or click on ✕ button to close
+                </p>
+              </div>
+            </dialog>
           </div>
           <hr />
           <div className="card w-full bg-base-100 ">
@@ -195,14 +226,11 @@ export default function EditBlock({ params }: Props) {
                 </button>
               </form>
 
-              {students!.length > 0 ? (
+              {students !== undefined && students!.length > 0 ? (
                 <div className="w-full mt-6">
                   {students?.map((student, index) => (
-                    <div key={student._id} className="flex items-center">
-                      <div
-                        className="collapse collapse-arrow bg-base-200 my-3"
-                        key={index}
-                      >
+                    <div key={index} className="flex items-center">
+                      <div className="collapse collapse-arrow bg-base-200 my-3">
                         <input
                           type="checkbox"
                           name="my-accordion-2"
@@ -215,15 +243,51 @@ export default function EditBlock({ params }: Props) {
                       </div>
                       <button
                         className="btn btn-outline btn-error ml-2"
-                        onClick={handleDeleteStudent(index)}
+                        onClick={() =>
+                          (
+                            document.getElementById(
+                              `my_modal_student_${index}`
+                            ) as HTMLDialogElement
+                          ).showModal()
+                        }
                       >
                         <MdDelete size={20} />
                       </button>
+                      <dialog
+                        id={`my_modal_student_${index}`}
+                        className="modal"
+                      >
+                        <div className="modal-box">
+                          <form method="dialog">
+                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                              ✕
+                            </button>
+                          </form>
+                          <h3 className="inline-block font-bold text-lg">
+                            Delete{" "}
+                            <h3 className="inline-block font-bold text-red-500">
+                              {student.firstName} {student.lastName}
+                            </h3>{" "}
+                            from the student list?
+                          </h3>
+                          <form method="dialog">
+                            <button
+                              className="block btn btn-info justify-center mt-2"
+                              onClick={handleDeleteStudent(index)}
+                            >
+                              Delete
+                            </button>
+                          </form>
+                          <p className="text-xs py-4">
+                            Press ESC key or click on ✕ button to close
+                          </p>
+                        </div>
+                      </dialog>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="bg-red-500 p-14">
+                <div className="bg-red-500 p-4">
                   <p className="text-black">
                     There are currently no students. Please add some students in
                     the block.
@@ -256,14 +320,47 @@ export default function EditBlock({ params }: Props) {
               {users !== undefined && (
                 <div className="p-4">
                   {users.map((user, index) => (
-                    <div className="flex items-center" key={index}>
-                      <p className="bg-gray-200 rounded-md p-2 mb-2">{user}</p>
+                    <div className="flex" key={index}>
+                      <p className="bg-gray-200 rounded-md p-3 mb-2">{user}</p>
                       <button
-                        className="btn btn-outline btn-error"
-                        onClick={handleDeleteUser(index)}
+                        className="btn btn-outline btn-error ml-2"
+                        onClick={() =>
+                          (
+                            document.getElementById(
+                              `my_modal_user_${index}`
+                            ) as HTMLDialogElement
+                          ).showModal()
+                        }
                       >
                         <MdDelete size={20} />
                       </button>
+                      <dialog id={`my_modal_user_${index}`} className="modal">
+                        <div className="modal-box">
+                          <form method="dialog">
+                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                              ✕
+                            </button>
+                          </form>
+                          <h3 className="inline-block font-bold text-lg">
+                            Delete{" "}
+                            <h3 className="inline-block font-bold text-red-500">
+                              {user}
+                            </h3>{" "}
+                            from the block?
+                          </h3>
+                          <form method="dialog">
+                            <button
+                              className="block btn btn-info justify-center mt-2"
+                              onClick={handleDeleteUser(index)}
+                            >
+                              Delete
+                            </button>
+                          </form>
+                          <p className="text-xs py-4">
+                            Press ESC key or click on ✕ button to close
+                          </p>
+                        </div>
+                      </dialog>
                     </div>
                   ))}
                 </div>
