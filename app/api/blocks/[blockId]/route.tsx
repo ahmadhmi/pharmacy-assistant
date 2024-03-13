@@ -4,6 +4,7 @@ import {
   addBlock,
   updateBlock,
   deleteBlock,
+  addWeek,
   getUserID,
   getBlock,
 } from "@/app/_services/databaseService";
@@ -159,4 +160,35 @@ export async function DELETE(
       }
     );
   }
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { blockId: string } }
+) {
+  const session = await getServerSession(authOptions);
+    try {
+        if (!session || !session.user) {
+            throw new Error("User is not authenticated");
+        };
+      
+        const result = await getBlock(params.blockId);
+        if (!result) {
+            throw new Error("Block with the ID is not found");
+        }
+      
+        if (!result.users.includes(session.user?.email)) {
+            throw new Error("User does not have permission for this block");
+        }       
+        
+        const body = await request.json(); 
+        const newWeek = await addWeek(params.blockId, body.week);
+        return NextResponse.json(newWeek, {
+            status: 200,
+        })
+    } catch (ex: any) {
+        return NextResponse.json({ error: ex.message || 'Unknown error occurred' }, {
+            status: 500,
+        })
+    }
 }
