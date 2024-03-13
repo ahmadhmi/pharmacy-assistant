@@ -57,7 +57,7 @@ export default function EditBlock({ params }: Props) {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const letters = /^[A-Za-z]+$/;
-    const Numbers = /^[1-9]+$/;
+    const Numbers = /^[0-9]+$/;
     if (!firstName.match(letters)) {
       alert("The FirstName should be all in letters ");
       return;
@@ -113,6 +113,7 @@ export default function EditBlock({ params }: Props) {
     const newBlock: Block = {
       _id: params.blockId,
       name: blockName,
+      weeks: block?.weeks || [],
       students: students || [],
       users: users || [],
     };
@@ -194,9 +195,9 @@ export default function EditBlock({ params }: Props) {
                 </button>
               </form>
 
-              {students !== undefined && (
+              {students!.length > 0 ? (
                 <div className="w-full mt-6">
-                  {students.map((student, index) => (
+                  {students?.map((student, index) => (
                     <div key={student._id} className="flex items-center">
                       <div
                         className="collapse collapse-arrow bg-base-200 my-3"
@@ -221,7 +222,15 @@ export default function EditBlock({ params }: Props) {
                     </div>
                   ))}
                 </div>
+              ) : (
+                <div className="bg-red-500 p-14">
+                  <p className="text-black">
+                    There are currently no students. Please add some students in
+                    the block.
+                  </p>
+                </div>
               )}
+              {}
             </div>
           </div>
           <hr />
