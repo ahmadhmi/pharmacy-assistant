@@ -109,6 +109,7 @@ export async function PATCH(
       if (oldBlock && oldBlock.users.includes(session.user?.email)) {
         const success = await updateBlock(params.blockId, body);
         if (success) {
+          console.log(success);
           return NextResponse.json(body, {
             status: 200,
           });
@@ -182,7 +183,7 @@ export async function POST(
         }       
         
         const body = await request.json(); 
-        const newWeek = await addWeek(params.blockId, body.week);
+        const newWeek = await addWeek(params.blockId, body);
         return NextResponse.json(newWeek, {
             status: 200,
         })
