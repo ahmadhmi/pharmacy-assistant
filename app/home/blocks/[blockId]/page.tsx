@@ -6,11 +6,13 @@ import { Block } from "@/interfaces/block";
 import { Week } from "@/interfaces/week";
 import axios from "axios";
 import { error } from "console";
+import { set } from "mongoose";
 import { redirect } from "next/dist/server/api-utils";
 import Link from "next/link";
-import { FormEvent, use, useEffect, useRef, useState } from "react";
+import { FormEvent, Suspense, use, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CiEdit } from "react-icons/ci";
+import Skeleton from "react-loading-skeleton";
 
 interface Props {
   params: {
@@ -33,9 +35,17 @@ export default function BlockPage({ params }: Props) {
   const [isCreateLabModalOpen, setCreateLabModalOpen] = useState(false);
   const [deleteLabModalOpen, setDeleteLabModalOpen] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const fetchBlock = async () => {
-    const block = await axios.get<Block>(`/api/blocks/${params.blockId}`);
-    setBlock(block.data);
+    setIsLoading(true);
+    try {
+      const block = await axios.get<Block>(`/api/blocks/${params.blockId}`);
+      setBlock(block.data);
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
   };
 
   // const patchBlock = async () => {
@@ -63,7 +73,10 @@ export default function BlockPage({ params }: Props) {
   };
 
   const postLab = async (weekId: string, lab: Lab) => {
-    const res = await axios.post(`/api/blocks/${params.blockId}/${weekId}`, lab);
+    const res = await axios.post(
+      `/api/blocks/${params.blockId}/${weekId}`,
+      lab
+    );
     const newLab: Lab = res.data;
     console.log(newLab);
     return newLab;
@@ -111,7 +124,7 @@ export default function BlockPage({ params }: Props) {
 
   const handleAddWeek = async (event: FormEvent) => {
     event.preventDefault();
-    
+
     if (!block) return;
 
     const weekExists = block?.weeks?.some((week) => week.name === addedWeek);
@@ -171,7 +184,7 @@ export default function BlockPage({ params }: Props) {
       console.log("Lab already exists in one of the weeks");
     } else {
       const weekId = selectedWeek._id!;
-      const newLab = await postLab(weekId, {name: addedLab} as Lab);
+      const newLab = await postLab(weekId, { name: addedLab } as Lab);
       const updatedWeeks = block?.weeks?.map((week) => {
         if (week.name === selectedWeek.name) {
           return {
@@ -238,59 +251,69 @@ export default function BlockPage({ params }: Props) {
     <div className="flex justify-center items-start text-slate-100 mt-10">
       <div className="card border justify-center shadow-xl w-full">
         <div className="card-body gap-5">
-          <div className="flex items-center justify-between p-4">
-            <h2 className="text-slate-600 text-2xl flex-grow text-center">
-              {block?.name}
-            </h2>
-            <div className="dropdown dropdown-hover dropdown-end">
-              <div tabIndex={0} role="button" className="btn btn-primary m-1">
-                <CiEdit size={20} />
-              </div>
-              <ul
-                tabIndex={0}
-                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 hover:cursor-pointer"
-              >
-                <li>
-                  <a onClick={() => setCreateWeekModalOpen(true)}>Add Week</a>
-                </li>
-                <li>
-                  <Link href={`/home/blocks/${params.blockId}/editBlock`}>
-                    Edit Block
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <hr />
-          <div className=" grid grid-cols-1 gap-5 lg:gap-20 w-full">
-            {!block?.weeks || block.weeks.length == 0 ? (
-              <p className="text-slate-800">
-                No weeks available currently.
-                <button
-                  className="btn btn-primary ml-4"
-                  onClick={() => setCreateWeekModalOpen(true)}
+          {isLoading ? (
+            <Skeleton height={100} />
+          ) : (
+            <div className="flex items-center justify-between p-4">
+              <h2 className="text-slate-600 text-2xl flex-grow text-center">
+                {block?.name}
+              </h2>
+              <div className="dropdown dropdown-hover dropdown-end">
+                <div tabIndex={0} role="button" className="btn btn-primary m-1">
+                  <CiEdit size={20} />
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 hover:cursor-pointer"
                 >
-                  Create Week
-                </button>
-              </p>
-            ) : (
-              <div className="flex flex-col gap-4">
-                {block?.weeks?.map((week) => (
-                  <div>
-                    <WeekAccordion
-                      key={week.name}
-                      week={week}
-                      handleAddLab={() => handleCreateLab(week)}
-                      handleDeleteLab={(labToDelete) =>
-                        handleDeleteLab(week, labToDelete)
-                      }
-                      blockId={params.blockId}
-                    />
-                  </div>
-                ))}
+                  <li>
+                    <a onClick={() => setCreateWeekModalOpen(true)}>Add Week</a>
+                  </li>
+                  <li>
+                    <Link href={`/home/blocks/${params.blockId}/editBlock`}>
+                      Edit Block
+                    </Link>
+                  </li>
+                </ul>
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          <hr />
+          {isLoading ? (
+            <Skeleton height={100} count={3} />
+          ) : (
+            <div className=" grid grid-cols-1 gap-5 lg:gap-20 w-full">
+              {!block?.weeks || block.weeks.length == 0 ? (
+                <p className="text-slate-800">
+                  No weeks available currently.
+                  <button
+                    className="btn btn-primary ml-4"
+                    onClick={() => setCreateWeekModalOpen(true)}
+                  >
+                    Create Week
+                  </button>
+                </p>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {block?.weeks?.map((week) => (
+                    <div>
+                      <WeekAccordion
+                        key={week.name}
+                        week={week}
+                        handleAddLab={() => handleCreateLab(week)}
+                        handleDeleteLab={(labToDelete) =>
+                          handleDeleteLab(week, labToDelete)
+                        }
+                        blockId={params.blockId}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           <dialog
             id="create_week_modal"
             className={`modal ${isCreateWeekModalOpen ? "modal-open" : ""}`}
