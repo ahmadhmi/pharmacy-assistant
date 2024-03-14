@@ -1,10 +1,10 @@
 import { Gradesheet } from "./gradesheet";
 import { criteria } from "./criteria";
+import { Template } from "./template";
 
 export interface Lab{
     _id?:string,
     name?:string,
-    gradesheets?:Gradesheet[]
-    selectedTemplate?:criteria[],
-    markingTemplates?: criteria[][],
+    selectedTemplate?: Template,
+    markingTemplates?: Template[],
 }
