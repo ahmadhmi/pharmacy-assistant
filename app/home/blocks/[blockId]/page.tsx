@@ -371,7 +371,7 @@ export default function BlockPage({ params }: Props) {
               </form>
             </div>
           </dialog>
-          <dialog
+          {/* <dialog
             id="delete_lab_modal"
             className={`modal ${isCreateLabModalOpen ? "modal-open" : ""}`}
           >
@@ -397,7 +397,7 @@ export default function BlockPage({ params }: Props) {
                 </div>
               </form>
             </div>
-          </dialog>
+          </dialog> */}
         </div>
       </div>
     </div>
