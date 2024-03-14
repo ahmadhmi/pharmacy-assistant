@@ -1,5 +1,6 @@
 import { Lab } from "@/interfaces/Lab";
 import { Week } from "@/interfaces/week";
+import Link from "next/link";
 import React, { useState } from "react";
 import { FaRegTrashCan } from "react-icons/fa6";
 
@@ -7,10 +8,10 @@ interface Props {
   week: Week;
   handleAddLab: () => void;
   handleDeleteLab: (lab: Lab) => void;
-  handleViewLab: () => void;
+  blockId: string;
 }
 
-const WeekAccordion = ({ week, handleAddLab, handleDeleteLab, handleViewLab }: Props) => {
+const WeekAccordion = ({ week, handleAddLab, handleDeleteLab, blockId }: Props) => {
   return (
     <div key={week.name} className="collapse collapse-arrow bg-base-200">
       <input type="radio" name="my-accordion-2" defaultChecked />
@@ -19,7 +20,7 @@ const WeekAccordion = ({ week, handleAddLab, handleDeleteLab, handleViewLab }: P
       </div>
       <div className="collapse-content">
         <hr className="pt-3 pb-3" />
-        {!week.labs || week.labs!.length == 0 ? (
+        {(!week.labs || week.labs!.length == 0) ? (
           <p className="text-slate-100">
             No labs available currently.
             <button className="btn btn-primary ml-7" onClick={handleAddLab}>
@@ -44,7 +45,7 @@ const WeekAccordion = ({ week, handleAddLab, handleDeleteLab, handleViewLab }: P
             <div key={lab._id} className="flex justify-between items-center border p-5 rounded-lg mb-4">
               <h3 className="text-xl font-semibold">{lab.name}</h3>
               <div className="flex gap-3">
-                <button className="btn btn-primary w-20" onClick={handleViewLab}>View</button>
+                <Link href={`/home/blocks/${blockId}/${lab._id}`} className="btn btn-primary w-20">View</Link>
                 <button className="btn btn-active bg-red-700 w-12" onClick={() => handleDeleteLab(lab)}>
                   <FaRegTrashCan size={15} />
                 </button>
@@ -52,7 +53,7 @@ const WeekAccordion = ({ week, handleAddLab, handleDeleteLab, handleViewLab }: P
             </div>
           ))
         )}
-        {week.labs && (
+        {(week.labs && week.labs!.length !== 0) && (
           <div className="flex justify-center">
             <button
               className="btn btn-circle btn-success mt-3 text-2xl"

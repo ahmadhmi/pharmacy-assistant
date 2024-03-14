@@ -183,7 +183,7 @@ export async function POST(
         }       
         
         const body = await request.json(); 
-        const newWeek = await addWeek(params.blockId, body.week);
+        const newWeek = await addWeek(params.blockId, body);
         return NextResponse.json(newWeek, {
             status: 200,
         })

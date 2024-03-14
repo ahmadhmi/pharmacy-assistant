@@ -25,27 +25,65 @@ export default function BlockPage({ params }: Props) {
   const [selectedWeek, setSelectedWeek] = useState<Week | undefined>();
   const [errorOcurred, setErrorOcurred] = useState(false);
   const [labErrorOccurred, setLabErrorOccurred] = useState(false); // State to track lab errors
-  const [selectedLabToDelete, setSelectedLabToDelete] = useState<Week | undefined>();
+  const [selectedLabToDelete, setSelectedLabToDelete] = useState<
+    Week | undefined
+  >();
 
   const [isCreateWeekModalOpen, setCreateWeekModalOpen] = useState(false);
   const [isCreateLabModalOpen, setCreateLabModalOpen] = useState(false);
   const [deleteLabModalOpen, setDeleteLabModalOpen] = useState(false);
-
-
 
   const fetchBlock = async () => {
     const block = await axios.get<Block>(`/api/blocks/${params.blockId}`);
     setBlock(block.data);
   };
 
-  const patchBlock = async () => {
-    console.log("Patching block", block);
-    //await axios.patch(`/api/blocks/${params.blockId}`, block);
+  // const patchBlock = async () => {
+  //   console.log("Patching block", block);
+  //   //await axios.patch(`/api/blocks/${params.blockId}`, block);
+  // };
+
+  const postWeek = async (week: Week) => {
+    const res = await axios.post(`/api/blocks/${params.blockId}`, week);
+    const newWeek: Week = res.data;
+    // setBlock((prevBlock: Block | undefined) => {
+    //   const updatedWeeks = prevBlock?.weeks?.map((week) => {
+    //     if (week.name === newWeek.name) {
+    //       return newWeek;
+    //     }
+    //     return week;
+    //   });
+    //   return {
+    //     ...prevBlock,
+    //     weeks: updatedWeeks,
+    //     users: prevBlock?.users || [],
+    //   };
+    // });
+    return newWeek;
   };
 
-  const postWeek = async (week : Week) =>{
-    
-  }
+  const postLab = async (weekId: string, lab: Lab) => {
+    const res = await axios.post(`/api/blocks/${params.blockId}/${weekId}`, lab);
+    const newLab: Lab = res.data;
+    console.log(newLab);
+    return newLab;
+    // setBlock((prevBlock: Block | undefined) => {
+    //   const updatedWeeks = prevBlock?.weeks?.map((week) => {
+    //     if (week._id === weekId) {
+    //       return {
+    //         ...week,
+    //         labs: [...(week.labs || []), newLab],
+    //       };
+    //     }
+    //     return week;
+    //   });
+    //   return {
+    //     ...prevBlock,
+    //     weeks: updatedWeeks,
+    //     users: prevBlock?.users || [],
+    //   }
+    // });
+  };
 
   // const createWeekModal = document.getElementById(
   //   "create_week_modal"
@@ -60,49 +98,57 @@ export default function BlockPage({ params }: Props) {
     fetchBlock();
   }, [params.blockId]);
 
-  useEffect(() => {
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
-      return;
-    }
+  // useEffect(() => {
+  //   if (firstUpdate.current) {
+  //     firstUpdate.current = false;
+  //     return;
+  //   }
 
-    if (block) {
-      patchBlock();
-    }
-  }, [block]);
+  //   if (block) {
+  //     patchBlock();
+  //   }
+  // }, [block]);
 
-  const handleAddWeek = (event: FormEvent) => {
+  const handleAddWeek = async (event: FormEvent) => {
     event.preventDefault();
-
+    
     if (!block) return;
 
-    setBlock((prevBlock: Block | undefined) => {
-      const weekExists = prevBlock?.weeks?.some(
-        (week) => week.name === addedWeek
-      );
+    const weekExists = block?.weeks?.some((week) => week.name === addedWeek);
 
-      if (weekExists) {
-        setErrorOcurred(true);
-        console.log("Week already exists");
-        return prevBlock; // Return the current state if the week exists
-      } else {
-        const updatedWeeks = [
-          ...(prevBlock?.weeks || []),
-          {name: addedWeek },
-        ];
-        setErrorOcurred(false);
-        setAddedWeek("");
-        // createWeekModal?.close();
-        setCreateWeekModalOpen(false);
-        return {
-          ...prevBlock,
-          weeks: updatedWeeks,
-          users: prevBlock?.users || [],
-        };
-      }
-    });
-    const newWeek = { name: addedWeek, labs: [] };
+    if (weekExists) {
+      setErrorOcurred(true);
+      console.log("Week already exists");
+    } else {
+      setErrorOcurred(false);
+      const newWeek = { name: addedWeek, labs: [] };
+      const returnedWeek = await postWeek(newWeek);
+      const updatedWeeks = [...(block?.weeks || []), returnedWeek];
+      setBlock({ weeks: updatedWeeks, users: block?.users || [] });
+      setAddedWeek("");
+      setCreateWeekModalOpen(false);
+    }
 
+    // setBlock((prevBlock: Block | undefined) => {
+    //   if (weekExists) {
+    //     setErrorOcurred(true);
+    //     console.log("Week already exists");
+    //     return prevBlock; // Return the current state if the week exists
+    //   } else {
+    //     const updatedWeeks = [...(prevBlock?.weeks || []), { name: addedWeek }];
+    //     setErrorOcurred(false);
+    //     newWeek.name = addedWeek;
+    //     postWeek(newWeek);
+    //     setAddedWeek("");
+    //     // createWeekModal?.close();
+    //     setCreateWeekModalOpen(false);
+    //     return {
+    //       ...prevBlock,
+    //       weeks: updatedWeeks,
+    //       users: prevBlock?.users || [],
+    //     };
+    //   }
+    // });
   };
   const handleCreateLab = (week: Week) => {
     setSelectedWeek(week);
@@ -111,41 +157,66 @@ export default function BlockPage({ params }: Props) {
     console.log(week);
   };
 
-  const handleAddLab = (event: FormEvent) => {
+  const handleAddLab = async (event: FormEvent) => {
     event.preventDefault();
 
     if (!selectedWeek) return;
 
-    setBlock((prevBlock: Block | undefined) => {
-      const weekExists = prevBlock?.weeks?.some((week) =>
-        week.labs?.some((lab) => lab.name === addedLab)
-      );
+    const labExists = block?.weeks?.some((week) =>
+      week.labs?.some((lab) => lab.name === addedLab)
+    );
 
-      if (weekExists) {
-        setLabErrorOccurred(true);
-        console.log("Lab already exists in one of the weeks");
-        return prevBlock;
-      } else {
-        const updatedWeeks = prevBlock?.weeks?.map((week) => {
-          if (week.name === selectedWeek.name) {
-            return {
-              ...week,
-              labs: [...(week.labs || []), { _id: "", name: addedLab }],
-            };
-          }
-          return week;
-        });
-        setLabErrorOccurred(false);
-        setAddedLab("");
-        // createLabModal?.close();
-        setCreateLabModalOpen(false);
-        return {
-          ...prevBlock,
-          weeks: updatedWeeks,
-          users: prevBlock?.users || [],
-        };
-      }
-    });
+    if (labExists) {
+      setLabErrorOccurred(true);
+      console.log("Lab already exists in one of the weeks");
+    } else {
+      const weekId = selectedWeek._id!;
+      const newLab = await postLab(weekId, {name: addedLab} as Lab);
+      const updatedWeeks = block?.weeks?.map((week) => {
+        if (week.name === selectedWeek.name) {
+          return {
+            ...week,
+            labs: [...(week.labs || []), newLab],
+          };
+        }
+        return week;
+      });
+      setBlock({ weeks: updatedWeeks, users: block?.users || [] });
+      setLabErrorOccurred(false);
+      setAddedLab("");
+      setCreateLabModalOpen(false);
+    }
+
+    // setBlock((prevBlock: Block | undefined) => {
+    //   const weekExists = prevBlock?.weeks?.some((week) =>
+    //     week.labs?.some((lab) => lab.name === addedLab)
+    //   );
+
+    //   if (weekExists) {
+    //     setLabErrorOccurred(true);
+    //     console.log("Lab already exists in one of the weeks");
+    //     return prevBlock;
+    //   } else {
+    //     const updatedWeeks = prevBlock?.weeks?.map((week) => {
+    //       if (week.name === selectedWeek.name) {
+    //         return {
+    //           ...week,
+    //           labs: [...(week.labs || []), { name: addedLab }],
+    //         };
+    //       }
+    //       return week;
+    //     });
+    //     setLabErrorOccurred(false);
+    //     setAddedLab("");
+    //     // createLabModal?.close();
+    //     setCreateLabModalOpen(false);
+    //     return {
+    //       ...prevBlock,
+    //       weeks: updatedWeeks,
+    //       users: prevBlock?.users || [],
+    //     };
+    //   }
+    // });
   };
   const handleDeleteLab = (weekToDelete: Week, labToDelete: Lab) => {
     setBlock((prevBlock: Block | undefined) => {
@@ -163,9 +234,6 @@ export default function BlockPage({ params }: Props) {
     });
   };
 
-  const handleViewLab = (week: Week) => {
-    console.log("View lab", week);
-  };
   return (
     <div className="flex justify-center items-start text-slate-100 mt-10">
       <div className="card border justify-center shadow-xl w-full">
@@ -208,13 +276,17 @@ export default function BlockPage({ params }: Props) {
             ) : (
               <div className="flex flex-col gap-4">
                 {block?.weeks?.map((week) => (
-                  <WeekAccordion
-                    key={week.name}
-                    week={week}
-                    handleAddLab={() => handleCreateLab(week)}
-                    handleDeleteLab={(labToDelete) => handleDeleteLab(week, labToDelete)}
-                    handleViewLab={() => handleViewLab(week)}
-                  />
+                  <div>
+                    <WeekAccordion
+                      key={week.name}
+                      week={week}
+                      handleAddLab={() => handleCreateLab(week)}
+                      handleDeleteLab={(labToDelete) =>
+                        handleDeleteLab(week, labToDelete)
+                      }
+                      blockId={params.blockId}
+                    />
+                  </div>
                 ))}
               </div>
             )}
@@ -226,7 +298,10 @@ export default function BlockPage({ params }: Props) {
             <div className="modal-box text-white">
               <form method="dialog">
                 {/* if there is a button in form, it will close the modal */}
-                <button onClick={() => setCreateWeekModalOpen(false)} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                <button
+                  onClick={() => setCreateWeekModalOpen(false)}
+                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                >
                   ✕
                 </button>
               </form>
@@ -263,7 +338,10 @@ export default function BlockPage({ params }: Props) {
             <div className="modal-box text-white">
               <form method="dialog">
                 {/* if there is a button in form, it will close the modal */}
-                <button onClick={() => setCreateLabModalOpen(false)} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 ">
+                <button
+                  onClick={() => setCreateLabModalOpen(false)}
+                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 "
+                >
                   ✕
                 </button>
               </form>
@@ -299,8 +377,10 @@ export default function BlockPage({ params }: Props) {
           >
             <div className="modal-box text-white">
               <form method="dialog">
-                {/* if there is a button in form, it will close the modal */}
-                <button onClick={() => setCreateLabModalOpen(false)} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 ">
+                <button
+                  onClick={() => setCreateLabModalOpen(false)}
+                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 "
+                >
                   ✕
                 </button>
               </form>

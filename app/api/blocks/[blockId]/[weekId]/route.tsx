@@ -29,7 +29,7 @@ export async function POST(request: NextRequest, { params }: Props) {
         }       
         
         const body = await request.json(); 
-        const newLab = await addLab(params.blockId, params.weekId, body.lab);
+        const newLab = await addLab(params.blockId, params.weekId, body);
         return NextResponse.json(newLab, {
             status: 200,
         })
