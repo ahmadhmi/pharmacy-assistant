@@ -381,7 +381,7 @@ export async function addStudent(blockId, student) {
       return null;
     }  
 
-    const newStudent = { _id: new ObjectId(), ...student}; 
+    const newStudent = {student}; 
 
     const result = await collection.updateOne(
       { _id: new ObjectId(blockId) },
@@ -439,11 +439,10 @@ export async function addWeek(blockId, week) {
     const newWeek = { 
       _id: new ObjectId(), 
       ...week, 
-      labs: []
     };
 
     const result = await collection.updateOne(
-      { _id: new ObjectId(blockId) }, //not sure if blockID is string or not
+      { _id: new ObjectId(blockId) },
       { $push: {weeks: newWeek} }
     );
 
@@ -493,8 +492,9 @@ export async function addLab(blockId, weekId, lab) {
     //await client.connect();
     let collection = db.collection("blocks");
     const newLab = { _id: new ObjectId(), ...lab };
+   
     const result = await collection.updateOne(
-      { _id: newObjectId(blockId), "weeks._id": newObjectId(weekId) },
+      { _id: new ObjectId(blockId), "weeks._id": new ObjectId(weekId) },
       { $push: { "weeks.$.labs": newLab } }
     );
 
