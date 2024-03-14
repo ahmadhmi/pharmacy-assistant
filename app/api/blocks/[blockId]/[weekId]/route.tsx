@@ -1,3 +1,6 @@
+"use server";
+
+import "server-only"; 
 // api for deleteWeek, updateWeek?, addLab
 import { getBlock, deleteWeek, addLab } from "@/app/_services/databaseService";
 import authOptions from "@/app/auth/authOptions";

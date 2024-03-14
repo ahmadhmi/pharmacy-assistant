@@ -1,4 +1,8 @@
-import { getBlock } from "@/app/_services/databaseService";
+"use server";
+
+import "server-only"; 
+import { getBlock, deleteLab } from "@/app/_services/databaseService";
+
 import authOptions from "@/app/auth/authOptions";
 import { Lab } from "@/interfaces/Lab";
 import { Week } from "@/interfaces/week";
@@ -8,6 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 interface Props {
     params: {
         blockId: string;
+        weekId: string;
         labId: string;
     };
 }
@@ -53,4 +58,35 @@ export async function GET(request: NextRequest, { params }: Props) {
         });
     }
 }
+
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: { blockId: string, weekId: string, labId: string } } 
+    ) {
+        const session = await getServerSession(authOptions);
+  
+    try {
+      if (!session || !session.user) {
+        throw new Error("User is not authenticated");
+      };
+  
+      const block = await getBlock(params.blockId);
+      if (!block) {
+        throw new Error("Block with the provided ID is not found");
+      };
+  
+      if (!block.users.includes(session.user.email)) {
+        throw new Error("User does not have permission for this block");
+      }
+
+      const result = await deleteLab(params.blockId, params.weekId, params.labId);
+      return NextResponse.json(result, {
+        status: 200,
+      });
+    } catch (ex: any) {
+        return NextResponse.json(ex, {
+            status: 500,
+        });
+    }
+}    
 
