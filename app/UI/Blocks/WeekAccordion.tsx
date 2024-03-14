@@ -1,3 +1,4 @@
+import { Lab } from "@/interfaces/Lab";
 import { Week } from "@/interfaces/week";
 import React, { useState } from "react";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -5,7 +6,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 interface Props {
   week: Week;
   handleAddLab: () => void;
-  handleDeleteLab: () => void;
+  handleDeleteLab: (lab: Lab) => void;
   handleViewLab: () => void;
 }
 
@@ -44,7 +45,7 @@ const WeekAccordion = ({ week, handleAddLab, handleDeleteLab, handleViewLab }: P
               <h3 className="text-xl font-semibold">{lab.name}</h3>
               <div className="flex gap-3">
                 <button className="btn btn-primary w-20" onClick={handleViewLab}>View</button>
-                <button className="btn btn-active bg-red-700 w-12" onClick={handleDeleteLab}>
+                <button className="btn btn-active bg-red-700 w-12" onClick={() => handleDeleteLab(lab)}>
                   <FaRegTrashCan size={15} />
                 </button>
               </div>
