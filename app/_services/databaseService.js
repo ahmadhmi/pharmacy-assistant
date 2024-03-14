@@ -539,3 +539,99 @@ export async function deleteLab(blockId, weekId, labId) {
     //await client.close();
   }
 }
+
+//get lab with specified id, returns lab or null
+export async function getLab(blockId, weekId, labId) {
+  try {
+    //await client.connect();
+    let collection = db.collection("blocks");
+
+    const retrievedDoc = await collection.aggregate(
+      [
+        {
+          $match: {_id: new ObjectId(blockId)}
+        },
+        {
+          $unwind: "$weeks"
+        },
+        {
+          $match: {"weeks._id": new ObjectId(weekId)}
+        },
+        {
+          $unwind: "$weeks.labs"
+        },
+        {
+          $match: {"weeks.labs._id": new ObjectId(labId)}
+        },
+        { $replaceRoot: { newRoot: '$weeks.labs' } }
+      ]
+    ).toArray(); 
+
+    const lab = {
+      _id: retrievedDoc[0]._id,
+      name: retrievedDoc[0].name,
+      selectedTemplate: retrievedDoc[0].selectedTemplate,
+      markingTemplates: retrievedDoc[0].markingTemplates,
+    }
+
+  if(retrievedDoc){
+    return lab; 
+  }
+  } catch (error) {
+    console.log("GetLab failed with an error\n" + error.message);
+    return null;
+  } finally {
+    //await client.close();
+  }
+}
+
+// set the marking template for a specific lab, return true or false
+export async function setTemplate(blockId, weekId, labId, template) {
+  try {
+    //await client.connect();
+    let collection = db.collection("blocks");
+    const result = await collection.updateOne(
+      { _id: new ObjectId(blockId), weeks: { $elemMatch: { _id: new ObjectId(weekId), 'labs._id': new ObjectId(labId) } } },
+      { $set: { 'weeks.$[weekElem].labs.$[labElem].selectedTemplate': template } },
+      { arrayFilters: [{ 'weekElem._id': new ObjectId(weekId) }, { 'labElem._id': new ObjectId(labId) }] }
+  );
+
+    if (result.modifiedCount === 1) {
+      console.log("Successfully a new lab has been inserted");
+      return true;
+    } else {
+      console.log("No lab has been inserted");
+      return false;
+    }
+  } catch (error) {
+    console.log("Failed to add with error\n" + error.message);
+    return false;
+  } finally {
+    //await client.close();
+  }
+}
+
+export async function setMarkingTemplates(blockId, weekId, labId, templates) {
+  try {
+    //await client.connect();
+    let collection = db.collection("blocks");
+    const result = await collection.updateOne(
+      { _id: new ObjectId(blockId), weeks: { $elemMatch: { _id: new ObjectId(weekId), 'labs._id': new ObjectId(labId) } } },
+      { $set: { 'weeks.$[weekElem].labs.$[labElem].markingTemplates': templates } },
+      { arrayFilters: [{ 'weekElem._id': new ObjectId(weekId) }, { 'labElem._id': new ObjectId(labId) }] }
+  );
+
+    if (result.modifiedCount === 1) {
+      console.log("Successfully a new lab has been inserted");
+      return newLab;
+    } else {
+      console.log("No lab has been inserted");
+      return null;
+    }
+  } catch (error) {
+    console.log("Failed to add with error\n" + error.message);
+    return null;
+  } finally {
+    //await client.close();
+  }
+}
