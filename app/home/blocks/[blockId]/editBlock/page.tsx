@@ -2,12 +2,8 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Block } from "@/interfaces/block";
 import axios from "axios";
-import CreateBlock from "@/app/UI/Blocks/CreateBlock";
-import { useBlocksContext } from "@/app/_utils/blocks-context";
-import { useSession } from "next-auth/react";
-import { LabData } from "@/types/LabData";
+import * as XLSX from "xlsx";
 import { Student } from "@/interfaces/student";
-import { set } from "mongoose";
 import { MdDelete } from "react-icons/md";
 
 interface Props {
@@ -15,9 +11,6 @@ interface Props {
 }
 
 export default function EditBlock({ params }: Props) {
-  const { blocks, selectedBlock } = useBlocksContext();
-  const { data: session } = useSession();
-  console.log(session);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [studentID, setStudentID] = useState("");
@@ -39,11 +32,32 @@ export default function EditBlock({ params }: Props) {
     setUsers(block.data.users);
   };
 
-  console.log(block);
-
   useEffect(() => {
     fetchBlock();
   }, [params.blockId]);
+
+  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const data = e.target?.result;
+        const workbook = XLSX.read(data, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const json = XLSX.utils.sheet_to_json(sheet);
+        const students: Student[] = json.map((student: any) => {
+          return {
+            _id: student["Student ID"],
+            firstName: student["First Name"],
+            lastName: student["Last Name"],
+          };
+        });
+        setStudents(students);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  };
 
   const handleFirstNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFirstName(event.target.value);
@@ -186,6 +200,8 @@ export default function EditBlock({ params }: Props) {
                   type="file"
                   className="file-input file-input-bordered file-input-primary w-full max-w-xs border-gray-300 shadow-xl"
                   placeholder="No"
+                  onChange={handleFileUpload}
+                  accept=".xlsx, .xls"
                 />
               </div>
               <div className="flex flex-row items-center w-full my-4">
@@ -287,14 +303,26 @@ export default function EditBlock({ params }: Props) {
                   ))}
                 </div>
               ) : (
-                <div className="bg-red-500 p-4">
-                  <p className="text-black">
+                <div role="alert" className="alert alert-warning">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="stroke-current shrink-0 h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                  <span>
                     There are currently no students. Please add some students in
                     the block.
-                  </p>
+                  </span>
                 </div>
               )}
-              {}
             </div>
           </div>
           <hr />
