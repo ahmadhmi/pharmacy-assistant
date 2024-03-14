@@ -1,3 +1,6 @@
+"use server";
+
+import "server-only"; 
 import {
     getBlock,
     getLab,
@@ -96,54 +99,9 @@ export async function GET() {
         if (!session) {
             throw { error: "User is not authenticated to test" };
         }
-        const retrieved = await setTemplate(
+        const retrieved = await getBlock(
             "65cbe1af929966312830eea0",
-            "65f0d7df13b0cb9b105afcae",
-            "65e6c4517fdb6a053a93de8a",
-            {
-                    name: "Default",
-                    description:
-                        "The default marking template as specified by a physical sample from the pharmacy assistant program",
-                    criteria: [
-                        {
-                            name: "Drug Selected",
-                            pass: false,
-                        },
-                        {
-                            name: "Patient Profile",
-                            pass: false,
-                        },
-                        {
-                            name: "Prescriber",
-                            pass: false,
-                        },
-                        {
-                            name: "Sig",
-                            pass: false,
-                        },
-                        {
-                            name: "Dispense Quantity",
-                            pass: false,
-                        },
-                        {
-                            name: "Billing Procedure",
-                            pass: false,
-                        },
-                        {
-                            name: "Auxiliary Labels",
-                            pass: false,
-                        },
-                        {
-                            name: "Accurate Drug Monograph",
-                            pass: false,
-                        },
-                        {
-                            name: "Question",
-                            pass: false,
-                        },
-                    ],
-                },
-        );
+            );
         return NextResponse.json(
             { ...retrieved, time: new Date().getTime() },
             {

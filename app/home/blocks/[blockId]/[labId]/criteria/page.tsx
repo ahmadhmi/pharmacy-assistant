@@ -1,5 +1,4 @@
 "use client";
-import { setMarkingTemplates } from "@/app/_services/databaseService";
 import { Lab } from "@/interfaces/Lab";
 import { criteria } from "@/interfaces/criteria";
 import { Template } from "@/interfaces/template";

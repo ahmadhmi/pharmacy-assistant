@@ -1,3 +1,6 @@
+"use server";
+
+import "server-only"; 
 import {
   addGradeSheet,
   getAllGradeSheets,

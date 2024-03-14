@@ -1,3 +1,6 @@
+"use server";
+
+import "server-only"; 
 import { getBlock, setTemplate } from "@/app/_services/databaseService";
 import authOptions from "@/app/auth/authOptions";
 import { Block } from "@/interfaces/block";

@@ -1,4 +1,5 @@
 "use server";
+import "server-only";
 import { Filter, MongoClient, ObjectId } from "mongodb";
 import { User } from "next-auth";
 import { getServerSession } from "next-auth";

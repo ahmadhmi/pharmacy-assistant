@@ -8,6 +8,7 @@ import { VscError, VscLoading } from "react-icons/vsc";
 import Link from "next/link";
 import { Block } from "@/interfaces/block";
 import { Student } from "@/interfaces/student";
+import { getBlock } from "@/app/_services/databaseService";
 
 interface Props {
     params: {
@@ -50,7 +51,7 @@ export default function Grading({ params }: Props) {
                 setBlock(block); 
             }
         }catch(error:any){
-            setError(error.response.data.error); 
+            setError(error.response?.data.error); 
         }
     }
 
@@ -72,27 +73,32 @@ export default function Grading({ params }: Props) {
     }
 
     async function fetchGradesheets() {
-        const data = (
-            await axios.get(
-                `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
-            )
-        ).data;
-        if (data) {
-            const result = data.reduce(
-                (
-                    groupedGradeSheets: Record<string, Gradesheet[]>,
-                    gradeSheet: Gradesheet
-                ) => {
-                    const studentID = gradeSheet.studentID;
-                    if (groupedGradeSheets[studentID] == null)
-                        groupedGradeSheets[studentID] = [];
-                    groupedGradeSheets[studentID].push(gradeSheet);
-                    return groupedGradeSheets;
-                },
-                {}
-            );
-            setGradeSheets(result);
+        try{
+            const data = (
+                await axios.get(
+                    `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
+                )
+            ).data;
+            if (data) {
+                const result = data.reduce(
+                    (
+                        groupedGradeSheets: Record<string, Gradesheet[]>,
+                        gradeSheet: Gradesheet
+                    ) => {
+                        const studentID = gradeSheet.studentID;
+                        if (groupedGradeSheets[studentID] == null)
+                            groupedGradeSheets[studentID] = [];
+                        groupedGradeSheets[studentID].push(gradeSheet);
+                        return groupedGradeSheets;
+                    },
+                    {}
+                );
+                setGradeSheets(result);
+            }
+        }catch(error:any){
+            setError(error.response?.data.error)
         }
+
     }
 
     async function handleStartGrading(e: FormEvent) {
@@ -140,7 +146,7 @@ export default function Grading({ params }: Props) {
         fetchGradesheets();
     }, []);
 
-    if (lab) {
+    if (block && lab) {
         return (
             <section className="flex-col items-center">
                 <div
