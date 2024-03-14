@@ -208,7 +208,8 @@ export default function LabPage({ params }: Props) {
                     <></>
                 )}
 
-                <div className=" flex justify-center w-100% mt-4 gap-3">
+               
+            </div> <div className=" flex justify-center w-100% mt-4 gap-3">
                     <PDFDownloadLink document={<PDFFile />}>
                         {" "}
                         <MyButton text="Export" />
@@ -220,7 +221,6 @@ export default function LabPage({ params }: Props) {
                         <MyButton text="Grading" />
                     </Link>
                 </div>
-            </div>
         </section>
     );
 }
