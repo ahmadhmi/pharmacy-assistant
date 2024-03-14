@@ -242,7 +242,9 @@ export default function EditBlock({ params }: Props) {
                 </button>
               </form>
 
-              {students !== undefined && students!.length > 0 ? (
+              {students !== null &&
+              students !== undefined &&
+              students!.length > 0 ? (
                 <div className="w-full mt-6">
                   {students?.map((student, index) => (
                     <div key={index} className="flex items-center">
@@ -348,7 +350,10 @@ export default function EditBlock({ params }: Props) {
               {users !== undefined && (
                 <div className="p-4">
                   {users.map((user, index) => (
-                    <div className="flex" key={index}>
+                    <div
+                      className="flex"
+                      key={index}
+                    >
                       <p className="bg-gray-200 rounded-md p-3 mb-2">{user}</p>
                       <button
                         className="btn btn-outline btn-error ml-2"
