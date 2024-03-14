@@ -1,3 +1,6 @@
+"use server";
+
+import "server-only"; 
 import { deleteStudent, getBlock } from "@/app/_services/databaseService";
 import authOptions from "@/app/auth/authOptions";
 import { getServerSession } from "next-auth";

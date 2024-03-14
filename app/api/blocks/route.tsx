@@ -1,4 +1,6 @@
-"use server"; 
+"use server";
+
+import "server-only";  
 import { NextRequest, NextResponse } from "next/server";
 import { getAllBlocks, addBlock } from "@/app/_services/databaseService";
 import { getServerSession } from "next-auth";
