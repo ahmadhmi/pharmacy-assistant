@@ -5,6 +5,7 @@ import { Lab } from "@/interfaces/Lab";
 import { Block } from "@/interfaces/block";
 import { Week } from "@/interfaces/week";
 import axios from "axios";
+import { set } from "mongoose";
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
@@ -28,7 +29,6 @@ export default function BlockPage({ params }: Props) {
   const [isCreateLabModalOpen, setCreateLabModalOpen] = useState(false);
   const [deleteLabModalOpen, setDeleteLabModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
 
   const fetchBlock = async () => {
     setIsLoading(true);
@@ -41,34 +41,53 @@ export default function BlockPage({ params }: Props) {
     setIsLoading(false);
   };
 
-
   const postWeek = async (week: Week) => {
-    const res = await axios.post(`/api/blocks/${params.blockId}`, week);
-    const newWeek: Week = res.data;
-    return newWeek;
+    setIsLoading(true);
+    try {
+      const res = await axios.post(`/api/blocks/${params.blockId}`, week);
+      const newWeek: Week = res.data;
+      setIsLoading(false);
+      return newWeek;
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
   };
 
   const postLab = async (weekId: string, lab: Lab) => {
-    const res = await axios.post(
-      `/api/blocks/${params.blockId}/${weekId}`,
-      lab
-    );
-    const newLab: Lab = res.data;
-    console.log(newLab);
-    return newLab;
+    setIsLoading(true);
+    try {
+      const res = await axios.post(
+        `/api/blocks/${params.blockId}/${weekId}`,
+        lab
+      );
+      const newLab: Lab = res.data;
+      console.log(newLab);
+      setIsLoading(false);
+      return newLab;
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
   };
 
   const deleteLab = async (week: Week, lab: Lab) => {
-    const res = await axios.delete(
-      `/api/blocks/${params.blockId}/${week._id}/${lab._id}`
-    );
-    return res.data;
+    setIsLoading(true);
+    try {
+      const res = await axios.delete(
+        `/api/blocks/${params.blockId}/${week._id}/${lab._id}`
+      );
+      setIsLoading(false);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchBlock();
   }, [params.blockId]);
-
 
   const handleAddWeek = async (event: FormEvent) => {
     event.preventDefault();
@@ -89,7 +108,6 @@ export default function BlockPage({ params }: Props) {
       setAddedWeek("");
       setCreateWeekModalOpen(false);
     }
-
   };
   const handleCreateLab = (week: Week) => {
     setSelectedWeek(week);
@@ -154,7 +172,6 @@ export default function BlockPage({ params }: Props) {
       setBlock({ weeks: updatedWeeks, users: block?.users || [] });
     }
     setDeleteLabModalOpen(false);
-
   };
 
   return (
@@ -234,6 +251,7 @@ export default function BlockPage({ params }: Props) {
                 <button
                   onClick={() => setCreateWeekModalOpen(false)}
                   className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                  disabled={isLoading}
                 >
                   ✕
                 </button>
@@ -252,7 +270,11 @@ export default function BlockPage({ params }: Props) {
                     value={addedWeek}
                     onChange={(e) => setAddedWeek(e.target.value)}
                   />
-                  <button type="submit" className="btn btn-primary">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={isLoading}
+                  >
                     Create
                   </button>
                 </div>
@@ -273,6 +295,7 @@ export default function BlockPage({ params }: Props) {
                 <button
                   onClick={() => setCreateLabModalOpen(false)}
                   className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 "
+                  disabled={isLoading}
                 >
                   ✕
                 </button>
@@ -291,7 +314,11 @@ export default function BlockPage({ params }: Props) {
                     value={addedLab}
                     onChange={(e) => setAddedLab(e.target.value)}
                   />
-                  <button type="submit" className="btn btn-primary">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={isLoading}
+                  >
                     Create
                   </button>
                 </div>
@@ -312,6 +339,7 @@ export default function BlockPage({ params }: Props) {
                 <button
                   onClick={() => setDeleteLabModalOpen(false)}
                   className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 "
+                  disabled={isLoading}
                 >
                   ✕
                 </button>
@@ -322,7 +350,11 @@ export default function BlockPage({ params }: Props) {
               >
                 <div className="flex justify-between gap-2 items-center">
                   <p>Do you want to delete {selectedLabToDelete?.name}?</p>
-                  <button type="submit" className="btn btn-error">
+                  <button
+                    type="submit"
+                    className="btn btn-error"
+                    disabled={isLoading}
+                  >
                     Delete
                   </button>
                 </div>
