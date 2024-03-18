@@ -11,6 +11,8 @@ const client = new MongoClient(url);
 await client.connect(); 
 var db = client.db(process.env.MONGO_CONNECTION_DATABASE);
 
+process.on("beforeExit", async () => {await client.close(); console.log("closed db connection")})
+
 // async function requestClose(){
 //     await client.close(); 
 //     console.log("closed"); 
@@ -592,20 +594,22 @@ export async function setTemplate(blockId, weekId, labId, template) {
     //await client.connect();
     let collection = db.collection("blocks");
     const result = await collection.updateOne(
-      { _id: new ObjectId(blockId), weeks: { $elemMatch: { _id: new ObjectId(weekId), 'labs._id': new ObjectId(labId) } } },
+      { _id: new ObjectId(blockId), weeks: { $elemMatch: { _id: weekId, 'labs._id': labId } } },
       { $set: { 'weeks.$[weekElem].labs.$[labElem].selectedTemplate': template } },
       { arrayFilters: [{ 'weekElem._id': new ObjectId(weekId) }, { 'labElem._id': new ObjectId(labId) }] }
-  );
+    );
+  console.log(template)
+  console.log(result)
 
     if (result.modifiedCount === 1) {
-      console.log("Successfully a new lab has been inserted");
+      console.log("Successfully updated a template");
       return true;
     } else {
-      console.log("No lab has been inserted");
+      console.log("No template has been updated");
       return false;
     }
   } catch (error) {
-    console.log("Failed to add with error\n" + error.message);
+    console.log("Failed to update template with error\n" + error.message);
     return false;
   } finally {
     //await client.close();
@@ -621,6 +625,7 @@ export async function setMarkingTemplates(blockId, weekId, labId, templates) {
       { $set: { 'weeks.$[weekElem].labs.$[labElem].markingTemplates': templates } },
       { arrayFilters: [{ 'weekElem._id': new ObjectId(weekId) }, { 'labElem._id': new ObjectId(labId) }] }
   );
+  console.log(result); 
 
     if (result.modifiedCount === 1) {
       console.log("Successfully a new lab has been inserted");

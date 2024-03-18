@@ -45,7 +45,7 @@ const WeekAccordion = ({ week, handleAddLab, handleDeleteLab, blockId }: Props) 
             <div key={lab._id} className="flex justify-between items-center border p-5 rounded-lg mb-4">
               <h3 className="text-xl font-semibold">{lab.name}</h3>
               <div className="flex gap-3">
-                <Link href={`/home/blocks/${blockId}/${lab._id}`} className="btn btn-primary w-20">View</Link>
+                <Link href={`/home/blocks/${blockId}/${week._id}/${lab._id}`} className="btn btn-primary w-20">View</Link>
                 <button className="btn btn-active bg-red-700 w-12" onClick={() => handleDeleteLab(lab)}>
                   <FaRegTrashCan size={15} />
                 </button>

@@ -13,7 +13,7 @@ import { NextResponse } from "next/server";
 
 let markingTemplates = [
     {
-        name: "Default",
+        name: "Default 2",
         description:
             "The default marking template as specified by a physical sample from the pharmacy assistant program",
         criteria: [
@@ -99,11 +99,15 @@ export async function GET() {
         if (!session) {
             throw { error: "User is not authenticated to test" };
         }
-        const retrieved = await getBlock(
+        const retrieved = await setTemplate(
             "65cbe1af929966312830eea0",
+            "65f0d7df13b0cb9b105afcae",
+            "65e6c4517fdb6a053a93de8a",
+            markingTemplates[1]
+
             );
         return NextResponse.json(
-            { ...retrieved, time: new Date().getTime() },
+            { retrieved, time: new Date().getTime() },
             {
                 status: 200,
             }

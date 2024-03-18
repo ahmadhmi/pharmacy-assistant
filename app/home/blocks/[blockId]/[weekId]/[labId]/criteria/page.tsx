@@ -9,8 +9,9 @@ import { VscCheck, VscTrash } from "react-icons/vsc";
 
 interface Props {
     params: {
-        blockId: string;
-        labId: string;
+        blockId: string,
+        weekId:string,
+        labId: string,
     };
 }
 
@@ -115,7 +116,7 @@ export default function Criteria({ params }: Props) {
         );
         setLab(retrievedLab.data);
         setMarkingTemplates(retrievedLab.data.markingTemplates);
-        setSelectedTemplate(retrievedLab.data.selectedTemplate);
+        setSelectedTemplate((retrievedLab.data.markingTemplates.find((template:Template) => template.name === retrievedLab.data.selectedTemplate.name) ));
     }
 
     async function saveSelection() {
@@ -138,7 +139,16 @@ export default function Criteria({ params }: Props) {
                 return prevMarkingTemplates;
             }
         });
-        setSelectedTemplate(newTemplate);
+        setSelectedTemplate(() => newTemplate);
+
+        //save it in the database
+        try{
+            console.log("Here front")
+            //await axios.patch(`/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/criteria/`, markingTemplates);
+            await axios.put(`/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/criteria/`, newTemplate); 
+        } catch(error){
+            console.log(error); 
+        }
     }
 
     useEffect(() => {
