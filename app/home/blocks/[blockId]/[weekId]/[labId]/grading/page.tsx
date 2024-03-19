@@ -135,7 +135,7 @@ export default function Grading({ params }: Props) {
         }
 
         if (response?.data) {
-            let redirectUrl = `/home/blocks/${params.blockId}/${params.labId}/grading/${response.data._id}`;
+            let redirectUrl = `/home/blocks/${params.blockId}/${params.labId}/${params.weekId}/grading/${response.data._id}`;
             router.push(redirectUrl);
         }
     }
