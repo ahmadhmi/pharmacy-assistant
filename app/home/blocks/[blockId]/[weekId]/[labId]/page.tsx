@@ -192,7 +192,7 @@ export default function LabPage({ params }: Props) {
                                         </p>
                                         <div>
                                             <Link
-                                                href={`/home/blocks/${params.blockId}/${params.labId}/grading/${gradesheet._id}`}
+                                                href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/${gradesheet._id}`}
                                             >
                                                 <button className="btn btn-sm">
                                                     Edit
@@ -216,7 +216,7 @@ export default function LabPage({ params }: Props) {
                     </PDFDownloadLink>
 
                     <Link
-                        href={`/home/blocks/${params.blockId}/${params.labId}/grading/`}
+                        href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/`}
                     >
                         <MyButton text="Grading" />
                     </Link>
