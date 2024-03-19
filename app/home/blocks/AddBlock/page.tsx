@@ -26,6 +26,9 @@ export default function AddBlock() {
     setEmails([...emails, email.trim().toLowerCase()]); 
     setEmail("");
   }
+  function handleDeleteEmail(email:string){
+    setEmails(emails => emails.filter(e => e !== email));
+  }
 
   return (
     <section className="flex flex-col items-center sm:items-start">
@@ -67,7 +70,7 @@ export default function AddBlock() {
           return (
           <div key={email} className="flex flex-row justify-between items-center badge badge-primary w-full rounded-md p-4">
             <p className="text-lg">{email}</p>
-            <button className=""><VscTrash size={20}></VscTrash></button>
+            <button className="" onClick={ () => handleDeleteEmail(email)}><VscTrash size={20}></VscTrash></button>
           </div>
           )
         })
