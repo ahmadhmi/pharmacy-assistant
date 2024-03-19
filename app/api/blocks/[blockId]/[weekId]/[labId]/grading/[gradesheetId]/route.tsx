@@ -30,8 +30,10 @@ export async function GET(request:NextRequest, {params}:Props){
                         labs = labs.concat(week.labs);
                     }
                 }
+ 
                 //if lab provided is part of the labs available for that block, get gradesheet
-                const lab = labs.filter((lab) => lab._id?.toString() === params.labId)[0]; 
+                const lab = labs.find((lab) => lab._id === params.labId); 
+                console.log(labs);
                 if(lab){
                     const found = await getGradeSheet(params.gradesheetId);
                     if(found && found?.labId === params.labId){
@@ -44,6 +46,8 @@ export async function GET(request:NextRequest, {params}:Props){
                     }else{
                         throw {error: "Requested gradesheet does not belong to lab specified"}
                     }
+                }else{
+                    throw {error: "No lab found"}
                 }   
             }else{
                 throw {error: `Block does not belong to ${session.user.name} or block does not exist`}
