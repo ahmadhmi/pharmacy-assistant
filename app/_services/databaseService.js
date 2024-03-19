@@ -8,7 +8,8 @@ import authOptions from "@/app/auth/authOptions";
 //const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
 const url = process.env.MONGODB_URI;
 const client = new MongoClient(url);
-await client.connect(); 
+const onStart = async () => await client.connect(); 
+onStart(); 
 var db = client.db(process.env.MONGO_CONNECTION_DATABASE);
 
 process.on("beforeExit", async () => {await client.close(); console.log("closed db connection")})
