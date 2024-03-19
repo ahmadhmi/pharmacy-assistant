@@ -176,7 +176,7 @@ export default function Grade({ params }: Props) {
                 setComment("");
                 setStateDefaultCriteria([]);
                 router.push(
-                    `/home/blocks/${params.blockId}/${params.labId}/grading`
+                    `/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
                 );
             } else {
                 alert("Failed to submit");
@@ -380,7 +380,7 @@ export default function Grade({ params }: Props) {
                     if (!gradesheet) {
                         setError("");
                         router.push(
-                            `/home/blocks/${params.blockId}/${params.labId}/grading`
+                            `/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
                         );
                     }
                 }}

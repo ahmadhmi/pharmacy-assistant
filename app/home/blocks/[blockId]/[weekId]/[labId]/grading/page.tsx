@@ -135,7 +135,7 @@ export default function Grading({ params }: Props) {
         }
 
         if (response?.data) {
-            let redirectUrl = `/home/blocks/${params.blockId}/${params.labId}/${params.weekId}/grading/${response.data._id}`;
+            let redirectUrl = `/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/${response.data._id}`;
             router.push(redirectUrl);
         }
     }
@@ -191,7 +191,7 @@ export default function Grading({ params }: Props) {
                                                     <div>
                                                         <Link
                                                             className="btn btn-sm px-12 btn-outline bg-black"
-                                                            href={`/home/blocks/${params.blockId}/${params.labId}/grading/${gradesheet._id}`}
+                                                            href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/${gradesheet._id}`}
                                                         >
                                                             Edit
                                                         </Link>
