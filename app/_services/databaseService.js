@@ -642,3 +642,75 @@ export async function setMarkingTemplates(blockId, weekId, labId, templates) {
     //await client.close();
   }
 }
+
+// add a new field "markingTemplates" in a lab with a specific ID, return true or false
+export async function addMarkingTemplatesField (blockId, weekId, labId) {
+  try {
+    await client.connect();
+    let collection = db.collection("blocks");
+    const result = await collection.updateOne(
+        { 
+          "_id": new ObjectId(blockId)
+        },
+        { $set: {"weeks.$[weeks].labs.$[labs].markingTemplates": [] } },
+        { arrayFilters: [
+          { "weeks._id": new ObjectId(weekId) },
+          { "labs._id": new ObjectId(labId) }
+        ]}
+    );
+
+    if (result.modifiedCount === 1) {
+        console.log("Successfully a new field had been created in the lab");
+        return true;
+    } else {
+        console.log("No lab found with the specified ID or the field already exists");
+        return false;
+    }
+  } catch (error) {
+    console.log("Add failed with an error\n" + error.message);
+    return false;
+  } finally {
+    await client.close();
+  }
+}
+
+// add a new field "selectedTemplate" in a lab with a specific ID, return true or false
+export async function addSelectedTemplateField (blockId, weekId, labId) {
+  try {
+    await client.connect();
+    let collection = db.collection("blocks");
+    const result = await collection.updateOne(
+      { 
+        "_id": new ObjectId(blockId) 
+      },
+      { $set: {"weeks.$[weeks].labs.$[labs].selectedTemplate": new Object() } },
+      { arrayFilters: [
+        { "weeks._id": new ObjectId(weekId) },
+        { "labs._id": new ObjectId(labId) }
+      ]}
+    );
+
+    if (result.modifiedCount === 1) {
+      console.log("Successfully a new field had been created in the lab");
+      return true;
+    } else {
+      console.log("No lab found with the specified ID or the field already exists");
+      return false;
+    }
+  } catch (error) {
+    console.log("Add failed with an error\n" + error.message);
+  } finally {
+    await client.close();
+  }
+}
+
+// async function main() {
+//   let blockId = "65f9da4e7f4662fafa44a0fb";
+//   let weekId = "65f9db4e7f4662fafa44a0fc";
+//   let labId = "65f9db777f4662fafa44a0fd";
+//   let result = await addSelectedTemplateField(blockId, weekId, labId);
+//   let result2 = await addMarkingTemplatesField(blockId, weekId, labId);
+//   console.log(result);
+//   console.log(result2);
+// }
+// main();
