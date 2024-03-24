@@ -646,7 +646,7 @@ export async function setMarkingTemplates(blockId, weekId, labId, templates) {
 // add a new field "markingTemplates" in a lab with a specific ID, return true or false
 export async function addMarkingTemplatesField (blockId, weekId, labId) {
   try {
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("blocks");
     const result = await collection.updateOne(
         { 
@@ -670,14 +670,14 @@ export async function addMarkingTemplatesField (blockId, weekId, labId) {
     console.log("Add failed with an error\n" + error.message);
     return false;
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
 // add a new field "selectedTemplate" in a lab with a specific ID, return true or false
 export async function addSelectedTemplateField (blockId, weekId, labId) {
   try {
-    await client.connect();
+    //await client.connect();
     let collection = db.collection("blocks");
     const result = await collection.updateOne(
       { 
@@ -700,7 +700,7 @@ export async function addSelectedTemplateField (blockId, weekId, labId) {
   } catch (error) {
     console.log("Add failed with an error\n" + error.message);
   } finally {
-    await client.close();
+    //await client.close();
   }
 }
 
