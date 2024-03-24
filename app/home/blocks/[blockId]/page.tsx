@@ -18,16 +18,18 @@ interface Props {
 }
 
 export default function BlockPage({ params }: Props) {
-  const [block, setBlock] = useState<Block | undefined>();
+  const [block, setBlock] = useState<Block>();
   const [addedWeek, setAddedWeek] = useState("");
   const [addedLab, setAddedLab] = useState("");
   const [selectedWeek, setSelectedWeek] = useState<Week | undefined>();
   const [errorOcurred, setErrorOcurred] = useState(false);
   const [labErrorOccurred, setLabErrorOccurred] = useState(false); // State to track lab errors
   const [selectedLabToDelete, setSelectedLabToDelete] = useState<Lab>();
+  const [selectedWeekToDelete, setSelectedWeekToDelete] = useState<Week>();
   const [isCreateWeekModalOpen, setCreateWeekModalOpen] = useState(false);
   const [isCreateLabModalOpen, setCreateLabModalOpen] = useState(false);
   const [deleteLabModalOpen, setDeleteLabModalOpen] = useState(false);
+  const [deleteWeekModalOpen, setDeleteWeekModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchBlock = async () => {
@@ -84,6 +86,19 @@ export default function BlockPage({ params }: Props) {
       setIsLoading(false);
     }
   };
+  const deleteWeek = async (week: Week) => {
+    setIsLoading(true);
+    try {
+      const res = await axios.delete(
+        `/api/blocks/${params.blockId}/${week._id}`
+      );
+      setIsLoading(false);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchBlock();
@@ -102,9 +117,13 @@ export default function BlockPage({ params }: Props) {
     } else {
       setErrorOcurred(false);
       const newWeek = { name: addedWeek, labs: [] };
-      const returnedWeek = await postWeek(newWeek);
+      const returnedWeek = (await postWeek(newWeek)) as Week;
       const updatedWeeks = [...(block?.weeks || []), returnedWeek];
-      setBlock({ weeks: updatedWeeks, users: block?.users || [] });
+      setBlock((prevBlock) => ({
+        ...prevBlock,
+        weeks: updatedWeeks,
+        users: block?.users || [],
+      }));
       setAddedWeek("");
       setCreateWeekModalOpen(false);
     }
@@ -129,7 +148,7 @@ export default function BlockPage({ params }: Props) {
       console.log("Lab already exists in one of the weeks");
     } else {
       const weekId = selectedWeek._id!;
-      const newLab = await postLab(weekId, { name: addedLab } as Lab);
+      const newLab = (await postLab(weekId, { name: addedLab } as Lab)) as Lab;
       const updatedWeeks = block?.weeks?.map((week) => {
         if (week.name === selectedWeek.name) {
           return {
@@ -139,7 +158,11 @@ export default function BlockPage({ params }: Props) {
         }
         return week;
       });
-      setBlock({ weeks: updatedWeeks, users: block?.users || [] });
+      setBlock((prevBlock) => ({
+        ...prevBlock,
+        weeks: updatedWeeks,
+        users: block?.users || [],
+      }));
       setLabErrorOccurred(false);
       setAddedLab("");
       setCreateLabModalOpen(false);
@@ -169,9 +192,38 @@ export default function BlockPage({ params }: Props) {
         }
         return week;
       });
-      setBlock({ weeks: updatedWeeks, users: block?.users || [] });
+      setBlock((prevBlock) => ({
+        ...prevBlock,
+        weeks: updatedWeeks,
+        users: block?.users || [],
+      }));
     }
     setDeleteLabModalOpen(false);
+  };
+
+  const handleRemoveWeek = async (week: Week) => {
+    setSelectedWeek(week);
+    setDeleteWeekModalOpen(true);
+  };
+
+  const handleDeleteWeek = async (event: FormEvent) => {
+    event.preventDefault();
+
+    if (!selectedWeek) return;
+
+    const res = await deleteWeek(selectedWeek);
+    console.log(res);
+
+    const updatedWeeks = block?.weeks?.filter(
+      (week) => week.name !== selectedWeek.name
+    );
+    setBlock((prevBlock) => ({
+      ...prevBlock,
+      weeks: updatedWeeks,
+      users: block?.users || [],
+    }));
+    setDeleteWeekModalOpen(false);
+    setSelectedWeek(undefined);
   };
 
   return (
@@ -194,7 +246,9 @@ export default function BlockPage({ params }: Props) {
                   className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 hover:cursor-pointer"
                 >
                   <li>
-                    <a onClick={() => setCreateWeekModalOpen(true)}>Add Week</a>
+                    <button onClick={() => setCreateWeekModalOpen(true)}>
+                      Add Week
+                    </button>
                   </li>
                   <li>
                     <Link href={`/home/blocks/${params.blockId}/editBlock`}>
@@ -231,6 +285,9 @@ export default function BlockPage({ params }: Props) {
                         handleAddLab={() => handleCreateLab(week)}
                         handleDeleteLab={(labToDelete) =>
                           handleRemoveLab(week, labToDelete)
+                        }
+                        handleDeleteWeek={(weekToDelete) =>
+                          handleRemoveWeek(weekToDelete)
                         }
                         blockId={params.blockId}
                       />
@@ -350,6 +407,37 @@ export default function BlockPage({ params }: Props) {
               >
                 <div className="flex justify-between gap-2 items-center">
                   <p>Do you want to delete {selectedLabToDelete?.name}?</p>
+                  <button
+                    type="submit"
+                    className="btn btn-error"
+                    disabled={isLoading}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </form>
+            </div>
+          </dialog>
+          <dialog
+            id="delete_week_modal"
+            className={`modal ${deleteWeekModalOpen ? "modal-open" : ""}`}
+          >
+            <div className="modal-box text-white">
+              <form method="dialog">
+                <button
+                  onClick={() => setDeleteWeekModalOpen(false)}
+                  className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 "
+                  disabled={isLoading}
+                >
+                  ✕
+                </button>
+              </form>
+              <form
+                onSubmit={handleDeleteWeek}
+                className="py-4 flex flex-col justify-between gap-2"
+              >
+                <div className="flex justify-between gap-2 items-center">
+                  <p>Do you want to delete {selectedWeek?.name}?</p>
                   <button
                     type="submit"
                     className="btn btn-error"
