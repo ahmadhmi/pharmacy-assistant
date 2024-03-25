@@ -644,7 +644,7 @@ export async function setMarkingTemplates(blockId, weekId, labId, templates) {
 }
 
 // add a new field "markingTemplates" in a lab with a specific ID, return true or false
-export async function addMarkingTemplatesField (blockId, weekId, labId) {
+export async function addMarkingTemplatesField (blockId, weekId, labId, templates) {
   try {
     //await client.connect();
     let collection = db.collection("blocks");
@@ -652,12 +652,13 @@ export async function addMarkingTemplatesField (blockId, weekId, labId) {
         { 
           "_id": new ObjectId(blockId)
         },
-        { $set: {"weeks.$[weeks].labs.$[labs].markingTemplates": [] } },
+        { $set: {"weeks.$[weeks].labs.$[labs].markingTemplates": templates } },
         { arrayFilters: [
           { "weeks._id": new ObjectId(weekId) },
           { "labs._id": new ObjectId(labId) }
         ]}
     );
+    console.log(`${blockId} ${weekId} ${labId}`);
 
     if (result.modifiedCount === 1) {
         console.log("Successfully a new field had been created in the lab");
@@ -675,7 +676,7 @@ export async function addMarkingTemplatesField (blockId, weekId, labId) {
 }
 
 // add a new field "selectedTemplate" in a lab with a specific ID, return true or false
-export async function addSelectedTemplateField (blockId, weekId, labId) {
+export async function addSelectedTemplateField (blockId, weekId, labId, selectedTemplate) {
   try {
     //await client.connect();
     let collection = db.collection("blocks");
@@ -683,7 +684,7 @@ export async function addSelectedTemplateField (blockId, weekId, labId) {
       { 
         "_id": new ObjectId(blockId) 
       },
-      { $set: {"weeks.$[weeks].labs.$[labs].selectedTemplate": new Object() } },
+      { $set: {"weeks.$[weeks].labs.$[labs].selectedTemplate": selectedTemplate } },
       { arrayFilters: [
         { "weeks._id": new ObjectId(weekId) },
         { "labs._id": new ObjectId(labId) }
