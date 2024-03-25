@@ -3,6 +3,7 @@
 import WeekAccordion from "@/app/UI/Blocks/WeekAccordion";
 import { Lab } from "@/interfaces/Lab";
 import { Block } from "@/interfaces/block";
+import { defaultTemplate } from "@/interfaces/template";
 import { Week } from "@/interfaces/week";
 import axios from "axios";
 import { set } from "mongoose";
@@ -148,7 +149,7 @@ export default function BlockPage({ params }: Props) {
       console.log("Lab already exists in one of the weeks");
     } else {
       const weekId = selectedWeek._id!;
-      const newLab = (await postLab(weekId, { name: addedLab } as Lab)) as Lab;
+      const newLab = (await postLab(weekId, { name: addedLab, selectedTemplate: defaultTemplate, markingTemplates: [defaultTemplate] } as Lab)) as Lab;
       const updatedWeeks = block?.weeks?.map((week) => {
         if (week.name === selectedWeek.name) {
           return {

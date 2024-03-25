@@ -1,7 +1,7 @@
 "use server";
 
 import "server-only"; 
-import { getBlock, setMarkingTemplates, setTemplate } from "@/app/_services/databaseService";
+import { addMarkingTemplatesField, addSelectedTemplateField, getBlock, setMarkingTemplates, setTemplate } from "@/app/_services/databaseService";
 import authOptions from "@/app/auth/authOptions";
 import { Block } from "@/interfaces/block";
 import { error } from "console";
@@ -35,7 +35,8 @@ export async function PUT(request:NextRequest, {params}:Props){
             throw {error: `${session.user.name} does not have access to this block`}
         }
         //setting template to one requested, no longer need to verify as db function restricts access to block specified
-        const success = await setTemplate(params.blockId, params.weekId, params.labId, body); 
+        const success = await addSelectedTemplateField(params.blockId, params.weekId, params.labId, body); 
+        console.log(body); 
         if(success){
             return NextResponse.json(
                 success,
@@ -77,7 +78,7 @@ export async function PATCH(request:NextRequest, {params}:Props){
             throw {error: `${session.user.name} does not have access to this block`}
         }
         //setting template to one requested, no longer need to verify as db function restricts access to block specified
-        const success = await setMarkingTemplates(params.blockId, params.weekId, params.labId, body); 
+        const success = await addMarkingTemplatesField(params.blockId, params.weekId, params.labId, body); 
         if(success){
             return NextResponse.json(
                 success,

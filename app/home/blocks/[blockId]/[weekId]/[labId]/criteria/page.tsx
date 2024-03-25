@@ -5,7 +5,7 @@ import { Template } from "@/interfaces/template";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { VscCheck, VscTrash } from "react-icons/vsc";
+import { VscAdd, VscCheck, VscTrash } from "react-icons/vsc";
 
 interface Props {
     params: {
@@ -14,85 +14,6 @@ interface Props {
         labId: string,
     };
 }
-
-const markingTemplates: criteria[][] = [
-    [
-        {
-            name: "Drug Selected",
-            pass: false,
-        },
-        {
-            name: "Patient Profile",
-            pass: false,
-        },
-        {
-            name: "Prescriber",
-            pass: false,
-        },
-        {
-            name: "Sig",
-            pass: false,
-        },
-        {
-            name: "Dispense Quantity",
-            pass: false,
-        },
-        {
-            name: "Billing Procedure",
-            pass: false,
-        },
-        {
-            name: "Auxiliary Labels",
-            pass: false,
-        },
-        {
-            name: "Accurate Drug Monograph",
-            pass: false,
-        },
-        {
-            name: "Question",
-            pass: false,
-        },
-    ],
-    [
-        {
-            name: "Drug Selected",
-            pass: false,
-        },
-        {
-            name: "Patient Profile",
-            pass: false,
-        },
-        {
-            name: "Prescriber",
-            pass: false,
-        },
-        {
-            name: "Sig",
-            pass: false,
-        },
-        {
-            name: "Dispense Quantity",
-            pass: false,
-        },
-        {
-            name: "Billing Procedure",
-            pass: false,
-        },
-        {
-            name: "Auxiliary Labels",
-            pass: false,
-        },
-        {
-            name: "Accurate Drug Monograph",
-            pass: false,
-        },
-        {
-            name: "Question",
-            pass: false,
-        },
-    ],
-];
 
 export default function Criteria({ params }: Props) {
     const [markingTemplates, setMarkingTemplates]: [
@@ -104,29 +25,67 @@ export default function Criteria({ params }: Props) {
         Function
     ] = useState();
     const [lab, setLab]: [Lab | undefined, Function] = useState();
-    const [templateName, setTemplateName] = useState("");
-    const [templateDesc, setTemplateDesc] = useState("");
+    const [templateName, setTemplateName] = useState<string | undefined>("");
+    const [templateDesc, setTemplateDesc] = useState<string | undefined>("");
     const [templateCriteria, setTemplateCriteria]: [
         criteria[] | undefined,
         Function
     ] = useState();
+    const [newTemplateName, setNewTemplateName] = useState(""); 
+    const [newCriteriaName, setNewCriteriaName] = useState(""); 
+
     async function fetchLab() {
         const retrievedLab = await axios.get(
-            `/api/blocks/${params.blockId}/1/${params.labId}`
+            `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}`
         );
         setLab(retrievedLab.data);
         setMarkingTemplates(retrievedLab.data.markingTemplates);
         setSelectedTemplate((retrievedLab.data.markingTemplates.find((template:Template) => template.name === retrievedLab.data.selectedTemplate.name) ));
     }
 
+    function handleOpenAddTemplate(){
+        const addTemplateModal = document.getElementById("add_template_modal"); 
+        if(addTemplateModal instanceof HTMLDialogElement){
+            addTemplateModal.showModal();  
+        }
+    }
+
+    function handleAddNewTemplate(){
+        const newTemplate:Template = {
+            name: newTemplateName,
+            description: "",
+            criteria: []
+        }
+        setSelectedTemplate(newTemplate); 
+        setMarkingTemplates((prevTemplates:Template[]) => [...prevTemplates, newTemplate])
+        setNewTemplateName("");
+    }
+
+    function handleAddCriteria(){
+        const newCriteria:criteria = {
+            name: newCriteriaName,
+            pass: false
+        }
+        setTemplateCriteria((prevCriteria:criteria[]) => [...prevCriteria, newCriteria]); 
+        setNewCriteriaName(""); 
+    }
+
+    function handleOpenAddCriteria(){
+        const newCriteriaModal = document.getElementById("add_criteria_modal"); 
+        if (newCriteriaModal instanceof HTMLDialogElement){
+            newCriteriaModal.showModal(); 
+        }
+    }
+
     async function saveSelection() {
         //save template locally
         const newTemplate: Template = {
             name: (selectedTemplate?.name && templateName) || "",
-            description: selectedTemplate?.description && templateDesc,
+            description: selectedTemplate?.description || templateDesc,
             criteria: selectedTemplate?.criteria && templateCriteria,
         };
-        setMarkingTemplates((prevMarkingTemplates: Template[]) => {
+        console.log(templateCriteria)
+        await setMarkingTemplates((prevMarkingTemplates: Template[]) => {
             if (selectedTemplate) {
                 const location = prevMarkingTemplates.indexOf(selectedTemplate);
                 let toBeUpdated = prevMarkingTemplates.find(
@@ -139,12 +98,11 @@ export default function Criteria({ params }: Props) {
                 return prevMarkingTemplates;
             }
         });
-        setSelectedTemplate(() => newTemplate);
+        await setSelectedTemplate(() => newTemplate);
 
         //save it in the database
         try{
-            console.log("Here front")
-            //await axios.patch(`/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/criteria/`, markingTemplates);
+            await axios.patch(`/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/criteria/`, markingTemplates);
             await axios.put(`/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/criteria/`, newTemplate); 
         } catch(error){
             console.log(error); 
@@ -156,7 +114,7 @@ export default function Criteria({ params }: Props) {
     }, []);
 
     useEffect(() => {
-        if (selectedTemplate && selectedTemplate.description) {
+        if (selectedTemplate) {
             setTemplateName(selectedTemplate?.name);
             setTemplateDesc(selectedTemplate?.description);
             setTemplateCriteria(selectedTemplate?.criteria);
@@ -178,7 +136,57 @@ export default function Criteria({ params }: Props) {
                     </button>
                 </div>
                 <div>
-                    <div className="flex gap-4 justify-start overflow-x-auto max-w-screen p-4">
+                <dialog id="add_template_modal" className="modal">
+                    <div className="modal-box">
+                        <h3 className="font-bold text-lg">Add Template</h3>
+                        <form method="dialog">
+                            <input
+                                type="text"
+                                placeholder="Template Name"
+                                className="input input-md w-full"
+                                value={newTemplateName}
+                                onChange={(e) => {
+                                    setNewTemplateName(e.currentTarget.value);
+                                }}
+                            ></input>
+                            <div className="modal-action w-full">
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleAddNewTemplate}
+                                >
+                                    Add
+                                </button>
+                                <button className="btn btn-error">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </dialog>
+                <dialog id="add_criteria_modal" className="modal">
+                    <div className="modal-box">
+                        <h3 className="font-bold text-lg">Add Criteria</h3>
+                        <form method="dialog">
+                            <input
+                                type="text"
+                                placeholder="Eg. Professionalism"
+                                className="input input-md w-full"
+                                value={newCriteriaName}
+                                onChange={(e) => {
+                                    setNewCriteriaName(e.currentTarget.value);
+                                }}
+                            ></input>
+                            <div className="modal-action w-full">
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleAddCriteria}
+                                >
+                                    Add
+                                </button>
+                                <button className="btn btn-error">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </dialog>
+                    <div className="flex gap-4 justify-start items-center overflow-x-auto max-w-screen p-4">
                         {markingTemplates?.map((template) => (
                             <div
                                 onClick={() => setSelectedTemplate(template)}
@@ -205,6 +213,9 @@ export default function Criteria({ params }: Props) {
                                 </div>
                             </div>
                         ))}
+                        <div className="btn" onClick={handleOpenAddTemplate}>
+                            <VscAdd size={20}></VscAdd>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -257,6 +268,9 @@ export default function Criteria({ params }: Props) {
                                         </button>
                                     </li>
                                 ))}
+                                <li className="btn" onClick={handleOpenAddCriteria}>
+                                    <VscAdd size={20}></VscAdd>
+                                </li>
                             </ul>
                         </div>
                     </div>
