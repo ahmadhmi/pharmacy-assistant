@@ -100,7 +100,7 @@ export async function GET(request: NextRequest, { params }: Props) {
         }
       }
       if (ifContains === false) {
-        throw { error: "please input right LabId" };
+        throw { error: "Lab does not exist" };
       }
 
       return NextResponse.json(gradesheets, { status: 200 });

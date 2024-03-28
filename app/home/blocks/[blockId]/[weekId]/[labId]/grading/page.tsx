@@ -295,11 +295,11 @@ export default function Grading({ params }: Props) {
                         className="cursor-pointer"
                         onClick={() => {
                             setError("");
-                            router.push("/home/");
+                            router.push(`/home/blocks/${params.blockId}`);
                         }}
                     >
                         <div className="alert alert-error hover:alert-warning">
-                            <span>{error}</span>
+                            <span>{`${error}`}</span>
                         </div>
                     </div>
                 ) : (
@@ -315,7 +315,7 @@ export default function Grading({ params }: Props) {
                 onClick={() => {
                     if (!lab) {
                         setError("");
-                        router.push(`/home/`);
+                        router.push(`/home/blocks/${params.blockId}`);
                     }
                 }}
             >
@@ -331,7 +331,7 @@ export default function Grading({ params }: Props) {
                     ) : (
                         <VscError size={30}></VscError>
                     )}
-                    <p className="break-words">{error}</p>
+                    <p className="break-words">{`${error}: click me to go back to the block page`}</p>
                 </div>
             </div>
         );
