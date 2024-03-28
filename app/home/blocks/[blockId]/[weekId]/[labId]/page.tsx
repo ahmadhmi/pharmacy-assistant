@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     paddingTop: 35,
     paddingBottom: 65,
     paddingHorizontal: 35,
+    flexDirection: "row",
   },
   title: {
     fontSize: 24,
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
   },
   text: {
     margin: 8,
-    fontSize: 14,
+    fontSize: 10,
   },
   header: {
     fontSize: 12,
@@ -98,13 +99,13 @@ export default function LabPage({ params }: Props) {
   const PDFFile = () => {
     return (
       <Document>
-        <Page size="A4" style={styles.body}>
+        <Page size="A4" orientation="landscape" style={styles.body}>
           {checkBoxValue.map((items, index) => {
             const sheet: Gradesheet | undefined = allSheets.find(
               (sheet) => sheet._id === items
             );
             return (
-              <View key={index} style={{ height: 370 }}>
+              <View key={index} style={{ height: 370,width:300 }}>
                 <Text key={index} style={styles.title}>
                   {sheet ? sheet.studentName : "Not found"}{" "}
                   {sheet ? sheet.rx : "Not found"}
@@ -112,7 +113,7 @@ export default function LabPage({ params }: Props) {
                 {sheet
                   ? sheet.criteria?.map((items, index) => {
                       return (
-                        <View key={index}>
+                        <View key={index} style={{ flexDirection: "column" }}>
                           <View
                             style={{
                               border: "1px",
