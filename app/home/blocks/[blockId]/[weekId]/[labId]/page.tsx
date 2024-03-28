@@ -157,7 +157,7 @@ export default function LabPage({ params }: Props) {
                 </div>
             </div>
 
-            <div className="border-y overflow-y-auto" style={{ height: "80%" }}>
+            <div className="border-y overflow-y-auto scrollbar-thin scrollbar-thumb-black pr-1" style={{ height: "80%" }}>
                 {labData ? (
                     Object.keys(labData).map((key) => (
                         <div

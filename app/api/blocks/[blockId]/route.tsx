@@ -35,6 +35,8 @@ export async function GET(request: NextRequest, { params }: Props) {
           weeks: retrievedDoc.weeks,
           students: retrievedDoc.students,
           users: retrievedDoc.users,
+          admin: retrievedDoc.admin, 
+          markingTemplates: retrievedDoc.markingTemplates,
         };
         if (
           session.user.email &&
@@ -110,6 +112,11 @@ export async function PATCH(
     const oldBlock = await getBlock(body._id);
     if (session) {
       if (oldBlock && oldBlock.users.includes(session.user?.email)) {
+
+        if(oldBlock.admin !== session.user?.email){
+          throw {error: `${session.user?.name} does not have administrative rights to this block`}
+        }
+
         const success = await updateBlock(params.blockId, body);
         if (success) {
           console.log(success);
@@ -152,15 +159,13 @@ export async function DELETE(
         status: 200,
       });
     } else {
-      throw { error: "User is not authenticated" };
+      throw { error: "User is not authenticated",  code: 401};
     }
-  } catch (ex: any) {
+  } catch (ex: {error:string, code:number} | any) {
     return NextResponse.json(
+      ex.error   ,
       {
-        error: ex.error,
-      },
-      {
-        status: 404,
+        status: ex.code || 400,
       }
     );
   }

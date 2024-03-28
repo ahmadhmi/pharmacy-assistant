@@ -1,6 +1,7 @@
 import { User } from "next-auth";
 import { Week } from "./week";
 import { Student } from "./student";
+import { Template } from "./template";
 
 export interface Block{
     _id?:String,
@@ -8,4 +9,6 @@ export interface Block{
     weeks?:Week[],
     students?:Student[],
     users:string[],
+    admin?:string, 
+    markingTemplates?:Template[],
 }

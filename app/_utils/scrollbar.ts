@@ -20,6 +20,10 @@ export function ScrollBar({addUtilities}:{addUtilities:Function}){
         ".scrollbar-thumb-black::-webkit-scrollbar-thumb": {
             background: "#555",
             "border-radius": 10,
+        },
+        ".scrollbar-thumb-black::-webkit-scrollbar-thumb:hover": {
+            background: "#999",
+            cursor: "pointer",
         }
     };
     addUtilities(newUtilities)

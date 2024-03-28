@@ -4,7 +4,7 @@ import { Gradesheet } from "@/interfaces/gradesheet";
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lab } from "@/interfaces/Lab";
-import { VscError, VscLoading } from "react-icons/vsc";
+import { VscArrowLeft, VscError, VscLoading } from "react-icons/vsc";
 import Link from "next/link";
 import { Block } from "@/interfaces/block";
 import { Student } from "@/interfaces/student";
@@ -13,7 +13,7 @@ import { getBlock } from "@/app/_services/databaseService";
 interface Props {
     params: {
         blockId: string;
-        weekId:string,
+        weekId: string;
         labId: string;
     };
 }
@@ -32,7 +32,7 @@ export default function Grading({ params }: Props) {
     const [gradesheets, setGradeSheets] = useState<
         Record<string, Gradesheet[]>
     >({});
-    const [block, setBlock]:[Block | undefined, Function] = useState(); 
+    const [block, setBlock]: [Block | undefined, Function] = useState();
     const [rx, setRx] = useState("");
     const [error, setError] = useState("Page is loading...");
     const [lab, setLab]: [Lab | undefined, Function] = useState();
@@ -44,21 +44,24 @@ export default function Grading({ params }: Props) {
         }
     }
 
-    async function fetchBlock(){
-        try{
-            const block = (await (axios.get(`/api/blocks/${params.blockId}`))).data; 
-            if(block){
-                setBlock(block); 
+    async function fetchBlock() {
+        try {
+            const block = (await axios.get(`/api/blocks/${params.blockId}`))
+                .data;
+            if (block) {
+                setBlock(block);
             }
-        }catch(error:any){
-            setError(error.response?.data.error); 
+        } catch (error: any) {
+            setError(error.response?.data.error);
         }
     }
 
     async function fetchLab() {
         try {
             const lab = (
-                await axios.get(`/api/blocks/${params.blockId}/${params.weekId}/${params.labId}`)
+                await axios.get(
+                    `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}`
+                )
             ).data;
             if (lab) {
                 setLab(lab);
@@ -73,7 +76,7 @@ export default function Grading({ params }: Props) {
     }
 
     async function fetchGradesheets() {
-        try{
+        try {
             const data = (
                 await axios.get(
                     `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
@@ -95,10 +98,9 @@ export default function Grading({ params }: Props) {
                 );
                 setGradeSheets(result);
             }
-        }catch(error:any){
-            setError(error.response?.data.error)
+        } catch (error: any) {
+            setError(error.response?.data.error);
         }
-
     }
 
     async function handleStartGrading(e: FormEvent) {
@@ -108,11 +110,14 @@ export default function Grading({ params }: Props) {
             alert("The studentID should be all in numbers");
             return;
         }
-        const student = block?.students?.find((student:Student) => student._id === studentId); 
+        const student = block?.students?.find(
+            (student: Student) => student._id === studentId
+        );
         const studentName = `${student?.firstName} ${student?.lastName}`;
         const newGradesheet: Gradesheet = {
             studentID: studentId,
             studentName: studentName,
+            criteria: lab?.selectedTemplate?.criteria,
             date: new Date(date),
             rx: rx,
         };
@@ -141,7 +146,7 @@ export default function Grading({ params }: Props) {
     }
 
     useEffect(() => {
-        fetchBlock(); 
+        fetchBlock();
         fetchLab();
         fetchGradesheets();
     }, []);
@@ -149,17 +154,28 @@ export default function Grading({ params }: Props) {
     if (block && lab) {
         return (
             <section className="flex-col items-center">
-                <div
-                    className={`badge badge-primary p-4 rounded-md text-white text-lg ${
-                        lab?.name ? "" : "hidden"
-                    }`}
-                >
-                    {lab?.name ? `Grading: ${lab.name}` : "Grading:"}
+                <div className="flex items-center justify-between">
+                    <div
+                        className={`badge badge-primary p-4 rounded-md text-white text-lg ${
+                            lab?.name ? "" : "hidden"
+                        }`}
+                    >
+                        {lab?.name ? `Grading: ${lab.name}` : "Grading:"}
+                    </div>
+                    <Link
+                        className="btn"
+                        href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}`}
+                    >
+                        <VscArrowLeft></VscArrowLeft>
+                        Back</Link>
                 </div>
+
                 <div>
-                    <h1 className="text-lg text-neutral mt-4">Completed Marking Sheets</h1>
+                    <h1 className="text-lg text-neutral mt-4">
+                        Completed Marking Sheets
+                    </h1>
                 </div>
-                <div className="overflow-y-auto min-h-64 max-h-72 my-2 px-2 scrollbar-thin scrollbar-track scrollbar-thumb-black mb-4 rounded-lg">
+                <div className="overflow-y-auto min-h-64 max-h-72 my-2 px-2 scrollbar-thin scrollbar-thumb-black mb-4 rounded-lg">
                     {gradesheets ? (
                         Object.keys(gradesheets).map((key, index) => (
                             <div
@@ -172,7 +188,12 @@ export default function Grading({ params }: Props) {
                                     placeholder="1"
                                 />
                                 <div className="collapse-title flex justify-between items-center text-xl font-medium text-neutral">
-                                    <h2>{gradesheets[key][0].studentName} {key}</h2><div className="badge badge-primary text-lg">{gradesheets[key].length}</div>
+                                    <h2>
+                                        {gradesheets[key][0].studentName} {key}
+                                    </h2>
+                                    <div className="badge badge-primary text-lg">
+                                        {gradesheets[key].length}
+                                    </div>
                                 </div>
                                 <div className="collapse-content">
                                     <div className="flex flex-row items-center justify-between my-2 text-neutral border-b-2 border-slate-400">
@@ -225,9 +246,12 @@ export default function Grading({ params }: Props) {
                                 onChange={(e) => setId(e.currentTarget.value)}
                                 className="select w-full max-w-xs"
                             >
-                                {block?.students?.map((student:Student) => 
-                                    <option key={student._id} value={student._id}>{`${student.firstName} ${student.lastName} — ${student._id}`}</option>
-                                )}
+                                {block?.students?.map((student: Student) => (
+                                    <option
+                                        key={student._id}
+                                        value={student._id}
+                                    >{`${student.firstName} ${student.lastName} — ${student._id}`}</option>
+                                ))}
                                 <option disabled={true} value={"default"}>
                                     Select One
                                 </option>
