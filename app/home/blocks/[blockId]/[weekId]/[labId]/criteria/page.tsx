@@ -7,7 +7,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { VscAdd, VscArrowLeft, VscCheck, VscCircle, VscTrash } from "react-icons/vsc";
+import { VscAdd, VscArrowLeft, VscCheck, VscCircle, VscEdit, VscTrash } from "react-icons/vsc";
 
 interface Props {
     params: {
@@ -73,12 +73,16 @@ export default function Criteria({ params }: Props) {
     if (block && lab) {
         return (
             <section className="p-4">
-                <div className="flex justify-between items-center">
-                    <h1 className="text-3xl">{`Selected template for ${lab.name}`}</h1>
-                    <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center">
+                    <h1 className="sm:text-3xl text-2xl">{`Selected template for ${lab.name}`}</h1>
+                    <div className="flex sm:items-center gap-2">
                     <Link className="btn" href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}`}>
                         <VscArrowLeft></VscArrowLeft>
                         Back
+                    </Link>
+                    <Link className="btn" href={`/home/blocks/${params.blockId}/editBlock`}>
+                        <VscEdit></VscEdit>
+                        Edit
                     </Link>
                     <button
                         className="btn"

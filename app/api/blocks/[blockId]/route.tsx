@@ -114,7 +114,7 @@ export async function PATCH(
       if (oldBlock && oldBlock.users.includes(session.user?.email)) {
 
         if(oldBlock.admin !== session.user?.email){
-          throw {error: `${session.user?.name} does not have administrative rights to this block`}
+          throw {error: `${session.user?.name} does not have administrative permissions to edit this block`, code: 403}
         }
 
         const success = await updateBlock(params.blockId, body);
@@ -124,42 +124,53 @@ export async function PATCH(
             status: 200,
           });
         } else {
-          throw { error: "Something went wrong when trying to update a block" };
+          throw { error: "Something went wrong when trying to update a block", code: 400 };
         }
       } else {
         throw {
-          error: `${session.user?.name} does not have access to this block or this block may not exist`,
+          error: `${session.user?.name} does not have access to this block or this block may not exist`, code: 401
         };
       }
     } else {
       throw { error: "User is not authenticated" };
     }
-  } catch (ex: any) {
-    return NextResponse.json(ex, {
-      status: 404,
+  } catch (ex: {error:string, code:number} | any) {
+    return NextResponse.json(ex.error, {
+      status: ex.code || 400,
     });
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: Props
 ) {
-  let session = true;
+  const session = await getServerSession(authOptions); 
 
+  const oldBlock = await getBlock(params.blockId); 
   try {
-    if (session) {
+    if (oldBlock) {
       const body = await request.json();
 
-      console.log(params.id + " " + body.block.id);
+      if(!session || !session.user){
+        throw {error: "User is not authenticated", code: 401}
+      }
 
-      await deleteBlock(params.id, body.block.id);
+      if(!oldBlock.users.includes(session?.user?.email)){
+        throw {error: `${session?.user?.name} does not have access to this block`, code: 403}
+      }
+
+      if(oldBlock.admin !== session.user.email){
+        throw {error: `${session.user.email} does not have administrative rights to delete this block`, code: 403}
+      }
+
+      await deleteBlock(params.blockId, body.block.id);
 
       return NextResponse.json(null, {
         status: 200,
       });
     } else {
-      throw { error: "User is not authenticated",  code: 401};
+      throw { error: "Block does not exist",  code: 404};
     }
   } catch (ex: {error:string, code:number} | any) {
     return NextResponse.json(

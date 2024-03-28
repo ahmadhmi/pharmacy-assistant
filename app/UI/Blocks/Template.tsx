@@ -148,7 +148,7 @@ export default function Criteria({ params, block }: Props) {
         }
     }, [selectedTemplate]);
 
-    if (block && block.markingTemplates) {
+    if (block) {
         return (
             <section className="p-4">
                 <div className="flex justify-between items-center">
@@ -160,7 +160,7 @@ export default function Criteria({ params, block }: Props) {
                             saveSelection();
                         }}
                     >
-                        Save
+                        Save Templates
                         <VscCheck></VscCheck>
                     </button>
                     </div>

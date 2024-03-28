@@ -1,5 +1,6 @@
 import { Lab } from "@/interfaces/Lab";
 import { Week } from "@/interfaces/week";
+import { truncate } from "fs";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -21,7 +22,7 @@ const WeekAccordion = ({
 }: Props) => {
   return (
     <div key={week.name} className="collapse collapse-arrow bg-base-200">
-      <input type="radio" name="my-accordion-2" defaultChecked />
+      <input type="radio" name="my-accordion-2" defaultChecked/>
       <div className="flex justify-between items-center collapse-title text-xl font-medium text-center">
         <div className="flex-grow">{week.name}</div>
       </div>
