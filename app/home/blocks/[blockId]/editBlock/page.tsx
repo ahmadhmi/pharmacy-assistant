@@ -150,6 +150,8 @@ export default function EditBlock({ params }: Props) {
         alert("Block updated successfully");
       })
       .catch((error) => {
+        //temp code
+        alert(error.response.data)
         console.error("Error updating block: ", error);
       });
   };
