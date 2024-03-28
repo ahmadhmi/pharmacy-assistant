@@ -533,6 +533,9 @@ export async function deleteLab(blockId, weekId, labId) {
       { $pull: { "weeks.$.labs": { _id: new ObjectId(labId)}}}
     );
 
+    let gradeSheetCol = db.collection("gradesheets"); 
+    const result2 = await gradeSheetCol.deleteMany({"labId": labId}); 
+
     if (result.modifiedCount === 1) {
       console.log("Successfully the lab has been deleted");
       return true;
