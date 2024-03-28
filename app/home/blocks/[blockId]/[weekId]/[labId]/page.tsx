@@ -22,11 +22,12 @@ const styles = StyleSheet.create({
     paddingBottom: 65,
     paddingHorizontal: 35,
     flexDirection: "row",
+    flexWrap: "wrap",
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     textAlign: "center",
-    marginVertical: 15,
+    marginVertical: 5,
   },
   text: {
     margin: 8,
@@ -64,32 +65,62 @@ export default function LabPage({ params }: Props) {
   const [isChecked, setIsChecked] = useState(false);
   const [checkBoxValue, setCheckBoxValue]: [string[], Function] = useState([]);
   const [allSheets, setAllSheets]: [Gradesheet[], Function] = useState([]);
+   const [error, setError] = useState("");
+   const [message, setMessage] = useState(""); 
   async function fetchGradingSheets() {
-    const data =
-      // await axios.get(`/api/blocks/${params.blockId}/${params.labId}/grading`)
-      (
+    try {
+      const data = (
         await axios.get(
           //`/api/blocks/65cbe1af929966312830eea0/65e6c4517fdb6a053a93de8a/grading`
           `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
         )
       ).data;
-    if (data) {
-      const result = data.reduce(
-        (
-          groupedGradeSheets: Record<string, Gradesheet[]>,
-          gradeSheet: Gradesheet
-        ) => {
-          const studentID = gradeSheet.studentID;
-          if (groupedGradeSheets[studentID] == null)
-            groupedGradeSheets[studentID] = [];
-          groupedGradeSheets[studentID].push(gradeSheet);
-          return groupedGradeSheets;
-        },
-        {}
-      );
-      setLabData(result);
-      setAllSheets(data);
+      if (data) {
+        const result = data.reduce(
+          (
+            groupedGradeSheets: Record<string, Gradesheet[]>,
+            gradeSheet: Gradesheet
+          ) => {
+            const studentID = gradeSheet.studentID;
+            if (groupedGradeSheets[studentID] == null)
+              groupedGradeSheets[studentID] = [];
+            groupedGradeSheets[studentID].push(gradeSheet);
+            return groupedGradeSheets;
+          },
+          {}
+        );
+        setLabData(result);
+        setAllSheets(data);
+      }
+    } catch (error) {
+      setError("Something went wrong while loading");
+      setTimeout(() => setError(""), 4000);
     }
+    // const data =
+      
+    //   (
+    //     await axios.get(
+    //       //`/api/blocks/65cbe1af929966312830eea0/65e6c4517fdb6a053a93de8a/grading`
+    //       `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
+    //     )
+    //   ).data;
+    // if (data) {
+    //   const result = data.reduce(
+    //     (
+    //       groupedGradeSheets: Record<string, Gradesheet[]>,
+    //       gradeSheet: Gradesheet
+    //     ) => {
+    //       const studentID = gradeSheet.studentID;
+    //       if (groupedGradeSheets[studentID] == null)
+    //         groupedGradeSheets[studentID] = [];
+    //       groupedGradeSheets[studentID].push(gradeSheet);
+    //       return groupedGradeSheets;
+    //     },
+    //     {}
+    //   );
+    //   setLabData(result);
+    //   setAllSheets(data);
+    // }
   }
 
   useEffect(() => {
@@ -105,9 +136,11 @@ export default function LabPage({ params }: Props) {
               (sheet) => sheet._id === items
             );
             return (
-              <View key={index} style={{ height: 370,width:300 }}>
-                <Text key={index} style={styles.title}>
+              <View key={index} style={{ height: 500, width: 380 }}>
+                <Text style={styles.title}>
                   {sheet ? sheet.studentName : "Not found"}{" "}
+                </Text>
+                <Text style={styles.title}>
                   {sheet ? sheet.rx : "Not found"}
                 </Text>
                 {sheet
@@ -169,7 +202,7 @@ export default function LabPage({ params }: Props) {
         </div>
       </div>
       <div className="border-y overflow-y-auto" style={{ height: "80%" }}>
-        {labData ? (
+        {Object.keys(labData).length > 0 ? (
           Object.keys(labData).map((key) => (
             <div className="collapse collapse-arrow bg-base-200 my-3" key={key}>
               <input type="checkbox" name="my-accordion-2" placeholder="1" />
@@ -205,7 +238,7 @@ export default function LabPage({ params }: Props) {
             </div>
           ))
         ) : (
-          <></>
+          <div>There is no student, please add student first!</div>
         )}
       </div>{" "}
       <div className=" flex justify-center w-100% mt-4 gap-3">
@@ -219,6 +252,22 @@ export default function LabPage({ params }: Props) {
         >
           <MyButton text="Grading" />
         </Link>
+      </div>
+      <div
+        onClick={() => setMessage("")}
+        className={`toast ${message === "" ? "hidden" : ""}`}
+      >
+        <div className="alert alert-info cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
+          {message}
+        </div>
+      </div>
+      <div
+        onClick={() => setError("")}
+        className={`toast ${error === "" ? "hidden" : ""}`}
+      >
+        <div className="alert alert-error cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
+          {error}
+        </div>
       </div>
     </section>
   );
