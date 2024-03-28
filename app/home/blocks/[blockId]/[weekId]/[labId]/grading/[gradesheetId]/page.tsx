@@ -4,77 +4,44 @@ import { useState } from "react";
 import axios from "axios";
 import { Gradesheet } from "@/interfaces/gradesheet";
 import { criteria } from "@/interfaces/criteria";
-import { updateGradeSheet } from "@/app/_services/databaseService";
+import { setTemplate, updateGradeSheet } from "@/app/_services/databaseService";
 import { useRouter } from "next/navigation";
 import { VscCheck, VscError, VscLoading } from "react-icons/vsc";
+import Link from "next/link";
+import { Template } from "@/interfaces/template";
 
 interface Props {
     params: {
         blockId: string;
-        weekId:string,
+        weekId: string;
         labId: string;
         gradesheetId: string;
     };
 }
-
-const defaultCriteria: criteria[] = [
-    {
-        name: "Drug Selected",
-        pass: false,
-    },
-    {
-        name: "Patient Profile",
-        pass: false,
-    },
-    {
-        name: "Prescriber",
-        pass: false,
-    },
-    {
-        name: "Sig",
-        pass: false,
-    },
-    {
-        name: "Dispense Quantity",
-        pass: false,
-    },
-    {
-        name: "Billing Procedure",
-        pass: false,
-    },
-    {
-        name: "Auxiliary Labels",
-        pass: false,
-    },
-    {
-        name: "Accurate Drug Monograph",
-        pass: false,
-    },
-    {
-        name: "Question",
-        pass: false,
-    },
-];
 
 export default function Grade({ params }: Props) {
     const router = useRouter();
     const [gradesheet, setGradesheet]: [Gradesheet | undefined, Function] =
         useState();
     const [form, setForm] = useState(0);
-    const [stateDefaultCriteria, setStateDefaultCriteria] =
-        useState(defaultCriteria);
+    const [template, setTemplate] = useState<Template>();
+    const [templateCriteria, setTemplateCriteria] = useState<criteria[]>();
     const [comment, setComment] = useState("");
     const [error, setError] = useState("Page is loading...");
     const [criterionName, setCriterionName] = useState("");
     const [score, setScore] = useState(0);
     const [maxScore, setMaxScore] = useState(0);
-    const [pass, setPass] = useState(false); 
+    const [pass, setPass] = useState(false);
 
     async function fetchGradesheet() {
         let response;
+        let lab;
         try {
             response = await axios.get(
                 `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/${params.gradesheetId}`
+            );
+            lab = await axios.get(
+                `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}`
             );
         } catch (ex: any) {
             if (ex.response.data.error) {
@@ -89,34 +56,41 @@ export default function Grade({ params }: Props) {
         }
         if (response?.data) {
             setGradesheet(response.data);
+            setTemplateCriteria(response.data.criteria)
         }
-        if (response?.data?.criteria) {
-            setStateDefaultCriteria(response.data.criteria);
+        if (lab?.data?.selectedTemplate) {
+            setTemplate(lab.data.selectedTemplate);
+            if(!response?.data.criteria){
+                setTemplateCriteria(lab.data.selectedTemplate.criteria)
+            }
         }
         if (response?.data.score) {
             setScore(response.data.score);
         }
         if (response?.data.maxScore) {
-            setForm(1);
             setMaxScore(response.data.maxScore);
         }
-        if(response?.data.pass){
-            setPass(response.data.pass)
+        if (response?.data.pass != null) {            
+            setForm(1);
+            setPass(response.data.pass);
         }
         if (response?.data?.comment) {
             setComment(response.data.comment);
         }
     }
 
-    function updateRadio(selectedCriteria: criteria) {
-        setStateDefaultCriteria((prevCriteria) => {
-            const newCriteria = prevCriteria.map((criteriaItem) =>
-                criteriaItem.name === selectedCriteria.name
-                    ? { ...criteriaItem, pass: !criteriaItem.pass }
-                    : criteriaItem
-            );
-            return newCriteria;
-        });
+    function updateRadio(selectedCriteria: criteria | undefined) {
+
+        if(selectedCriteria){
+            setTemplateCriteria((prevCriteria) => {
+                const newCriteria = prevCriteria?.map((criteriaItem) =>
+                    criteriaItem.name === selectedCriteria.name
+                        ? { ...criteriaItem, pass: !criteriaItem.pass }
+                        : criteriaItem
+                );
+                return newCriteria;
+            });
+        }
     }
 
     function handleOpenAddCriteria() {
@@ -130,15 +104,19 @@ export default function Grade({ params }: Props) {
         if (criterionName === "") {
             alert("Please give the new criterion a name");
         } else {
-            setStateDefaultCriteria((prevCriteria) => [
-                ...prevCriteria,
-                {
-                    name:
-                        criterionName[0].toUpperCase() +
-                        criterionName.slice(1).toLowerCase(),
-                    pass: false,
-                },
-            ]);
+            setTemplateCriteria((prevCriteria) => {
+                if (prevCriteria) {
+                    return [
+                        ...prevCriteria,
+                        {
+                            name:
+                                criterionName[0].toUpperCase() +
+                                criterionName.slice(1).toLowerCase(),
+                            pass: false,
+                        },
+                    ];
+                }
+            });
             setCriterionName("");
         }
     }
@@ -148,7 +126,7 @@ export default function Grade({ params }: Props) {
         if (form == 0) {
             newGradesheet = {
                 ...gradesheet,
-                criteria: stateDefaultCriteria,
+                criteria: templateCriteria,
                 score: null,
                 maxScore: null,
                 pass: null,
@@ -174,7 +152,7 @@ export default function Grade({ params }: Props) {
             );
             if (updated) {
                 setComment("");
-                setStateDefaultCriteria([]);
+                setTemplateCriteria([]);
                 router.push(
                     `/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
                 );
@@ -246,19 +224,15 @@ export default function Grade({ params }: Props) {
                 {form == 0 ? (
                     <div className="flex flex-col gap-4 w-full">
                         <ul className="flex flex-col items-center min-h-64 max-h-72 px-2 overflow-y-auto list-none scrollbar-thin scrollbar-track scrollbar-thumb-black">
-                            {stateDefaultCriteria.length > 0 ? (
-                                stateDefaultCriteria.map(
+                            {templateCriteria && templateCriteria.length > 0 ? (
+                                templateCriteria?.map(
                                     (criteria: criteria) => (
                                         <li
                                             className="w-full flex flex-row justify-between px-4 py-2 shadow-lg my-2 rounded-lg cursor-pointer hover:bg-neutral"
                                             key={criteria.name}
                                             onClick={() =>
                                                 updateRadio(
-                                                    stateDefaultCriteria.filter(
-                                                        (stateCriteria) =>
-                                                            stateCriteria.name ===
-                                                            criteria.name
-                                                    )[0]
+                                                    templateCriteria.find((tempCriteria) => criteria.name === tempCriteria.name)
                                                 )
                                             }
                                         >
@@ -286,7 +260,7 @@ export default function Grade({ params }: Props) {
                                     </h2>
                                 </li>
                             )}
-                            {stateDefaultCriteria.length > 0 ? (
+                            {templateCriteria && templateCriteria.length > 0 ? (
                                 <button
                                     className="btn w-full"
                                     onClick={() => {
@@ -341,14 +315,30 @@ export default function Grade({ params }: Props) {
                         </div>
                         <div>
                             <label className="label cursor-pointer flex justify-center gap-4">
-                                <span className={`label-text text-lg p-4 ${!pass? "badge badge-error text-white" : "badge badge-ghost"}`}>Fail</span>
+                                <span
+                                    className={`label-text text-lg p-4 ${
+                                        !pass
+                                            ? "badge badge-error text-white"
+                                            : "badge badge-ghost"
+                                    }`}
+                                >
+                                    Fail
+                                </span>
                                 <input
                                     type="checkbox"
                                     className="toggle toggle-primary"
                                     checked={pass}
                                     onChange={(e) => setPass(e.target.checked)}
                                 />
-                                <span className={`label-text text-lg p-4 ${pass? "badge badge-primary text-white" : "badge badge-ghost"}`}>Pass</span>
+                                <span
+                                    className={`label-text text-lg p-4 ${
+                                        pass
+                                            ? "badge badge-primary text-white"
+                                            : "badge badge-ghost"
+                                    }`}
+                                >
+                                    Pass
+                                </span>
                             </label>
                         </div>
                     </div>

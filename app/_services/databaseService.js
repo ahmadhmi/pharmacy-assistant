@@ -104,6 +104,7 @@ export async function addBlock(block) {
     let collection = db.collection("blocks");
     console.log(block);
     block.users.push(session.user.email);
+    block.admin = session.user.email; 
 
     await collection.insertOne(block);
     console.log("Connected to atlas and added a block");
@@ -164,10 +165,10 @@ export async function updateBlock(blockID, newBlock) {
     const filter = {
       _id: new ObjectId(blockID),
     };
+    // do not set weeks because its not necessary and it replaces all objectId's with strings in the db for children weeks and labs
     const update = {
       $set: {
         name: newBlock.name,
-        weeks:newBlock.weeks,
         students: newBlock.students,
         users: newBlock.users,
       },
@@ -356,11 +357,14 @@ export async function deleteGradeSheet(gradesheetID){
 
     if (result.deletedCount === 1) {
         console.log("Successfully deleted a gradesheet");
+        return true;
     } else {
         console.log("No gradesheet found with the specified ID");
+        return false;
     }
   } catch (error) {
     console.log("Delete failed with error\n" + error);
+    return false;
   } finally {
     //await client.close();
   }
@@ -644,7 +648,7 @@ export async function setMarkingTemplates(blockId, weekId, labId, templates) {
 }
 
 // add a new field "markingTemplates" in a lab with a specific ID, return true or false
-export async function addMarkingTemplatesField (blockId, weekId, labId, templates) {
+export async function addMarkingTemplatesField (blockId, templates) {
   try {
     //await client.connect();
     let collection = db.collection("blocks");
@@ -652,20 +656,17 @@ export async function addMarkingTemplatesField (blockId, weekId, labId, template
         { 
           "_id": new ObjectId(blockId)
         },
-        { $set: {"weeks.$[weeks].labs.$[labs].markingTemplates": templates } },
-        { arrayFilters: [
-          { "weeks._id": new ObjectId(weekId) },
-          { "labs._id": new ObjectId(labId) }
-        ]}
+        { $set: {"markingTemplates": templates } },
     );
-    console.log(`${blockId} ${weekId} ${labId}`);
 
     if (result.modifiedCount === 1) {
         console.log("Successfully a new field had been created in the lab");
         return true;
-    } else {
-        console.log("No lab found with the specified ID or the field already exists");
-        return false;
+    } else if(result.matchedCount >= 1){
+        console.log("No updates were made");
+        return true;
+    }else{
+      return false
     }
   } catch (error) {
     console.log("Add failed with an error\n" + error.message);
@@ -690,12 +691,15 @@ export async function addSelectedTemplateField (blockId, weekId, labId, selected
         { "labs._id": new ObjectId(labId) }
       ]}
     );
+    console.log(result)
 
     if (result.modifiedCount === 1) {
       console.log("Successfully a new field had been created in the lab");
       return true;
-    } else {
-      console.log("No lab found with the specified ID or the field already exists");
+    } else if(result.matchedCount >= 1) {
+      console.log("No updates were made");
+      return true;
+    } else{
       return false;
     }
   } catch (error) {

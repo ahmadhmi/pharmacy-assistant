@@ -4,6 +4,7 @@ import { useBlocksContext } from "@/app/_utils/blocks-context";
 import { Block } from "@/interfaces/block";
 import { useSession } from "next-auth/react";
 import { VscTrash } from "react-icons/vsc";
+import { defaultTemplate } from "@/interfaces/template";
 
 export default function AddBlock() {
   const [blockName, setBlockName] = useState("");
@@ -16,6 +17,7 @@ export default function AddBlock() {
     const newBlock: Block = {
       name: blockName,
       users: emails,
+      markingTemplates: [defaultTemplate],
     };
     setBlockName("");
     setEmails([]); 
