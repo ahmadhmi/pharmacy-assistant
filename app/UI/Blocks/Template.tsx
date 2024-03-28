@@ -160,7 +160,7 @@ export default function Criteria({ params, block }: Props) {
                             saveSelection();
                         }}
                     >
-                        Save
+                        Save Templates
                         <VscCheck></VscCheck>
                     </button>
                     </div>

@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, { params }: Props) {
     const session = await getServerSession(authOptions);
     try {
         if (!session) {
-            throw { error: "User is not authenticated" };
+            throw { error: "User is not authenticated", code: 401 };
         }
 
         const block = await getBlock(params.blockId);
@@ -44,17 +44,17 @@ export async function GET(request: NextRequest, { params }: Props) {
                 });
             } else {
                 throw {
-                    error: "Requested lab does not belong to block specified",
+                    error: "Requested lab does not belong to block specified", code: 404
                 };
             }
         } else {
             throw {
-                error: `${session?.user?.name} does not have access to this lab or lab does not exist`,
+                error: `${session?.user?.name} does not have access to this lab or lab does not exist`, code: 403
             };
         }
-    } catch (ex) {
-        return NextResponse.json(ex, {
-            status: 403,
+    } catch (ex: any) {
+        return NextResponse.json(ex.error, {
+            status: ex.code || 400,
         });
     }
 }
@@ -67,16 +67,20 @@ export async function DELETE(
   
     try {
       if (!session || !session.user) {
-        throw new Error("User is not authenticated");
+        throw {error:"User is not authenticated", code: 401};
       };
   
       const block = await getBlock(params.blockId);
       if (!block) {
-        throw new Error("Block with the provided ID is not found");
+        throw {error: "Block with the provided ID is not found", code: 404};
       };
   
       if (!block.users.includes(session.user.email)) {
-        throw new Error("User does not have permission for this block");
+        throw {error: `${session.user.name} does not have permission for this block`, code: 403};
+      }
+
+      if(block.admin !== session.user.email){
+        throw {error: `${session.user.name} does not have administrative permissions to delete labs`, code: 403}
       }
 
       const result = await deleteLab(params.blockId, params.weekId, params.labId);
