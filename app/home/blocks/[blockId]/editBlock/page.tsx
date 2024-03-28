@@ -9,9 +9,9 @@ import Skeleton from "react-loading-skeleton";
 import Criteria from "@/app/UI/Blocks/Template";
 
 interface Props {
-  params: { 
-    blockId: string,
-    weekId: string, 
+  params: {
+    blockId: string;
+    weekId: string;
   };
 }
 
@@ -60,7 +60,7 @@ export default function EditBlock({ params }: Props) {
         const json = XLSX.utils.sheet_to_json(sheet);
         const students: Student[] = json.map((student: any) => {
           return {
-            _id: student["Student ID"],
+            _id: String(student["Student ID"]),
             firstName: student["First Name"],
             lastName: student["Last Name"],
           };
@@ -151,7 +151,7 @@ export default function EditBlock({ params }: Props) {
       })
       .catch((error) => {
         //temp code
-        alert(error.response.data)
+        alert(error.response.data);
         console.error("Error updating block: ", error);
       });
   };
@@ -428,7 +428,7 @@ export default function EditBlock({ params }: Props) {
             </div>
           )}
           <hr></hr>
-        <Criteria params={params} block={block}></Criteria>
+          <Criteria params={params} block={block}></Criteria>
         </div>
       </div>
     </section>
