@@ -64,7 +64,7 @@ export default function Grade({ params }: Props) {
         }
         if (template?.data) {
             setTemplate(template.data);
-            if (response?.data.criteria.length <= 0) {
+            if (!response?.data.criteria || response.data.criteria.length <= 0) {
                 setTemplateCriteria(template.data.criteria);
             }
         }
