@@ -172,14 +172,16 @@ export default function Criteria({ params }: Props) {
         if (selectedTemplate === toBeDeleted && markingTemplates) {
             setSelectedTemplate(markingTemplates[0]);
         }
-        try {
-            const success = (
-                await axios.delete(`/api/criteria/${toBeDeleted?._id}`)
-            ).data;
-        } catch (error: any) {
-            console.log(error);
-            setError(error.response.data.error);
-            setTimeout(() => setError(""), 4000);
+        if(toBeDeleted?._id){
+            try {
+                const success = (
+                    await axios.delete(`/api/criteria/${toBeDeleted?._id}`)
+                ).data;
+            } catch (error: any) {
+                console.log(error);
+                setError(error.response.data.error);
+                setTimeout(() => setError(""), 4000);
+            }
         }
     }
 
@@ -321,7 +323,7 @@ export default function Criteria({ params }: Props) {
                             </form>
                         </div>
                     </dialog>
-                    <div className="flex gap-4 justify-start items-center overflow-x-auto scrollbar-track scrollbar-thumb-black scrollbar-thin max-w-screen p-4">
+                    <div className="flex gap-4 justify-start items-center overflow-x-auto min-h-64 scrollbar-track scrollbar-thumb-black scrollbar-thin max-w-screen p-4">
                         {markingTemplates?.map((template) => (
                             <div
                                 key={template.name}
@@ -364,7 +366,7 @@ export default function Criteria({ params }: Props) {
                             </div>
                         ))}
 
-                        <div className="dropdown dropdown-hover dropdown-end">
+                        <div className="dropdown dropdown-hover dropdown-right">
                             <div tabIndex={0} role="button" className="btn m-1">
                                 <VscAdd size={20}></VscAdd>
                             </div>
