@@ -7,7 +7,7 @@ import AzureADProvider from 'next-auth/providers/azure-ad';
 
 
 const authOptions: NextAuthOptions = {
-    adapter: MongoDBAdapter(clientPromise,{databaseName: "pharmacy-assistant"}),
+    adapter: MongoDBAdapter(clientPromise,{databaseName: process.env.MONGO_CONNECTION_DATABASE}),
     providers: [
       GitHubProvider({
         clientId: process.env.GITHUB_CLIENT_ID!,

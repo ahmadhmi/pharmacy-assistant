@@ -5,6 +5,6 @@ import { Template } from "./template";
 export interface Lab{
     _id?:string,
     name?:string,
-    selectedTemplate?: Template,
+    selectedTemplate?: string,
     markingTemplates?: Template[],
 }

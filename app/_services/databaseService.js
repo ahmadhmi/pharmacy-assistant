@@ -96,6 +96,27 @@ export async function getUserID(email) {
   // }
 }
 
+export async function getUsersForBlock(blockId){
+  try{
+    let collection = db.collection("blocks"); 
+    const result = await collection.find(
+      {
+        _id: new ObjectId(blockId)
+      }
+    ).project(
+      {
+        users: 1,
+        _id: 0
+      }
+    );
+    const users = await result.toArray(); 
+    return users[0].users;
+  }catch(error){
+    console.log(error);
+    return []; 
+  }
+}
+
 //todo
 export async function addBlock(block) {
   try {
@@ -473,6 +494,11 @@ export async function deleteWeek(blockId, weekId) {
   try {
     //await client.connect();
     let collection = db.collection("blocks");
+    let gradesheetCol = db.collection("gradesheets"); 
+
+    const block = await getBlock(blockId);
+
+    //const week
 
     const result = await collection.updateOne(
       { _id: new ObjectId(blockId) },
@@ -651,23 +677,19 @@ export async function setMarkingTemplates(blockId, weekId, labId, templates) {
 }
 
 // add a new field "markingTemplates" in a lab with a specific ID, return true or false
-export async function addMarkingTemplatesField (blockId, templates) {
+export async function addMarkingTemplates(templates, user) {
   try {
     //await client.connect();
-    let collection = db.collection("blocks");
-    const result = await collection.updateOne(
-        { 
-          "_id": new ObjectId(blockId)
-        },
-        { $set: {"markingTemplates": templates } },
-    );
+    let collection = db.collection("markingTemplates");
+    templates.user = user;
+    const result = await collection.insertOne(templates);
 
-    if (result.modifiedCount === 1) {
-        console.log("Successfully a new field had been created in the lab");
-        return true;
+    if (result.insertedId) {
+        console.log("Successfully a new template has been added");
+        return result.insertedId;
     } else if(result.matchedCount >= 1){
         console.log("No updates were made");
-        return true;
+        return result.insertedId;
     }else{
       return false
     }
@@ -688,7 +710,7 @@ export async function addSelectedTemplateField (blockId, weekId, labId, selected
       { 
         "_id": new ObjectId(blockId) 
       },
-      { $set: {"weeks.$[weeks].labs.$[labs].selectedTemplate": selectedTemplate } },
+      { $set: {"weeks.$[weeks].labs.$[labs].selectedTemplate": new ObjectId(selectedTemplate) } },
       { arrayFilters: [
         { "weeks._id": new ObjectId(weekId) },
         { "labs._id": new ObjectId(labId) }
@@ -709,6 +731,88 @@ export async function addSelectedTemplateField (blockId, weekId, labId, selected
     console.log("Add failed with an error\n" + error.message);
   } finally {
     //await client.close();
+  }
+}
+
+export async function getTemplates(userId){
+  try{
+    let collection = db.collection("markingTemplates");
+    const result = await collection.find(
+      {
+        "user": userId
+      }
+    )
+    const templates = await result.toArray(); 
+    templates.forEach((template) => delete template.user)
+    return templates; 
+
+  }catch(error){
+    console.log(error);
+    return false 
+  }
+}
+
+export async function getTemplate(templateId){
+  try{
+    let collection = db.collection("markingTemplates"); 
+    const result = await collection.findOne({
+      "_id": new ObjectId(templateId) 
+    }); 
+    if(result){
+      return result; 
+    }else{
+      return null; 
+    }
+  }catch(ex){
+    console.log(ex)
+    return null; 
+  }
+}
+
+export async function updateTemplate(updatedTemplate){
+  try{
+    let collection = db.collection("markingTemplates"); 
+    const result = await collection.updateOne(
+      {
+        _id: new ObjectId(updatedTemplate._id)
+      },
+      {
+        $set:{
+          "name": updatedTemplate.name,
+          "description": updatedTemplate.description,
+          "criteria": updatedTemplate.criteria,
+          "minimum": updatedTemplate.minimum
+        }
+      }
+    ); 
+    if(result.modifiedCount == 1 || result.matchedCount == 1){
+      return true;
+    }else{
+      return false;
+    }
+
+  }catch(error){
+    console.log(error)
+    return false;
+  }
+}
+
+export async function deleteTemplate(templateId){
+  try{
+    let collection = db.collection("markingTemplates");
+    const result = await collection.deleteOne(
+      {
+        "_id": new ObjectId(templateId)
+      }
+    );
+    if (result.deletedCount == 1){
+      return true
+    }else{
+      return false;
+    }
+  }catch(error){
+    console.log(error)
+    return false; 
   }
 }
 

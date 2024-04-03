@@ -159,9 +159,6 @@ export default function BlockPage({ params }: Props) {
             const weekId = selectedWeek._id!;
             const newLab = (await postLab(weekId, {
                 name: addedLab,
-                selectedTemplate: block?.markingTemplates
-                    ? block?.markingTemplates[0]
-                    : defaultTemplate,
             } as Lab)) as Lab;
             const updatedWeeks = block?.weeks?.map((week) => {
                 if (week.name === selectedWeek.name) {

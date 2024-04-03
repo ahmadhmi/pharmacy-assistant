@@ -4,6 +4,8 @@ import "server-only";
 import {
     getBlock,
     getLab,
+    getTemplate,
+    getUsersForBlock,
     setMarkingTemplates,
     setTemplate,
 } from "@/app/_services/databaseService";
@@ -99,13 +101,7 @@ export async function GET() {
         if (!session) {
             throw { error: "User is not authenticated to test" };
         }
-        const retrieved = await setTemplate(
-            "65cbe1af929966312830eea0",
-            "65f0d7df13b0cb9b105afcae",
-            "65e6c4517fdb6a053a93de8a",
-            markingTemplates[1]
-
-            );
+        const retrieved = await getUsersForBlock("65cbe1af929966312830eea0");
         return NextResponse.json(
             { retrieved, time: new Date().getTime() },
             {

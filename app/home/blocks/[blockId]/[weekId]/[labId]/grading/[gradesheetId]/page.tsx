@@ -6,9 +6,10 @@ import { Gradesheet } from "@/interfaces/gradesheet";
 import { criteria } from "@/interfaces/criteria";
 import { setTemplate, updateGradeSheet } from "@/app/_services/databaseService";
 import { useRouter } from "next/navigation";
-import { VscCheck, VscError, VscLoading } from "react-icons/vsc";
+import { VscCheck, VscError, VscLoading, VscVerified } from "react-icons/vsc";
 import Link from "next/link";
 import { Template } from "@/interfaces/template";
+import LabPage from "../../page";
 
 interface Props {
     params: {
@@ -36,6 +37,7 @@ export default function Grade({ params }: Props) {
     async function fetchGradesheet() {
         let response;
         let lab;
+        let template; 
         try {
             response = await axios.get(
                 `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/${params.gradesheetId}`
@@ -43,6 +45,8 @@ export default function Grade({ params }: Props) {
             lab = await axios.get(
                 `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}`
             );
+            template = await axios.get(`/api/criteria/${lab.data.selectedTemplate}`)
+
         } catch (ex: any) {
             if (ex.response.data.error) {
                 setError(
@@ -56,12 +60,12 @@ export default function Grade({ params }: Props) {
         }
         if (response?.data) {
             setGradesheet(response.data);
-            setTemplateCriteria(response.data.criteria)
+            setTemplateCriteria(response.data.criteria);
         }
-        if (lab?.data?.selectedTemplate) {
-            setTemplate(lab.data.selectedTemplate);
-            if(!response?.data.criteria){
-                setTemplateCriteria(lab.data.selectedTemplate.criteria)
+        if (template?.data) {
+            setTemplate(template.data);
+            if (response?.data.criteria.length <= 0) {
+                setTemplateCriteria(template.data.criteria);
             }
         }
         if (response?.data.score) {
@@ -69,9 +73,9 @@ export default function Grade({ params }: Props) {
         }
         if (response?.data.maxScore) {
             setMaxScore(response.data.maxScore);
-        }
-        if (response?.data.pass != null) {            
             setForm(1);
+        }
+        if (response?.data.pass != null) {
             setPass(response.data.pass);
         }
         if (response?.data?.comment) {
@@ -80,8 +84,7 @@ export default function Grade({ params }: Props) {
     }
 
     function updateRadio(selectedCriteria: criteria | undefined) {
-
-        if(selectedCriteria){
+        if (selectedCriteria) {
             setTemplateCriteria((prevCriteria) => {
                 const newCriteria = prevCriteria?.map((criteriaItem) =>
                     criteriaItem.name === selectedCriteria.name
@@ -123,13 +126,32 @@ export default function Grade({ params }: Props) {
 
     async function saveGradeSheet() {
         let newGradesheet;
+        let calcPass = true; 
+        let numPass = 0; 
+        templateCriteria?.forEach((criterion) => {
+            if(criterion.pass){
+                numPass += 1; 
+            }
+        })
+        if(template){
+            calcPass = numPass >= (template.minimum || 3)
+        } 
+        templateCriteria?.forEach((criterion) => {
+            if(criterion.required){
+                if(!criterion.pass){
+                    calcPass = false; 
+                    console.log(criterion)
+                }
+            }
+        })
+        console.log(`Number of criteria passed:${numPass} Min:${template?.minimum} ${calcPass}`)
         if (form == 0) {
             newGradesheet = {
                 ...gradesheet,
                 criteria: templateCriteria,
                 score: null,
                 maxScore: null,
-                pass: null,
+                pass: calcPass,
                 comment: comment,
             };
         } else {
@@ -166,7 +188,7 @@ export default function Grade({ params }: Props) {
         fetchGradesheet();
     }, []);
 
-    if (gradesheet) {
+    if (gradesheet && template) {
         return (
             <section className="flex flex-col items-center gap-4">
                 <div className="">
@@ -225,30 +247,41 @@ export default function Grade({ params }: Props) {
                     <div className="flex flex-col gap-4 w-full">
                         <ul className="flex flex-col items-center min-h-64 max-h-72 px-2 overflow-y-auto list-none scrollbar-thin scrollbar-track scrollbar-thumb-black">
                             {templateCriteria && templateCriteria.length > 0 ? (
-                                templateCriteria?.map(
-                                    (criteria: criteria) => (
-                                        <li
-                                            className="w-full flex flex-row justify-between px-4 py-2 shadow-lg my-2 rounded-lg cursor-pointer hover:bg-neutral"
-                                            key={criteria.name}
-                                            onClick={() =>
-                                                updateRadio(
-                                                    templateCriteria.find((tempCriteria) => criteria.name === tempCriteria.name)
+                                templateCriteria?.map((criteria: criteria) => (
+                                    <li
+                                        className="w-full flex flex-row justify-between px-4 py-2 shadow-lg my-2 rounded-lg cursor-pointer hover:bg-neutral"
+                                        key={criteria.name}
+                                        onClick={() =>
+                                            updateRadio(
+                                                templateCriteria.find(
+                                                    (tempCriteria) =>
+                                                        criteria.name ===
+                                                        tempCriteria.name
                                                 )
-                                            }
-                                        >
+                                            )
+                                        }
+                                    >
+                                        <div className="flex items-center gap-2">
                                             <h2 className="text-base-content text-md">
                                                 {criteria.name}
                                             </h2>
-                                            <input
-                                                className="radio radio-primary"
-                                                type="radio"
-                                                checked={criteria.pass}
-                                                onChange={() => null}
-                                                title="radio"
-                                            ></input>
-                                        </li>
-                                    )
-                                )
+                                            {criteria.required ? (
+                                                <VscVerified
+                                                    size={25}
+                                                ></VscVerified>
+                                            ) : (
+                                                <></>
+                                            )}
+                                        </div>
+                                        <input
+                                            className="radio radio-primary"
+                                            type="radio"
+                                            checked={criteria.pass}
+                                            onChange={() => null}
+                                            title="radio"
+                                        ></input>
+                                    </li>
+                                ))
                             ) : (
                                 <li>
                                     <VscCheck
