@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Block } from "@/interfaces/block";
 import { Student } from "@/interfaces/student";
 import { getBlock } from "@/app/_services/databaseService";
+import { defaultTemplate, Template } from "@/interfaces/template";
 
 interface Props {
     params: {
@@ -106,8 +107,9 @@ export default function Grading({ params }: Props) {
     async function handleStartGrading(e: FormEvent) {
         e.preventDefault();
         const Numbers = /^[0-9]+$/;
-        if (!studentId.match(Numbers)) {
-            alert("The studentID should be all in numbers");
+        if (!studentId.match(Numbers) || rx.length <= 0) {
+            setError("Student ID should all be in numbers and the Rx should not be empty");
+            setTimeout(() => setError(""), 4000); 
             return;
         }
         const student = block?.students?.find(
@@ -117,7 +119,6 @@ export default function Grading({ params }: Props) {
         const newGradesheet: Gradesheet = {
             studentID: studentId,
             studentName: studentName,
-            criteria: lab?.selectedTemplate?.criteria,
             date: new Date(date),
             rx: rx,
         };

@@ -6,7 +6,7 @@ import * as XLSX from "xlsx";
 import { Student } from "@/interfaces/student";
 import { MdDelete } from "react-icons/md";
 import Skeleton from "react-loading-skeleton";
-import Criteria from "@/app/UI/Blocks/Template";
+import Criteria from "@/app/home/template/page";
 
 interface Props {
   params: {
@@ -427,8 +427,6 @@ export default function EditBlock({ params }: Props) {
               </div>
             </div>
           )}
-          <hr></hr>
-          <Criteria params={params} block={block}></Criteria>
         </div>
       </div>
     </section>

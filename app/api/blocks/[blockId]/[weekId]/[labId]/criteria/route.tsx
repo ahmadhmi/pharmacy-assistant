@@ -1,7 +1,7 @@
 "use server";
 
 import "server-only"; 
-import { addMarkingTemplatesField, addSelectedTemplateField, getBlock, setMarkingTemplates, setTemplate } from "@/app/_services/databaseService";
+import { addSelectedTemplateField, getBlock, setMarkingTemplates, setTemplate } from "@/app/_services/databaseService";
 import authOptions from "@/app/auth/authOptions";
 import { Block } from "@/interfaces/block";
 import { error } from "console";
@@ -21,6 +21,7 @@ interface Props{
 export async function PUT(request:NextRequest, {params}:Props){
     const session = await getServerSession(authOptions);
     const body = await request.json(); 
+
     try{
         if(!session || !session.user){
             throw {error: "User is not authenticated", code: 401}
@@ -35,7 +36,7 @@ export async function PUT(request:NextRequest, {params}:Props){
             throw {error: `${session.user.name} does not have access to this block`, code: 403}
         }
         //setting template to one requested, no longer need to verify as db function restricts access to block specified
-        const success = await addSelectedTemplateField(params.blockId, params.weekId, params.labId, body); 
+        const success = await addSelectedTemplateField(params.blockId, params.weekId, params.labId, body.id); 
         if(success){
             return NextResponse.json(
                 success,
