@@ -26,7 +26,7 @@ const SideBar = ({ children }: Props) => {
           Quick Links
           <IoIosArrowDown />
         </label>
-        <main className="p-3 bg-white min-h-screen">{children}</main>
+        <main className="p-3 bg-neutral min-h-screen">{children}</main>
       </div>
       <div className="drawer-side">
         <label
@@ -53,8 +53,8 @@ const SideBar = ({ children }: Props) => {
               </button>
             </div>
           )} */}
-          <div>
-            <h2 className="text-xl text-neutral font-bold min-w-56 border-b-2 border-primary">
+          <div className="mb-5">
+            <h2 className="text-xl text-neutral font-bold min-w-56 border-b-2 border-neutral pb-3 mb-3">
               Quick Links
             </h2>
             <div className="flex flex-col gap-2  py-4 px-2 rounded-lg">
