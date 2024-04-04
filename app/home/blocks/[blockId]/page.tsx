@@ -220,122 +220,100 @@ export default function BlockPage({ params }: Props) {
 
     if (!selectedWeek) return;
 
-        const labExists = block?.weeks?.some((week) =>
-            week.labs?.some((lab) => lab.name === addedLab)
-        );
+    const labExists = block?.weeks?.some((week) =>
+      week.labs?.some((lab) => lab.name === addedLab)
+    );
 
-        if (labExists) {
-            setLabErrorOccurred(true);
-            console.log("Lab already exists in one of the weeks");
-        } else {
-            const weekId = selectedWeek._id!;
-            const newLab = (await postLab(weekId, {
-                name: addedLab,
-            } as Lab)) as Lab;
-            const updatedWeeks = block?.weeks?.map((week) => {
-                if (week.name === selectedWeek.name) {
-                    return {
-                        ...week,
-                        labs: [...(week.labs || []), newLab],
-                    };
-                }
-                return week;
-            });
-            setBlock((prevBlock) => ({
-                ...prevBlock,
-                weeks: updatedWeeks,
-                users: block?.users || [],
-            }));
-            setLabErrorOccurred(false);
-            setAddedLab("");
-            setCreateLabModalOpen(false);
+    if (labExists) {
+      setLabErrorOccurred(true);
+      console.log("Lab already exists in one of the weeks");
+    } else {
+      const weekId = selectedWeek._id!;
+      const newLab = (await postLab(weekId, {
+        name: addedLab,
+      } as Lab)) as Lab;
+      const updatedWeeks = block?.weeks?.map((week) => {
+        if (week.name === selectedWeek.name) {
+          return {
+            ...week,
+            labs: [...(week.labs || []), newLab],
+          };
         }
-    };
+        return week;
+      });
+      setBlock((prevBlock) => ({
+        ...prevBlock,
+        weeks: updatedWeeks,
+        users: block?.users || [],
+      }));
+      setLabErrorOccurred(false);
+      setAddedLab("");
+      setCreateLabModalOpen(false);
+    }
+  };
 
-    const handleRemoveLab = (week: Week, lab: Lab) => {
-        setSelectedWeek(week);
-        setSelectedLabToDelete(lab);
-        setDeleteLabModalOpen(true);
-    };
-    const handleDeleteLab = async (event: FormEvent) => {
-        event.preventDefault();
+  const handleRemoveLab = (week: Week, lab: Lab) => {
+    setSelectedWeek(week);
+    setSelectedLabToDelete(lab);
+    setDeleteLabModalOpen(true);
+  };
+  const handleDeleteLab = async (event: FormEvent) => {
+    event.preventDefault();
 
-        if (!selectedWeek || !selectedLabToDelete) return;
-        const res = await deleteLab(selectedWeek, selectedLabToDelete);
+    if (!selectedWeek || !selectedLabToDelete) return;
+    const res = await deleteLab(selectedWeek, selectedLabToDelete);
 
-        if (res) {
-            const updatedWeeks = block?.weeks?.map((week: Week) => {
-                if (week.name === selectedWeek.name) {
-                    return {
-                        ...week,
-                        labs: week.labs?.filter(
-                            (lab) => lab.name !== selectedLabToDelete.name
-                        ),
-                    };
-                }
-                return week;
-            });
-            setBlock((prevBlock) => ({
-                ...prevBlock,
-                weeks: updatedWeeks,
-                users: block?.users || [],
-            }));
+    if (res) {
+      const updatedWeeks = block?.weeks?.map((week: Week) => {
+        if (week.name === selectedWeek.name) {
+          return {
+            ...week,
+            labs: week.labs?.filter(
+              (lab) => lab.name !== selectedLabToDelete.name
+            ),
+          };
         }
-        setDeleteLabModalOpen(false);
-    };
+        return week;
+      });
+      setBlock((prevBlock) => ({
+        ...prevBlock,
+        weeks: updatedWeeks,
+        users: block?.users || [],
+      }));
+    }
+    setDeleteLabModalOpen(false);
+  };
 
-    const handleRemoveWeek = async (week: Week) => {
-        setSelectedWeek(week);
-        setDeleteWeekModalOpen(true);
-    };
+  const handleRemoveWeek = async (week: Week) => {
+    setSelectedWeek(week);
+    setDeleteWeekModalOpen(true);
+  };
 
-    const handleDeleteWeek = async (event: FormEvent) => {
-        event.preventDefault();
+  const handleDeleteWeek = async (event: FormEvent) => {
+    event.preventDefault();
 
-        if (!selectedWeek) return;
+    if (!selectedWeek) return;
 
-        const res = await deleteWeek(selectedWeek);
-        console.log(res);
+    const res = await deleteWeek(selectedWeek);
+    console.log(res);
 
-        const updatedWeeks = block?.weeks?.filter(
-            (week) => week.name !== selectedWeek.name
-        );
-        setBlock((prevBlock) => ({
-            ...prevBlock,
-            weeks: updatedWeeks,
-            users: block?.users || [],
-        }));
-        setDeleteWeekModalOpen(false);
-        setSelectedWeek(undefined);
-    };
-
-   
+    const updatedWeeks = block?.weeks?.filter(
+      (week) => week.name !== selectedWeek.name
+    );
+    setBlock((prevBlock) => ({
+      ...prevBlock,
+      weeks: updatedWeeks,
+      users: block?.users || [],
+    }));
+    setDeleteWeekModalOpen(false);
+    setSelectedWeek(undefined);
+  };
 
   const [contentVisible, setContentVisible] = useState(true);
   const [analyticsVisible, setAnalyticsVisible] = useState(false);
 
   return (
     <div>
-      <div className="flex gap-5">
-        <button
-          className={`btn ${contentVisible ? "btn-primary" : ""} `}
-          onClick={() => {
-            setContentVisible(true);
-            setAnalyticsVisible(false);
-          }}
-        >
-          Content
-        </button>
-        <button
-          className={`btn ${analyticsVisible ? "btn-primary" : ""} `}
-          onClick={() => {
-            setContentVisible(false);
-            setAnalyticsVisible(true);
-          }}
-        >
-          Analytics
-        </button>
-      </div>
       <div className="flex justify-center items-start text-slate-100 mt-10">
         <div className="card border justify-center shadow-xl w-full">
           <div className="card-body gap-5">
@@ -343,7 +321,27 @@ export default function BlockPage({ params }: Props) {
               <Skeleton height={100} />
             ) : (
               <div className="flex items-center justify-between p-4">
-                <h2 className="text-slate-600 text-2xl flex-grow text-center">
+                <div className="flex gap-5">
+                  <button
+                    className={`btn ${contentVisible ? "btn-primary" : ""} `}
+                    onClick={() => {
+                      setContentVisible(true);
+                      setAnalyticsVisible(false);
+                    }}
+                  >
+                    Content
+                  </button>
+                  <button
+                    className={`btn ${analyticsVisible ? "btn-primary" : ""} `}
+                    onClick={() => {
+                      setContentVisible(false);
+                      setAnalyticsVisible(true);
+                    }}
+                  >
+                    Analytics
+                  </button>
+                </div>
+                <h2 className="text-slate-600 text-2xl flex-grow text-center ">
                   {block?.name}
                 </h2>
                 <div className="dropdown dropdown-hover dropdown-end">
@@ -374,69 +372,74 @@ export default function BlockPage({ params }: Props) {
             )}
             <hr />
             <div>
-            {analyticsVisible && <ResponsiveContainer width={500} height={500}>
-                      <BarChart
-                        width={500}
-                        height={300}
-                        data={barchartData}
-                        margin={{
-                          top: 5,
-                          right: 30,
-                          left: 20,
-                          bottom: 5,
-                        }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar
-                          dataKey="number"
-                          fill="#8884d8"
-                          activeBar={<Rectangle fill="pink" stroke="blue" />}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>}
+              {analyticsVisible && (
+                <ResponsiveContainer width={500} height={500}>
+                  <BarChart
+                    width={500}
+                    height={300}
+                    data={barchartData}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar
+                      dataKey="number"
+                      fill="#8884d8"
+                      activeBar={<Rectangle fill="pink" stroke="blue" />}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
-            {contentVisible && <div>{isLoading ? (
-              <Skeleton height={100} count={3} />
-            ) : (
-              <div className=" grid grid-cols-1 gap-5 lg:gap-20 w-full">
-                {!block?.weeks || block.weeks.length == 0 ? (
-                  <p className="text-slate-800">
-                    No weeks available currently.
-                    <button
-                      className="btn btn-primary ml-4"
-                      onClick={() => setCreateWeekModalOpen(true)}
-                    >
-                      Create Week
-                    </button>
-                  </p>
+            {contentVisible && (
+              <div>
+                {isLoading ? (
+                  <Skeleton height={100} count={3} />
                 ) : (
-                  <div className="flex flex-col gap-4">
-                    {block?.weeks?.map((week) => (
-                      <div>
-                        <WeekAccordion
-                          key={week.name}
-                          week={week}
-                          handleAddLab={() => handleCreateLab(week)}
-                          handleDeleteLab={(labToDelete) =>
-                            handleRemoveLab(week, labToDelete)
-                          }
-                          handleDeleteWeek={(weekToDelete) =>
-                            handleRemoveWeek(weekToDelete)
-                          }
-                          blockId={params.blockId}
-                        />
+                  <div className=" grid grid-cols-1 gap-5 lg:gap-20 w-full">
+                    {!block?.weeks || block.weeks.length == 0 ? (
+                      <p className="text-slate-800">
+                        No weeks available currently.
+                        <button
+                          className="btn btn-primary ml-4"
+                          onClick={() => setCreateWeekModalOpen(true)}
+                        >
+                          Create Week
+                        </button>
+                      </p>
+                    ) : (
+                      <div className="flex flex-col gap-4">
+                        {block?.weeks?.map((week) => (
+                          <div>
+                            <WeekAccordion
+                              key={week.name}
+                              week={week}
+                              handleAddLab={() => handleCreateLab(week)}
+                              handleDeleteLab={(labToDelete) =>
+                                handleRemoveLab(week, labToDelete)
+                              }
+                              handleDeleteWeek={(weekToDelete) =>
+                                handleRemoveWeek(weekToDelete)
+                              }
+                              blockId={params.blockId}
+                            />
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                    
+                    )}
                   </div>
                 )}
               </div>
-            )}</div>}
-            
+            )}
+
             <dialog
               id="create_week_modal"
               className={`modal ${isCreateWeekModalOpen ? "modal-open" : ""}`}
