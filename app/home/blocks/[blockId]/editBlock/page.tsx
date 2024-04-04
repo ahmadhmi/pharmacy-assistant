@@ -6,7 +6,9 @@ import * as XLSX from "xlsx";
 import { Student } from "@/interfaces/student";
 import { MdDelete } from "react-icons/md";
 import Skeleton from "react-loading-skeleton";
-import Criteria from "@/app/home/template/page";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 interface Props {
   params: {
@@ -16,9 +18,14 @@ interface Props {
 }
 
 export default function EditBlock({ params }: Props) {
+  const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [studentID, setStudentID] = useState("");
+
+  const [firstNameError, setFirstNameError] = useState(false);
+  const [lastNameError, setLastNameError] = useState(false);
+  const [studentIDError, setStudentIDError] = useState(false);
 
   const [block, setBlock] = useState<Block>();
   const [blockName, setBlockName] = useState<string | undefined>();
@@ -26,6 +33,8 @@ export default function EditBlock({ params }: Props) {
   const [students, setStudents] = useState<Student[] | undefined>([]);
 
   const [user, setUser] = useState("");
+
+  const [userError, setUserError] = useState(false);
 
   const [users, setUsers] = useState<string[] | undefined>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -73,36 +82,53 @@ export default function EditBlock({ params }: Props) {
 
   const handleFirstNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFirstName(event.target.value);
+    const letters = /^[A-Za-z\s]*$/;
+    if (!firstName.match(letters)) {
+      setFirstNameError(true);
+    } else {
+      setFirstNameError(false);
+    }
   };
   const handleLastNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setLastName(event.target.value);
+    const letters = /^[A-Za-z\s]*$/;
+    if (!lastName.match(letters)) {
+      setLastNameError(true);
+    } else {
+      setLastNameError(false);
+    }
   };
   const handleStudentIDChange = (event: ChangeEvent<HTMLInputElement>) => {
     setStudentID(event.target.value);
+    const Numbers = /^[0-9\s]*$/;
+    if (!studentID.match(Numbers)) {
+      setStudentIDError(true);
+    } else {
+      setStudentIDError(false);
+    }
   };
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const letters = /^[A-Za-z]+$/;
-    const Numbers = /^[0-9]+$/;
+    const letters = /^[A-Za-z\s]*$/;
+    const Numbers = /^[0-9\s]*$/;
+
     if (!firstName.match(letters)) {
-      alert("The FirstName should be all in letters ");
       return;
     }
     if (!lastName.match(letters)) {
-      alert("The lastName should be all in letters");
       return;
     }
     if (!studentID.match(Numbers)) {
-      alert("The studentID should be all in numbers");
       return;
     }
+
     const newStudent: Student = {
-      _id: studentID,
-      firstName: firstName,
-      lastName: lastName,
+      _id: studentID.trim(),
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
     };
     if (students?.some((student) => student._id === newStudent._id)) {
-      alert("Student with the same Student Id already exists");
+      toast.error("Student with the same Student Id already exists");
       return;
     }
     setStudents((prevStudents) => (prevStudents || []).concat(newStudent));
@@ -117,14 +143,23 @@ export default function EditBlock({ params }: Props) {
     );
   };
 
-  const handleAddUser = () => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const handleUserChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setUser(event.target.value?.toLowerCase().trim());
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]*$/;
     if (!user.match(emailPattern)) {
-      alert("Please enter a valid email address");
+      setUserError(true);
+    } else {
+      setUserError(false);
+    }
+  };
+
+  const handleAddUser = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]*$/;
+    if (!user.match(emailPattern)) {
       return;
     }
     if (users?.includes(user)) {
-      alert("User already exists");
+      toast.error("User already exists");
       return;
     }
     setUsers((prevUsers) => (prevUsers || []).concat(user));
@@ -147,12 +182,25 @@ export default function EditBlock({ params }: Props) {
       .patch<Block>(`/api/blocks/${params.blockId}`, newBlock)
       .then((response) => {
         console.log("Block updated successfully: ", response.data);
-        alert("Block updated successfully");
+        toast.success("Block updated successfully");
       })
       .catch((error) => {
-        //temp code
-        alert(error.response.data);
+        toast.error(error.response.data);
         console.error("Error updating block: ", error);
+      });
+  };
+
+  const handleDeleteBlock = async () => {
+    await axios
+      .delete(`/api/blocks/${params.blockId}`)
+      .then((response) => {
+        console.log("Block deleted successfully: ", response.data);
+        toast.success("Block deleted successfully");
+        router.push("/home");
+      })
+      .catch((error) => {
+        toast.error(error.response.data);
+        console.error("Error deleting block: ", error);
       });
   };
 
@@ -195,9 +243,6 @@ export default function EditBlock({ params }: Props) {
                       Confirm
                     </button>
                   </form>
-                  <p className="text-xs py-4">
-                    Press ESC key or click on ✕ button to close
-                  </p>
                 </div>
               </dialog>
             </div>
@@ -263,6 +308,21 @@ export default function EditBlock({ params }: Props) {
                     Add students
                   </button>
                 </form>
+                {firstNameError && (
+                  <span className="ml-6 text-red-500">
+                    <p>The first name should contain letters only!</p>
+                  </span>
+                )}
+                {lastNameError && (
+                  <span className="ml-6 text-red-500">
+                    <p>The last name should contain letters only!</p>
+                  </span>
+                )}
+                {studentIDError && (
+                  <span className="ml-6 text-red-500">
+                    <p>The student ID should contain numbers only!</p>
+                  </span>
+                )}
 
                 {students !== null &&
                 students !== undefined &&
@@ -318,9 +378,6 @@ export default function EditBlock({ params }: Props) {
                                 Delete
                               </button>
                             </form>
-                            <p className="text-xs py-4">
-                              Press ESC key or click on ✕ button to close
-                            </p>
                           </div>
                         </dialog>
                       </div>
@@ -364,7 +421,7 @@ export default function EditBlock({ params }: Props) {
                     type="text"
                     placeholder="Users"
                     value={user}
-                    onChange={(e) => setUser(e.target.value?.toLowerCase())}
+                    onChange={handleUserChange}
                     className="input input-bordered input-primary w-full max-w-xs my-2"
                   />
                   <button
@@ -374,6 +431,11 @@ export default function EditBlock({ params }: Props) {
                     Add Users
                   </button>
                 </div>
+                {userError && (
+                  <span className="ml-6 text-red-500">
+                    <p>Please enter a valid email address!</p>
+                  </span>
+                )}
                 {users !== undefined && (
                   <div className="p-4">
                     {users.map((user, index) => (
@@ -415,9 +477,6 @@ export default function EditBlock({ params }: Props) {
                                 Delete
                               </button>
                             </form>
-                            <p className="text-xs py-4">
-                              Press ESC key or click on ✕ button to close
-                            </p>
                           </div>
                         </dialog>
                       </div>
@@ -427,8 +486,46 @@ export default function EditBlock({ params }: Props) {
               </div>
             </div>
           )}
+          <hr />
+          {isLoading ? (
+            <Skeleton height={240} />
+          ) : (
+            <div className="flex justify-center">
+              <button
+                className="btn btn-error"
+                onClick={() =>
+                  (
+                    document.getElementById("my_modal_2") as HTMLDialogElement
+                  ).showModal()
+                }
+              >
+                Delete the Block
+              </button>
+              <dialog id="my_modal_2" className="modal">
+                <div className="modal-box">
+                  <form method="dialog">
+                    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                      ✕
+                    </button>
+                  </form>
+                  <h3 className="font-bold text-lg">
+                    Please confirm to delete the block?
+                  </h3>
+                  <form method="dialog">
+                    <button
+                      className="btn btn-info mt-2"
+                      onClick={handleDeleteBlock}
+                    >
+                      Confirm
+                    </button>
+                  </form>
+                </div>
+              </dialog>
+            </div>
+          )}
         </div>
       </div>
+      <ToastContainer closeOnClick={true} autoClose={5000} />
     </section>
   );
 }
