@@ -67,11 +67,11 @@ const SideBar = ({ children }: Props) => {
                 Blocks
               </LinkBlock>
               <LinkBlock
-                href="/home/blocks/65cbe1af929966312830eea0/65e6c4517fdb6a053a93de8a"
+                href="/home/template"
                 Icon={VscArrowRight}
                 IconSize={25}
               >
-                Labs
+                Templates
               </LinkBlock>
             </div>
           </div>
