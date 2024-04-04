@@ -20,20 +20,20 @@ import Skeleton from "react-loading-skeleton";
 const styles = StyleSheet.create({
   body: {
     paddingTop: 35,
-    paddingBottom: 65,
+    paddingBottom: 35,
     paddingHorizontal: 35,
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 20,
   },
   title: {
-    fontSize: 18,
+    fontSize: 15,
     textAlign: "center",
     marginVertical: 5,
   },
   text: {
-    margin: 4,
-    fontSize: 10,
+    margin: 2,
+    fontSize: 8,
   },
   header: {
     fontSize: 12,
@@ -139,7 +139,7 @@ export default function LabPage({ params }: Props) {
               (sheet) => sheet._id === items
             );
             return (
-              <View key={index} style={{ height: 500, width: 360, gap: 5 }}>
+              <View key={index} style={{ minHeight: 500, width: 360, gap: 5 }}>
                 <Text style={styles.title}>
                   {sheet ? sheet.studentName : "Not found"}{" "}
                 </Text>
@@ -180,7 +180,7 @@ export default function LabPage({ params }: Props) {
                   <Text>Overall</Text>
                   <Text>{sheet?.pass?.toString()}</Text>
                 </View>
-                <View style={{ marginTop: 20 }}>
+                <View style={{ marginTop: 10 }}>
                   <Text>Comments: {sheet?.comment}</Text>
                 </View>
               </View>
