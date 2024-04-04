@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body data-theme="dark" className={inter.className + " min-h-screen"}>
+      <body data-theme="mytheme" className={inter.className + " min-h-screen"}>
         <AuthProvider>
           <NavBar />
           {children}
