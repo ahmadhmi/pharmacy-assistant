@@ -6,12 +6,18 @@ import { useBlocksContext } from "../_utils/blocks-context";
 import { Block } from "@/interfaces/block";
 import LinkBlock from "./home/link";
 import { VscArrowRight } from "react-icons/vsc";
+import { useRouter } from 'next/router';
+import Breadcrumbs from "./Breadcrumbs";
+
+
 
 interface Props {
   children: React.ReactNode;
 }
 
 const SideBar = ({ children }: Props) => {
+
+  
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -75,6 +81,7 @@ const SideBar = ({ children }: Props) => {
               </LinkBlock>
             </div>
           </div>
+          <Breadcrumbs/>
         </ul>
       </div>
     </div>
