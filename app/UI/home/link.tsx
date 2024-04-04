@@ -22,7 +22,7 @@ export default function LinkBlock({
       <div
         className={
           className +
-          " btn btn-accent flex flex-row justify-between items-center min-w-full"
+          " btn btn-accent flex text-neutral text-lg flex-row justify-between items-center min-w-full"
         }
       >
         <p>{children}</p>
