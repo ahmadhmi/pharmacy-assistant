@@ -245,7 +245,7 @@ export default function Grade({ params }: Props) {
                 </div>
                 {form == 0 ? (
                     <div className="flex flex-col gap-4 w-full">
-                        <ul className="flex flex-col items-center min-h-64 max-h-72 px-2 overflow-y-auto list-none scrollbar-thin scrollbar-track scrollbar-thumb-black">
+                        <ul className="flex flex-col items-center min-h-64 max-h-72 px-2 overflow-y-auto list-none scrollbar-thin scrollbar-thumb-black">
                             {templateCriteria && templateCriteria.length > 0 ? (
                                 templateCriteria?.map((criteria: criteria) => (
                                     <li
@@ -380,6 +380,7 @@ export default function Grade({ params }: Props) {
                     className="min-h-40 rounded p-2 w-full"
                     placeholder="Comments..."
                     value={comment}
+                    maxLength={1000}
                     onChange={(e) => {
                         setComment(e.currentTarget.value);
                     }}

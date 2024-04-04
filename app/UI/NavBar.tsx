@@ -18,7 +18,7 @@ const NavBar = () => {
         <Link href={status === "authenticated" ? "/home" : "/"}>
           <Image src={logo.src} alt="logo" width={50} height={50} />
         </Link>
-        <div className="text-xl tracking-wider">PharmaGrades</div>
+        <div className="text-xl text-neutral tracking-wider">PharmaGrades</div>
       </div>
       <AuthStatus />
     </div>
