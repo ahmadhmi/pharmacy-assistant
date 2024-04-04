@@ -154,7 +154,7 @@ export default function Grading({ params }: Props) {
 
     if (block && lab) {
         return (
-            <section className="flex-col items-center">
+            <section className="flex-col sm:flex-col-reverse items-center">
                 <div className="flex items-center justify-between">
                     <div
                         className={`badge badge-primary p-4 rounded-md text-white text-lg ${
@@ -163,24 +163,17 @@ export default function Grading({ params }: Props) {
                     >
                         {lab?.name ? `Grading: ${lab.name}` : "Grading:"}
                     </div>
-                    <Link
-                        className="btn"
-                        href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}`}
-                    >
-                        <VscArrowLeft></VscArrowLeft>
-                        Back</Link>
                 </div>
-
                 <div>
                     <h1 className="text-lg text-neutral mt-4">
                         Completed Marking Sheets
                     </h1>
                 </div>
-                <div className="overflow-y-auto min-h-64 max-h-72 my-2 px-2 scrollbar-thin scrollbar-thumb-black mb-4 rounded-lg">
+                <div className="overflow-y-auto min-h-96 max-h-96 my-2 px-2 scrollbar-thin scrollbar-thumb-black mb-4 rounded-lg">
                     {gradesheets ? (
                         Object.keys(gradesheets).map((key, index) => (
                             <div
-                                className="collapse collapse-arrow my-1 shadow-lg border-2 border-slate-50"
+                                className="collapse collapse-arrow my-1 shadow-lg border-2 bg-secondary"
                                 key={key}
                             >
                                 <input
@@ -188,17 +181,17 @@ export default function Grading({ params }: Props) {
                                     name="my-accordion-2"
                                     placeholder="1"
                                 />
-                                <div className="collapse-title flex justify-between items-center text-xl font-medium text-neutral">
+                                <div className="collapse-title flex justify-between items-center text-xl font-medium">
                                     <h2>
                                         {gradesheets[key][0].studentName} {key}
                                     </h2>
-                                    <div className="badge badge-primary text-lg">
+                                    <div className="badge badge-primary text-lg text-neutral">
                                         {gradesheets[key].length}
                                     </div>
                                 </div>
-                                <div className="collapse-content">
-                                    <div className="flex flex-row items-center justify-between my-2 text-neutral border-b-2 border-slate-400">
-                                        <div>Rx Number</div>
+                                <div className="collapse-content bg-neutral m-2 rounded-xl">
+                                    <div className="flex flex-row items-center justify-between my-2 text-neutral border-b-2">
+                                        <div className="text-accent font-bold">Rx Number</div>
                                     </div>
                                     {gradesheets ? (
                                         gradesheets[key].map(
@@ -207,12 +200,12 @@ export default function Grading({ params }: Props) {
                                                     className="flex flex-row items-center justify-between text-neutral py-2 border-b-2 border-slate-400"
                                                     key={index}
                                                 >
-                                                    <p className="font-bold">
+                                                    <p className="font-bold text-accent">
                                                         {gradesheet.rx}
                                                     </p>
                                                     <div>
                                                         <Link
-                                                            className="btn btn-sm px-12 btn-outline bg-black"
+                                                            className="btn btn-sm btn-primary text-neutral px-12"
                                                             href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/${gradesheet._id}`}
                                                         >
                                                             Edit
@@ -234,18 +227,18 @@ export default function Grading({ params }: Props) {
                     )}
                 </div>
                 <form
-                    className="grid grid-cols-1 grid-rows-2 gap-4"
+                    className="grid grid-cols-1 grid-rows-2 gap-4 md:flex items-center bg-white shadow-xl rounded-xl p-2"
                     onSubmit={(e) => handleStartGrading(e)}
                 >
-                    <div className="flex flex-row gap-4">
+                    <div className="flex flex-row gap-4 w-full">
                         <label className="form-control w-full">
                             <div className="label">
-                                <span className="label-text">Student ID</span>
+                                <span className="label-text text-accent font-bold">Student ID</span>
                             </div>
                             <select
                                 defaultValue={"default"}
                                 onChange={(e) => setId(e.currentTarget.value)}
-                                className="select w-full max-w-xs"
+                                className="select w-full max-w-xs bg-secondary"
                             >
                                 {block?.students?.map((student: Student) => (
                                     <option
@@ -260,11 +253,11 @@ export default function Grading({ params }: Props) {
                         </label>
                         <label className="form-control w-full">
                             <div className="label">
-                                <span className="label-text">Date</span>
+                                <span className="label-text text-accent font-bold">Date</span>
                             </div>
                             <input
                                 type="date"
-                                className="input-md rounded-md"
+                                className="input-md rounded-md bg-secondary"
                                 value={date}
                                 onChange={(e) => {
                                     setDate(e.currentTarget.value);
@@ -274,19 +267,20 @@ export default function Grading({ params }: Props) {
                     </div>
                     <label className="form-control w-full">
                         <div className="label">
-                            <span className="label-text">Rx Number</span>
+                            <span className="label-text text-accent font-bold">Rx Number</span>
                         </div>
                         <input
                             type="text"
                             placeholder="111222333"
-                            className="input-md rounded-md"
+                            maxLength={20}
+                            className="input-md rounded-md bg-secondary text-black"
                             onChange={(e) => {
                                 setRx(e.currentTarget.value);
                             }}
                             value={rx}
                         ></input>
                     </label>
-                    <button className="btn" type="submit">
+                    <button className="btn btn-primary text-neutral mt-8" type="submit">
                         Start Grading
                     </button>
                 </form>
@@ -323,7 +317,7 @@ export default function Grading({ params }: Props) {
                 <div
                     className={`alert hover:alert-warning flex flex-row ${
                         error === "Page is loading..."
-                            ? "alert-info"
+                            ? "alert bg-prim"
                             : "alert-error"
                     }`}
                 >
