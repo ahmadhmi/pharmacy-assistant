@@ -8,29 +8,32 @@ import authOptions from "@/app/auth/authOptions";
 //const url = `mongodb+srv://${process.env.MONGO_CONNECTION_USER}:${process.env.MONGO_CONNECTION_PASS}@${process.env.MONGO_CONNECTION_DATABASE}.u1s3nfi.mongodb.net/?retryWrites=true&w=majority`;
 const url = process.env.MONGODB_URI;
 const client = new MongoClient(url);
-const onStart = async () => await client.connect(); 
-onStart(); 
+const onStart = async () => await client.connect();
+onStart();
 var db = client.db(process.env.MONGO_CONNECTION_DATABASE);
 
-process.on("beforeExit", async () => {await client.close(); console.log("closed db connection")})
+process.on("beforeExit", async () => {
+  await client.close();
+  console.log("closed db connection");
+});
 
 // async function requestClose(){
-//     await client.close(); 
-//     console.log("closed"); 
-//     console.log("Closing, Client open?:" + clientOpen); 
+//     await client.close();
+//     console.log("closed");
+//     console.log("Closing, Client open?:" + clientOpen);
 // }
 
 // async function requestOpen(){
 //   //check if since its been more than 5 seconds since last request
 //   console.log("Opening, Client open?:" + clientOpen);
 //   if(!clientOpen){
-//     await client.connect(); 
+//     await client.connect();
 //     console.log("Opened")
 //     setTimeout(requestClose, 30000)
 //   }
 //   else{
 //     console.log("Rejected open request")
-//     return Promise.resolve(); 
+//     return Promise.resolve();
 //   }
 // }
 
@@ -72,7 +75,7 @@ export async function addUser(user) {
   } catch (err) {
     console.log("Tried to add a user, error encountered\n" + err.log);
   } finally {
-   // await client.close();
+    // await client.close();
   }
 }
 
@@ -96,24 +99,22 @@ export async function getUserID(email) {
   // }
 }
 
-export async function getUsersForBlock(blockId){
-  try{
-    let collection = db.collection("blocks"); 
-    const result = await collection.find(
-      {
-        _id: new ObjectId(blockId)
-      }
-    ).project(
-      {
+export async function getUsersForBlock(blockId) {
+  try {
+    let collection = db.collection("blocks");
+    const result = await collection
+      .find({
+        _id: new ObjectId(blockId),
+      })
+      .project({
         users: 1,
-        _id: 0
-      }
-    );
-    const users = await result.toArray(); 
+        _id: 0,
+      });
+    const users = await result.toArray();
     return users[0].users;
-  }catch(error){
+  } catch (error) {
     console.log(error);
-    return []; 
+    return [];
   }
 }
 
@@ -125,7 +126,7 @@ export async function addBlock(block) {
     let collection = db.collection("blocks");
     console.log(block);
     block.users.push(session.user.email);
-    block.admin = session.user.email; 
+    block.admin = session.user.email;
 
     await collection.insertOne(block);
     console.log("Connected to atlas and added a block");
@@ -158,28 +159,28 @@ export async function getAllBlocks(userEmail) {
   }
 }
 
-export async function getBlock(blockID){
-  let retrievedDoc = null; 
-  try{
+export async function getBlock(blockID) {
+  let retrievedDoc = null;
+  try {
     let db = client.db(process.env.MONGO_CONNECTION_DATABASE);
-    //await client.connect(); 
+    //await client.connect();
     let filter = {
-      _id: new ObjectId(blockID)
-    }
-    let collection = db.collection("blocks"); 
-    retrievedDoc = await collection.findOne(filter); 
-  }catch(ex){
-    console.log(ex)
+      _id: new ObjectId(blockID),
+    };
+    let collection = db.collection("blocks");
+    retrievedDoc = await collection.findOne(filter);
+  } catch (ex) {
+    console.log(ex);
     console.log(`Error in retrieving block ID: ${blockID}`);
     return null;
-  }finally{
-    //await client.close(); 
+  } finally {
+    //await client.close();
     return retrievedDoc;
   }
 }
 
 export async function updateBlock(blockID, newBlock) {
-  console.log(blockID + " " + newBlock)
+  console.log(blockID + " " + newBlock);
   try {
     //await client.connect();
     let collection = db.collection("blocks");
@@ -207,7 +208,7 @@ export async function updateBlock(blockID, newBlock) {
     } else if (matchedCount === 0) {
       console.log("There is no document matching the query");
     }
-    return true; 
+    return true;
   } catch (err) {
     console.log("Update block failed with error\n" + err);
     return false;
@@ -217,16 +218,16 @@ export async function updateBlock(blockID, newBlock) {
 }
 
 //todo
-export async function deleteBlock(userID, blockID) {
+export async function deleteBlock(blockID) {
   //make sure the block in the database with the blockID passed contains the userID passed before deleting
   try {
     //await client.connect();
     let collection = db.collection("blocks");
     const filter = {
       _id: new ObjectId(blockID),
-      users: {
-        $in: [userID],
-      },
+      // users: {
+      //   $in: [userID],
+      // },
     };
     const result = await collection.deleteOne(filter);
 
@@ -245,13 +246,13 @@ export async function deleteBlock(userID, blockID) {
 //todo
 
 //get all gradesheets, return a gradesheet array, filled or empty for a lab provided a labId
-export async function getAllGradeSheets(labId){
+export async function getAllGradeSheets(labId) {
   try {
     //await client.connect();
     let collection = db.collection("gradesheets");
     let filter = {
       labId: labId,
-    }
+    };
     const cursor = await collection.find(filter);
     const gradesheets = await cursor.toArray();
     return gradesheets;
@@ -264,57 +265,59 @@ export async function getAllGradeSheets(labId){
 }
 
 //get singular gradesheet, return a single gradesheet or null for a lab provided a gradeSheetId
-export async function getGradeSheet(gradesheetId){
-  try{
-    //await client.connect(); 
-    let collection = db.collection("gradesheets"); 
-    const found = await collection.findOne({_id: new ObjectId(gradesheetId)}); 
-    if(found){
+export async function getGradeSheet(gradesheetId) {
+  try {
+    //await client.connect();
+    let collection = db.collection("gradesheets");
+    const found = await collection.findOne({ _id: new ObjectId(gradesheetId) });
+    if (found) {
       return {
-        _id:found._id.toString(),
-        studentID:found.studentID,
-        studentName:found.studentName,
-        labId:found.labId, 
-        date:found.date, 
-        rx:found.rx,
+        _id: found._id.toString(),
+        studentID: found.studentID,
+        studentName: found.studentName,
+        labId: found.labId,
+        date: found.date,
+        rx: found.rx,
         criteria: found.criteria,
         score: found.score,
         maxScore: found.maxScore,
         pass: found.pass,
-        comment:found.comment,
-      }
-    }else{
-      return null; 
+        comment: found.comment,
+      };
+    } else {
+      return null;
     }
-  }catch(ex){
-    console.log(`Failed to retrieve with gradesheetID: ${gradesheetId}\nFailed with error: ${ex}`);
-    return null; 
-  }finally{
-    //await client.close();  
+  } catch (ex) {
+    console.log(
+      `Failed to retrieve with gradesheetID: ${gradesheetId}\nFailed with error: ${ex}`
+    );
+    return null;
+  } finally {
+    //await client.close();
   }
 }
 
 //create gradesheet, return newly created gradesheet with its _id inserted
 
-export async function addGradeSheet(gradesheet){
+export async function addGradeSheet(gradesheet) {
   try {
-    //await client.connect(); 
+    //await client.connect();
     let collection = db.collection("gradesheets");
 
     const added = await collection.insertOne(gradesheet);
-    const found = await collection.findOne({_id:added.insertedId});
+    const found = await collection.findOne({ _id: added.insertedId });
     const newGradesheet = {
       _id: found._id.toString(),
-      studentID:found.studentID, 
-      studentName: found.studentName, 
-      labId:found.labId, 
-      date:found.date, 
-      rx:found.rx,
-    }
-    return newGradesheet; 
-  } catch(error) {
+      studentID: found.studentID,
+      studentName: found.studentName,
+      labId: found.labId,
+      date: found.date,
+      rx: found.rx,
+    };
+    return newGradesheet;
+  } catch (error) {
     console.log("failed to insert a gradesheet\n" + error);
-    return null; 
+    return null;
   } finally {
     //await client.close();
   }
@@ -322,7 +325,7 @@ export async function addGradeSheet(gradesheet){
 
 //update gradesheet, return true or false
 
-export async function updateGradeSheet(gradesheet){
+export async function updateGradeSheet(gradesheet) {
   try {
     //await client.connect();
     let collection = db.collection("gradesheets");
@@ -333,13 +336,13 @@ export async function updateGradeSheet(gradesheet){
       $set: {
         studentID: gradesheet.studentID,
         studentName: gradesheet.studentName,
-        labId: gradesheet.labId, 
-        date: gradesheet.date, 
+        labId: gradesheet.labId,
+        date: gradesheet.date,
         rx: gradesheet.rx,
         criteria: gradesheet.criteria,
         score: gradesheet.score,
         maxScore: gradesheet.maxScore,
-        pass: gradesheet.pass, 
+        pass: gradesheet.pass,
         comment: gradesheet.comment,
       },
     };
@@ -355,33 +358,33 @@ export async function updateGradeSheet(gradesheet){
     } else if (matchedCount === 0) {
       console.log("There is no document matching the query");
     }
-    return true; 
+    return true;
   } catch (err) {
     console.log("Update failed with error\n" + err);
-    return false; 
+    return false;
   } finally {
     //await client.close();
   }
 }
 
-//delete gradesheet 
+//delete gradesheet
 
-export async function deleteGradeSheet(gradesheetID){
+export async function deleteGradeSheet(gradesheetID) {
   try {
     //await client.connect();
     let collection = db.collection("gradesheets");
 
     const filter = {
-        _id: new ObjectId(gradesheetID),
+      _id: new ObjectId(gradesheetID),
     };
     const result = await collection.deleteOne(filter);
 
     if (result.deletedCount === 1) {
-        console.log("Successfully deleted a gradesheet");
-        return true;
+      console.log("Successfully deleted a gradesheet");
+      return true;
     } else {
-        console.log("No gradesheet found with the specified ID");
-        return false;
+      console.log("No gradesheet found with the specified ID");
+      return false;
     }
   } catch (error) {
     console.log("Delete failed with error\n" + error);
@@ -402,15 +405,15 @@ export async function addStudent(blockId, student) {
     const existingStudent = await collection.findOne({
       _id: new ObjectId(blockId),
       "students.firstName": student.firstName,
-      "students.lastName": student.lastName
+      "students.lastName": student.lastName,
     });
 
     if (existingStudent) {
       console.log("A student with the same name already exists");
       return null;
-    }  
+    }
 
-    const newStudent = {student}; 
+    const newStudent = { student };
 
     const result = await collection.updateOne(
       { _id: new ObjectId(blockId) },
@@ -441,7 +444,7 @@ export async function deleteStudent(blockId, studentId) {
 
     const result = await collection.updateOne(
       { _id: new ObjectId(blockId) },
-      { $pull: { students: {_id: new ObjectId(studentId) }}}
+      { $pull: { students: { _id: new ObjectId(studentId) } } }
     );
 
     if (result.modifiedCount === 1) {
@@ -464,15 +467,15 @@ export async function addWeek(blockId, week) {
   try {
     //await client.connect();
     let collection = db.collection("blocks");
-      
-    const newWeek = { 
-      _id: new ObjectId(), 
-      ...week, 
+
+    const newWeek = {
+      _id: new ObjectId(),
+      ...week,
     };
 
     const result = await collection.updateOne(
       { _id: new ObjectId(blockId) },
-      { $push: {weeks: newWeek} }
+      { $push: { weeks: newWeek } }
     );
 
     if (result.modifiedCount === 1) {
@@ -494,7 +497,7 @@ export async function deleteWeek(blockId, weekId) {
   try {
     //await client.connect();
     let collection = db.collection("blocks");
-    let gradesheetCol = db.collection("gradesheets"); 
+    let gradesheetCol = db.collection("gradesheets");
 
     const block = await getBlock(blockId);
 
@@ -502,7 +505,7 @@ export async function deleteWeek(blockId, weekId) {
 
     const result = await collection.updateOne(
       { _id: new ObjectId(blockId) },
-      { $pull: { weeks: { _id: new ObjectId(weekId) }}}
+      { $pull: { weeks: { _id: new ObjectId(weekId) } } }
     );
 
     if (result.modifiedCount === 1) {
@@ -526,7 +529,7 @@ export async function addLab(blockId, weekId, lab) {
     //await client.connect();
     let collection = db.collection("blocks");
     const newLab = { _id: new ObjectId(), ...lab };
-   
+
     const result = await collection.updateOne(
       { _id: new ObjectId(blockId), "weeks._id": new ObjectId(weekId) },
       { $push: { "weeks.$.labs": newLab } }
@@ -555,12 +558,12 @@ export async function deleteLab(blockId, weekId, labId) {
     let collection = db.collection("blocks");
 
     const result = await collection.updateOne(
-      { _id: new ObjectId(blockId), "weeks._id": new ObjectId(weekId)},
-      { $pull: { "weeks.$.labs": { _id: new ObjectId(labId)}}}
+      { _id: new ObjectId(blockId), "weeks._id": new ObjectId(weekId) },
+      { $pull: { "weeks.$.labs": { _id: new ObjectId(labId) } } }
     );
 
-    let gradeSheetCol = db.collection("gradesheets"); 
-    const result2 = await gradeSheetCol.deleteMany({"labId": labId}); 
+    let gradeSheetCol = db.collection("gradesheets");
+    const result2 = await gradeSheetCol.deleteMany({ labId: labId });
 
     if (result.modifiedCount === 1) {
       console.log("Successfully the lab has been deleted");
@@ -583,37 +586,37 @@ export async function getLab(blockId, weekId, labId) {
     //await client.connect();
     let collection = db.collection("blocks");
 
-    const retrievedDoc = await collection.aggregate(
-      [
+    const retrievedDoc = await collection
+      .aggregate([
         {
-          $match: {_id: new ObjectId(blockId)}
+          $match: { _id: new ObjectId(blockId) },
         },
         {
-          $unwind: "$weeks"
+          $unwind: "$weeks",
         },
         {
-          $match: {"weeks._id": new ObjectId(weekId)}
+          $match: { "weeks._id": new ObjectId(weekId) },
         },
         {
-          $unwind: "$weeks.labs"
+          $unwind: "$weeks.labs",
         },
         {
-          $match: {"weeks.labs._id": new ObjectId(labId)}
+          $match: { "weeks.labs._id": new ObjectId(labId) },
         },
-        { $replaceRoot: { newRoot: '$weeks.labs' } }
-      ]
-    ).toArray(); 
+        { $replaceRoot: { newRoot: "$weeks.labs" } },
+      ])
+      .toArray();
 
     const lab = {
       _id: retrievedDoc[0]._id,
       name: retrievedDoc[0].name,
       selectedTemplate: retrievedDoc[0].selectedTemplate,
       markingTemplates: retrievedDoc[0].markingTemplates,
-    }
+    };
 
-  if(retrievedDoc){
-    return lab; 
-  }
+    if (retrievedDoc) {
+      return lab;
+    }
   } catch (error) {
     console.log("GetLab failed with an error\n" + error.message);
     return null;
@@ -628,12 +631,24 @@ export async function setTemplate(blockId, weekId, labId, template) {
     //await client.connect();
     let collection = db.collection("blocks");
     const result = await collection.updateOne(
-      { _id: new ObjectId(blockId), weeks: { $elemMatch: { _id: weekId, 'labs._id': labId } } },
-      { $set: { 'weeks.$[weekElem].labs.$[labElem].selectedTemplate': template } },
-      { arrayFilters: [{ 'weekElem._id': new ObjectId(weekId) }, { 'labElem._id': new ObjectId(labId) }] }
+      {
+        _id: new ObjectId(blockId),
+        weeks: { $elemMatch: { _id: weekId, "labs._id": labId } },
+      },
+      {
+        $set: {
+          "weeks.$[weekElem].labs.$[labElem].selectedTemplate": template,
+        },
+      },
+      {
+        arrayFilters: [
+          { "weekElem._id": new ObjectId(weekId) },
+          { "labElem._id": new ObjectId(labId) },
+        ],
+      }
     );
-  console.log(template)
-  console.log(result)
+    console.log(template);
+    console.log(result);
 
     if (result.modifiedCount === 1) {
       console.log("Successfully updated a template");
@@ -655,11 +670,28 @@ export async function setMarkingTemplates(blockId, weekId, labId, templates) {
     //await client.connect();
     let collection = db.collection("blocks");
     const result = await collection.updateOne(
-      { _id: new ObjectId(blockId), weeks: { $elemMatch: { _id: new ObjectId(weekId), 'labs._id': new ObjectId(labId) } } },
-      { $set: { 'weeks.$[weekElem].labs.$[labElem].markingTemplates': templates } },
-      { arrayFilters: [{ 'weekElem._id': new ObjectId(weekId) }, { 'labElem._id': new ObjectId(labId) }] }
-  );
-  console.log(result); 
+      {
+        _id: new ObjectId(blockId),
+        weeks: {
+          $elemMatch: {
+            _id: new ObjectId(weekId),
+            "labs._id": new ObjectId(labId),
+          },
+        },
+      },
+      {
+        $set: {
+          "weeks.$[weekElem].labs.$[labElem].markingTemplates": templates,
+        },
+      },
+      {
+        arrayFilters: [
+          { "weekElem._id": new ObjectId(weekId) },
+          { "labElem._id": new ObjectId(labId) },
+        ],
+      }
+    );
+    console.log(result);
 
     if (result.modifiedCount === 1) {
       console.log("Successfully a new lab has been inserted");
@@ -685,13 +717,13 @@ export async function addMarkingTemplates(templates, user) {
     const result = await collection.insertOne(templates);
 
     if (result.insertedId) {
-        console.log("Successfully a new template has been added");
-        return result.insertedId;
-    } else if(result.matchedCount >= 1){
-        console.log("No updates were made");
-        return result.insertedId;
-    }else{
-      return false
+      console.log("Successfully a new template has been added");
+      return result.insertedId;
+    } else if (result.matchedCount >= 1) {
+      console.log("No updates were made");
+      return result.insertedId;
+    } else {
+      return false;
     }
   } catch (error) {
     console.log("Add failed with an error\n" + error.message);
@@ -702,29 +734,42 @@ export async function addMarkingTemplates(templates, user) {
 }
 
 // add a new field "selectedTemplate" in a lab with a specific ID, return true or false
-export async function addSelectedTemplateField (blockId, weekId, labId, selectedTemplate) {
+export async function addSelectedTemplateField(
+  blockId,
+  weekId,
+  labId,
+  selectedTemplate
+) {
   try {
     //await client.connect();
     let collection = db.collection("blocks");
     const result = await collection.updateOne(
-      { 
-        "_id": new ObjectId(blockId) 
+      {
+        _id: new ObjectId(blockId),
       },
-      { $set: {"weeks.$[weeks].labs.$[labs].selectedTemplate": new ObjectId(selectedTemplate) } },
-      { arrayFilters: [
-        { "weeks._id": new ObjectId(weekId) },
-        { "labs._id": new ObjectId(labId) }
-      ]}
+      {
+        $set: {
+          "weeks.$[weeks].labs.$[labs].selectedTemplate": new ObjectId(
+            selectedTemplate
+          ),
+        },
+      },
+      {
+        arrayFilters: [
+          { "weeks._id": new ObjectId(weekId) },
+          { "labs._id": new ObjectId(labId) },
+        ],
+      }
     );
-    console.log(result)
+    console.log(result);
 
     if (result.modifiedCount === 1) {
       console.log("Successfully a new field had been created in the lab");
       return true;
-    } else if(result.matchedCount >= 1) {
+    } else if (result.matchedCount >= 1) {
       console.log("No updates were made");
       return true;
-    } else{
+    } else {
       return false;
     }
   } catch (error) {
@@ -734,85 +779,79 @@ export async function addSelectedTemplateField (blockId, weekId, labId, selected
   }
 }
 
-export async function getTemplates(userId){
-  try{
+export async function getTemplates(userId) {
+  try {
     let collection = db.collection("markingTemplates");
-    const result = await collection.find(
-      {
-        "user": userId
-      }
-    )
-    const templates = await result.toArray(); 
-    templates.forEach((template) => delete template.user)
-    return templates; 
-
-  }catch(error){
+    const result = await collection.find({
+      user: userId,
+    });
+    const templates = await result.toArray();
+    templates.forEach((template) => delete template.user);
+    return templates;
+  } catch (error) {
     console.log(error);
-    return false 
-  }
-}
-
-export async function getTemplate(templateId){
-  try{
-    let collection = db.collection("markingTemplates"); 
-    const result = await collection.findOne({
-      "_id": new ObjectId(templateId) 
-    }); 
-    if(result){
-      return result; 
-    }else{
-      return null; 
-    }
-  }catch(ex){
-    console.log(ex)
-    return null; 
-  }
-}
-
-export async function updateTemplate(updatedTemplate){
-  try{
-    let collection = db.collection("markingTemplates"); 
-    const result = await collection.updateOne(
-      {
-        _id: new ObjectId(updatedTemplate._id)
-      },
-      {
-        $set:{
-          "name": updatedTemplate.name,
-          "description": updatedTemplate.description,
-          "criteria": updatedTemplate.criteria,
-          "minimum": updatedTemplate.minimum
-        }
-      }
-    ); 
-    if(result.modifiedCount == 1 || result.matchedCount == 1){
-      return true;
-    }else{
-      return false;
-    }
-
-  }catch(error){
-    console.log(error)
     return false;
   }
 }
 
-export async function deleteTemplate(templateId){
-  try{
+export async function getTemplate(templateId) {
+  try {
     let collection = db.collection("markingTemplates");
-    const result = await collection.deleteOne(
+    const result = await collection.findOne({
+      _id: new ObjectId(templateId),
+    });
+    if (result) {
+      return result;
+    } else {
+      return null;
+    }
+  } catch (ex) {
+    console.log(ex);
+    return null;
+  }
+}
+
+export async function updateTemplate(updatedTemplate) {
+  try {
+    let collection = db.collection("markingTemplates");
+    const result = await collection.updateOne(
       {
-        "_id": new ObjectId(templateId)
+        _id: new ObjectId(updatedTemplate._id),
+      },
+      {
+        $set: {
+          name: updatedTemplate.name,
+          description: updatedTemplate.description,
+          criteria: updatedTemplate.criteria,
+          minimum: updatedTemplate.minimum,
+        },
       }
     );
-    if (result.deletedCount == 1){
-      return true
-    }else{
+    if (result.modifiedCount == 1 || result.matchedCount == 1) {
+      return true;
+    } else {
       return false;
     }
-  }catch(error){
-    console.log(error)
-    return false; 
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+export async function deleteTemplate(templateId) {
+  try {
+    let collection = db.collection("markingTemplates");
+    const result = await collection.deleteOne({
+      _id: new ObjectId(templateId),
+    });
+    if (result.deletedCount == 1) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log(error);
+    return false;
   }
 }
 

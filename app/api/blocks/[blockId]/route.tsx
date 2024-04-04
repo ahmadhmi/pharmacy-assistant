@@ -1,6 +1,6 @@
 "use server";
 
-import "server-only"; 
+import "server-only";
 import { NextRequest, NextResponse } from "next/server";
 import {
   getAllBlocks,
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest, { params }: Props) {
           weeks: retrievedDoc.weeks,
           students: retrievedDoc.students,
           users: retrievedDoc.users,
-          admin: retrievedDoc.admin, 
+          admin: retrievedDoc.admin,
           markingTemplates: retrievedDoc.markingTemplates,
         };
         if (
@@ -46,7 +46,9 @@ export async function GET(request: NextRequest, { params }: Props) {
             status: 200,
           });
         } else {
-          throw { error: `${session.user.name} does not have access to this block or the block does not exist` };
+          throw {
+            error: `${session.user.name} does not have access to this block or the block does not exist`,
+          };
         }
       } else {
         throw { error: "No such block exists" };
@@ -112,9 +114,11 @@ export async function PATCH(
     const oldBlock = await getBlock(body._id);
     if (session) {
       if (oldBlock && oldBlock.users.includes(session.user?.email)) {
-
-        if(oldBlock.admin !== session.user?.email){
-          throw {error: `${session.user?.name} does not have administrative permissions to edit this block`, code: 403}
+        if (oldBlock.admin !== session.user?.email) {
+          throw {
+            error: `${session.user?.name} does not have administrative permissions to edit this block`,
+            code: 403,
+          };
         }
 
         const success = await updateBlock(params.blockId, body);
@@ -124,61 +128,65 @@ export async function PATCH(
             status: 200,
           });
         } else {
-          throw { error: "Something went wrong when trying to update a block", code: 400 };
+          throw {
+            error: "Something went wrong when trying to update a block",
+            code: 400,
+          };
         }
       } else {
         throw {
-          error: `${session.user?.name} does not have access to this block or this block may not exist`, code: 401
+          error: `${session.user?.name} does not have access to this block or this block may not exist`,
+          code: 401,
         };
       }
     } else {
       throw { error: "User is not authenticated" };
     }
-  } catch (ex: {error:string, code:number} | any) {
+  } catch (ex: { error: string; code: number } | any) {
     return NextResponse.json(ex.error, {
       status: ex.code || 400,
     });
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: Props
-) {
-  const session = await getServerSession(authOptions); 
+export async function DELETE(request: NextRequest, { params }: Props) {
+  const session = await getServerSession(authOptions);
 
-  const oldBlock = await getBlock(params.blockId); 
+  const oldBlock = await getBlock(params.blockId);
   try {
     if (oldBlock) {
-      const body = await request.json();
+      //const body = await request.json();
 
-      if(!session || !session.user){
-        throw {error: "User is not authenticated", code: 401}
+      if (!session || !session.user) {
+        throw { error: "User is not authenticated", code: 401 };
       }
 
-      if(!oldBlock.users.includes(session?.user?.email)){
-        throw {error: `${session?.user?.name} does not have access to this block`, code: 403}
+      if (!oldBlock.users.includes(session?.user?.email)) {
+        throw {
+          error: `${session?.user?.name} does not have access to this block`,
+          code: 403,
+        };
       }
 
-      if(oldBlock.admin !== session.user.email){
-        throw {error: `${session.user.email} does not have administrative rights to delete this block`, code: 403}
+      if (oldBlock.admin !== session.user.email) {
+        throw {
+          error: `${session.user.email} does not have administrative rights to delete this block`,
+          code: 403,
+        };
       }
 
-      await deleteBlock(params.blockId, body.block.id);
+      await deleteBlock(params.blockId);
 
       return NextResponse.json(null, {
         status: 200,
       });
     } else {
-      throw { error: "Block does not exist",  code: 404};
+      throw { error: "Block does not exist", code: 404 };
     }
-  } catch (ex: {error:string, code:number} | any) {
-    return NextResponse.json(
-      ex.error   ,
-      {
-        status: ex.code || 400,
-      }
-    );
+  } catch (ex: { error: string; code: number } | any) {
+    return NextResponse.json(ex.error, {
+      status: ex.code || 400,
+    });
   }
 }
 
@@ -187,28 +195,31 @@ export async function POST(
   { params }: { params: { blockId: string } }
 ) {
   const session = await getServerSession(authOptions);
-    try {
-        if (!session || !session.user) {
-            throw new Error("User is not authenticated");
-        };
-      
-        const result = await getBlock(params.blockId);
-        if (!result) {
-            throw new Error("Block with the ID is not found");
-        }
-      
-        if (!result.users.includes(session.user?.email)) {
-            throw new Error("User does not have permission for this block");
-        }       
-        
-        const body = await request.json(); 
-        const newWeek = await addWeek(params.blockId, body);
-        return NextResponse.json(newWeek, {
-            status: 200,
-        })
-    } catch (ex: any) {
-        return NextResponse.json({ error: ex.message || 'Unknown error occurred' }, {
-            status: 500,
-        })
+  try {
+    if (!session || !session.user) {
+      throw new Error("User is not authenticated");
     }
+
+    const result = await getBlock(params.blockId);
+    if (!result) {
+      throw new Error("Block with the ID is not found");
+    }
+
+    if (!result.users.includes(session.user?.email)) {
+      throw new Error("User does not have permission for this block");
+    }
+
+    const body = await request.json();
+    const newWeek = await addWeek(params.blockId, body);
+    return NextResponse.json(newWeek, {
+      status: 200,
+    });
+  } catch (ex: any) {
+    return NextResponse.json(
+      { error: ex.message || "Unknown error occurred" },
+      {
+        status: 500,
+      }
+    );
+  }
 }
