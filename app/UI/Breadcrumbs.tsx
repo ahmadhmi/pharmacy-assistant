@@ -28,8 +28,6 @@ const Breadcrumbs = () => {
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter((path) => path !== "");
 
-  console.log(pathSegments);
-
   const breadcrumbLinks = pathSegments.map((segment, index) => {
     const href = "/" + pathSegments.slice(0, index + 1).join("/");
     let tempBlock = null;
