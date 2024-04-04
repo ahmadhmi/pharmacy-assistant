@@ -220,97 +220,96 @@ export default function BlockPage({ params }: Props) {
 
     if (!selectedWeek) return;
 
-    const labExists = block?.weeks?.some((week) =>
-      week.labs?.some((lab) => lab.name === addedLab)
-    );
+        const labExists = block?.weeks?.some((week) =>
+            week.labs?.some((lab) => lab.name === addedLab)
+        );
 
-    if (labExists) {
-      setLabErrorOccurred(true);
-      console.log("Lab already exists in one of the weeks");
-    } else {
-      const weekId = selectedWeek._id!;
-      const newLab = (await postLab(weekId, {
-        name: addedLab,
-        selectedTemplate: block?.markingTemplates
-          ? block?.markingTemplates[0]
-          : defaultTemplate,
-      } as Lab)) as Lab;
-      const updatedWeeks = block?.weeks?.map((week) => {
-        if (week.name === selectedWeek.name) {
-          return {
-            ...week,
-            labs: [...(week.labs || []), newLab],
-          };
+        if (labExists) {
+            setLabErrorOccurred(true);
+            console.log("Lab already exists in one of the weeks");
+        } else {
+            const weekId = selectedWeek._id!;
+            const newLab = (await postLab(weekId, {
+                name: addedLab,
+            } as Lab)) as Lab;
+            const updatedWeeks = block?.weeks?.map((week) => {
+                if (week.name === selectedWeek.name) {
+                    return {
+                        ...week,
+                        labs: [...(week.labs || []), newLab],
+                    };
+                }
+                return week;
+            });
+            setBlock((prevBlock) => ({
+                ...prevBlock,
+                weeks: updatedWeeks,
+                users: block?.users || [],
+            }));
+            setLabErrorOccurred(false);
+            setAddedLab("");
+            setCreateLabModalOpen(false);
         }
-        return week;
-      });
-      setBlock((prevBlock) => ({
-        ...prevBlock,
-        weeks: updatedWeeks,
-        users: block?.users || [],
-      }));
-      setLabErrorOccurred(false);
-      setAddedLab("");
-      setCreateLabModalOpen(false);
-    }
-  };
+    };
 
-  const handleRemoveLab = (week: Week, lab: Lab) => {
-    setSelectedWeek(week);
-    setSelectedLabToDelete(lab);
-    setDeleteLabModalOpen(true);
-  };
-  const handleDeleteLab = async (event: FormEvent) => {
-    event.preventDefault();
+    const handleRemoveLab = (week: Week, lab: Lab) => {
+        setSelectedWeek(week);
+        setSelectedLabToDelete(lab);
+        setDeleteLabModalOpen(true);
+    };
+    const handleDeleteLab = async (event: FormEvent) => {
+        event.preventDefault();
 
-    if (!selectedWeek || !selectedLabToDelete) return;
-    const res = await deleteLab(selectedWeek, selectedLabToDelete);
+        if (!selectedWeek || !selectedLabToDelete) return;
+        const res = await deleteLab(selectedWeek, selectedLabToDelete);
 
-    if (res) {
-      const updatedWeeks = block?.weeks?.map((week: Week) => {
-        if (week.name === selectedWeek.name) {
-          return {
-            ...week,
-            labs: week.labs?.filter(
-              (lab) => lab.name !== selectedLabToDelete.name
-            ),
-          };
+        if (res) {
+            const updatedWeeks = block?.weeks?.map((week: Week) => {
+                if (week.name === selectedWeek.name) {
+                    return {
+                        ...week,
+                        labs: week.labs?.filter(
+                            (lab) => lab.name !== selectedLabToDelete.name
+                        ),
+                    };
+                }
+                return week;
+            });
+            setBlock((prevBlock) => ({
+                ...prevBlock,
+                weeks: updatedWeeks,
+                users: block?.users || [],
+            }));
         }
-        return week;
-      });
-      setBlock((prevBlock) => ({
-        ...prevBlock,
-        weeks: updatedWeeks,
-        users: block?.users || [],
-      }));
-    }
-    setDeleteLabModalOpen(false);
-  };
+        setDeleteLabModalOpen(false);
+    };
 
-  const handleRemoveWeek = async (week: Week) => {
-    setSelectedWeek(week);
-    setDeleteWeekModalOpen(true);
-  };
+    const handleRemoveWeek = async (week: Week) => {
+        setSelectedWeek(week);
+        setDeleteWeekModalOpen(true);
+    };
 
-  const handleDeleteWeek = async (event: FormEvent) => {
-    event.preventDefault();
+    const handleDeleteWeek = async (event: FormEvent) => {
+        event.preventDefault();
 
-    if (!selectedWeek) return;
+        if (!selectedWeek) return;
 
-    const res = await deleteWeek(selectedWeek);
-    console.log(res);
+        const res = await deleteWeek(selectedWeek);
+        console.log(res);
 
-    const updatedWeeks = block?.weeks?.filter(
-      (week) => week.name !== selectedWeek.name
-    );
-    setBlock((prevBlock) => ({
-      ...prevBlock,
-      weeks: updatedWeeks,
-      users: block?.users || [],
-    }));
-    setDeleteWeekModalOpen(false);
-    setSelectedWeek(undefined);
-  };
+        const updatedWeeks = block?.weeks?.filter(
+            (week) => week.name !== selectedWeek.name
+        );
+        setBlock((prevBlock) => ({
+            ...prevBlock,
+            weeks: updatedWeeks,
+            users: block?.users || [],
+        }));
+        setDeleteWeekModalOpen(false);
+        setSelectedWeek(undefined);
+    };
+
+   
 
   const [contentVisible, setContentVisible] = useState(true);
   const [analyticsVisible, setAnalyticsVisible] = useState(false);

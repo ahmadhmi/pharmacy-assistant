@@ -2,7 +2,7 @@
 import { LabData } from "@/types/LabData";
 import React, { Suspense } from "react";
 import MyButton from "@/app/UI/componenttest";
-import axios from "axios";
+import axios, { all } from "axios";
 import { useEffect, useState } from "react";
 import { group } from "console";
 import { useSession } from "next-auth/react";
@@ -16,22 +16,24 @@ import {
   View,
 } from "@react-pdf/renderer";
 import { Gradesheet } from "@/interfaces/gradesheet";
+import Skeleton from "react-loading-skeleton";
 const styles = StyleSheet.create({
   body: {
     paddingTop: 35,
-    paddingBottom: 65,
+    paddingBottom: 35,
     paddingHorizontal: 35,
     flexDirection: "row",
     flexWrap: "wrap",
+    gap: 20,
   },
   title: {
-    fontSize: 18,
+    fontSize: 15,
     textAlign: "center",
     marginVertical: 5,
   },
   text: {
-    margin: 8,
-    fontSize: 10,
+    margin: 2,
+    fontSize: 8,
   },
   header: {
     fontSize: 12,
@@ -65,16 +67,16 @@ export default function LabPage({ params }: Props) {
   const [isChecked, setIsChecked] = useState(false);
   const [checkBoxValue, setCheckBoxValue]: [string[], Function] = useState([]);
   const [allSheets, setAllSheets]: [Gradesheet[], Function] = useState([]);
-   const [error, setError] = useState("");
-   const [message, setMessage] = useState(""); 
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   async function fetchGradingSheets() {
     try {
-      const data = (
-        await axios.get(
-          //`/api/blocks/65cbe1af929966312830eea0/65e6c4517fdb6a053a93de8a/grading`
-          `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
-        )
-      ).data;
+      const data = (setIsLoading(true),
+      await axios.get(
+        //`/api/blocks/65cbe1af929966312830eea0/65e6c4517fdb6a053a93de8a/grading`
+        `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
+      )).data;
       if (data) {
         const result = data.reduce(
           (
@@ -96,8 +98,9 @@ export default function LabPage({ params }: Props) {
       setError("Something went wrong while loading");
       setTimeout(() => setError(""), 4000);
     }
+    setIsLoading(false);
     // const data =
-      
+
     //   (
     //     await axios.get(
     //       //`/api/blocks/65cbe1af929966312830eea0/65e6c4517fdb6a053a93de8a/grading`
@@ -136,7 +139,7 @@ export default function LabPage({ params }: Props) {
               (sheet) => sheet._id === items
             );
             return (
-              <View key={index} style={{ height: 500, width: 380 }}>
+              <View key={index} style={{ minHeight: 500, width: 360, gap: 5 }}>
                 <Text style={styles.title}>
                   {sheet ? sheet.studentName : "Not found"}{" "}
                 </Text>
@@ -152,7 +155,6 @@ export default function LabPage({ params }: Props) {
                               border: "1px",
                               flexDirection: "row",
                               display: "flex",
-
                               justifyContent: "space-between",
                             }}
                           >
@@ -167,6 +169,20 @@ export default function LabPage({ params }: Props) {
                       );
                     })
                   : "Not found"}
+                <View
+                  style={{
+                    marginTop: "10px",
+                    flexDirection: "row",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Text>Overall</Text>
+                  <Text>{sheet?.pass?.toString()}</Text>
+                </View>
+                <View style={{ marginTop: 10 }}>
+                  <Text>Comments: {sheet?.comment}</Text>
+                </View>
               </View>
             );
           })}
@@ -187,8 +203,18 @@ export default function LabPage({ params }: Props) {
         ...checkValue,
         e.target.name,
       ]);
-
+    console.log(checkBoxValue);
     console.log(allSheets);
+  };
+  const handleSelectAll = () => {
+    setIsChecked(true);
+    setCheckBoxValue(allSheets.map((sheet) => sheet._id));
+    console.log(checkBoxValue);
+  };
+  const handleUnSelectAll = () => {
+    setIsChecked(true);
+    setCheckBoxValue([]);
+    console.log(checkBoxValue);
   };
 
   return (
@@ -196,13 +222,29 @@ export default function LabPage({ params }: Props) {
       <div className="flex justify-between items-center py-2">
         <h1 className="text-center text-3xl">Lab Page</h1>
         <div className="flex gap-2">
+          <button
+            className="btn bnt-neutral"
+            title="select All"
+            onClick={handleSelectAll}
+          >
+            Select all
+          </button>
+          <button
+            className="btn bnt-neutral"
+            title="Unselect All"
+            onClick={handleUnSelectAll}
+          >
+            Unselect all
+          </button>
           <Link className="btn bnt-neutral" href={`${params.labId}/criteria`}>
             Edit Criteria
           </Link>
         </div>
       </div>
       <div className="border-y overflow-y-auto" style={{ height: "80%" }}>
-        {Object.keys(labData).length > 0 ? (
+        {isLoading ? (
+          <Skeleton height={100}></Skeleton>
+        ) : Object.keys(labData).length > 0 ? (
           Object.keys(labData).map((key) => (
             <div className="collapse collapse-arrow bg-base-200 my-3" key={key}>
               <input type="checkbox" name="my-accordion-2" placeholder="1" />
@@ -220,7 +262,11 @@ export default function LabPage({ params }: Props) {
                       type="checkbox"
                       name={gradesheet._id}
                       value={gradesheet._id}
-                      defaultChecked={isChecked}
+                      checked={
+                        checkBoxValue.find((id) => id === gradesheet._id)
+                          ? true
+                          : false
+                      }
                       onChange={handleChecked}
                       className=" checkbox border-black"
                     />
@@ -243,14 +289,23 @@ export default function LabPage({ params }: Props) {
       </div>{" "}
       <div className=" flex justify-center w-100% mt-4 gap-3">
         <PDFDownloadLink document={<PDFFile />}>
-          {" "}
-          <MyButton text="Export" />
+          <button
+            className={`btn bnt-neutral ${
+              checkBoxValue.length === 0 ? "hidden" : "display"
+            }`}
+            title="Export"
+            disabled={checkBoxValue.length < 1}
+          >
+            Export
+          </button>
         </PDFDownloadLink>
 
         <Link
           href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/`}
         >
-          <MyButton text="Grading" />
+          <button title="Grading" className="btn btn-neutral">
+            Grading
+          </button>
         </Link>
       </div>
       <div

@@ -17,6 +17,6 @@ export default function Page(){
     )
 
     return(
-        <section>{blocks?.map((block) => <li>{block.name}</li>)}</section>
+        <section>{}</section>
     )
 }
