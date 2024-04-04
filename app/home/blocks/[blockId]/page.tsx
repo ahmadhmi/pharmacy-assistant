@@ -418,7 +418,7 @@ export default function BlockPage({ params }: Props) {
                     ) : (
                       <div className="flex flex-col gap-4">
                         {block?.weeks?.map((week) => (
-                          <div>
+                          <div key={week._id}>
                             <WeekAccordion
                               key={week.name}
                               week={week}
