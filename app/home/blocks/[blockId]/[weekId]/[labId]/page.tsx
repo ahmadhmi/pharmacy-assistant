@@ -20,20 +20,20 @@ import Skeleton from "react-loading-skeleton";
 const styles = StyleSheet.create({
   body: {
     paddingTop: 35,
-    paddingBottom: 65,
+    paddingBottom: 35,
     paddingHorizontal: 35,
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 20,
   },
   title: {
-    fontSize: 18,
+    fontSize: 15,
     textAlign: "center",
     marginVertical: 5,
   },
   text: {
-    margin: 4,
-    fontSize: 10,
+    margin: 2,
+    fontSize: 8,
   },
   header: {
     fontSize: 12,
@@ -70,6 +70,8 @@ export default function LabPage({ params }: Props) {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [searchedLabData, setSearchedLabData] = useState<Record<string, Gradesheet[]> | null>(null);
   async function fetchGradingSheets() {
     try {
       const data = (setIsLoading(true),
@@ -134,12 +136,13 @@ export default function LabPage({ params }: Props) {
     return (
       <Document>
         <Page size="A4" orientation="landscape" style={styles.body}>
-          {checkBoxValue.map((items, index) => {
-            const sheet: Gradesheet | undefined = allSheets.find(
-              (sheet) => sheet._id === items
-            );
+          {checkBoxValue.map((itemId, index) => {
+            const sheet = (searchedLabData
+              ? Object.values(searchedLabData).flat()
+              : allSheets
+            ).find((sheet) => sheet._id === itemId);
             return (
-              <View key={index} style={{ height: 500, width: 360, gap: 5 }}>
+              <View key={index} style={{ minHeight: 500, width: 360, gap: 5 }}>
                 <Text style={styles.title}>
                   {sheet ? sheet.studentName : "Not found"}{" "}
                 </Text>
@@ -180,7 +183,7 @@ export default function LabPage({ params }: Props) {
                   <Text>Overall</Text>
                   <Text>{sheet?.pass?.toString()}</Text>
                 </View>
-                <View style={{ marginTop: 20 }}>
+                <View style={{ marginTop: 10 }}>
                   <Text>Comments: {sheet?.comment}</Text>
                 </View>
               </View>
@@ -207,8 +210,8 @@ export default function LabPage({ params }: Props) {
     console.log(allSheets);
   };
   const handleSelectAll = () => {
-    setIsChecked(true);
-    setCheckBoxValue(allSheets.map((sheet) => sheet._id));
+    const sheetsToSelect = searchedLabData ? Object.values(searchedLabData).flat() : allSheets;
+    setCheckBoxValue(sheetsToSelect.map((sheet) => sheet._id));
     console.log(checkBoxValue);
   };
   const handleUnSelectAll = () => {
@@ -216,12 +219,42 @@ export default function LabPage({ params }: Props) {
     setCheckBoxValue([]);
     console.log(checkBoxValue);
   };
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+  const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+  const handleShowAll = () => {
+    setSearch("");
+    setSearchedLabData(null);
+  }
+  const handleSearch = () => {
+    if(!search.trim()) {
+      setSearchedLabData(null);
+    } else {
+      const searchResult = Object.keys(labData).reduce((result: Record<string, Gradesheet[]>, key) => {
+        const searchedGradesheets = labData[key].filter(gradeSheets =>
+          gradeSheets.studentName?.includes(search));
+        if (searchedGradesheets.length) result[key] = searchedGradesheets;
+        return result;
+      }, {});
+      setSearchedLabData(searchResult);
+    }
+  };
 
   return (
     <section className="display-flex justify-center h-screen w-100% px-8 py-10">
       <div className="flex justify-between items-center py-2">
         <h1 className="text-center text-3xl">Lab Page</h1>
         <div className="flex gap-2">
+        <label className="input input-bordered flex items-center gap-2">
+          <input type="text" className="grow bg-transparent" placeholder="Enter student name" value={search} onChange={handleInput} onKeyDown={handleEnter} />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path fillRule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clipRule="evenodd" /></svg>
+        </label>
+          <button onClick={handleShowAll} className="btn bnt-neutral" title="search" >Show all</button>
           <button
             className="btn bnt-neutral"
             title="select All"
@@ -244,15 +277,15 @@ export default function LabPage({ params }: Props) {
       <div className="border-y overflow-y-auto" style={{ height: "80%" }}>
         {isLoading ? (
           <Skeleton height={100}></Skeleton>
-        ) : Object.keys(labData).length > 0 ? (
-          Object.keys(labData).map((key) => (
+        ) : searchedLabData || Object.keys(labData).length > 0 ? (
+          Object.keys(searchedLabData || labData).map((key) => (
             <div className="collapse collapse-arrow bg-base-200 my-3" key={key}>
               <input type="checkbox" name="my-accordion-2" placeholder="1" />
               <div className="collapse-title text-xl font-medium">
-                {labData[key][0]?.studentName}
+                {(searchedLabData || labData)[key][0]?.studentName}
               </div>
               <div className="collapse-content bg-primary">
-                {labData[key].map((gradesheet, index) => (
+                {(searchedLabData || labData)[key].map((gradesheet, index) => (
                   <div
                     className="flex flex-row items-center justify-between text-black my-2 "
                     key={index}
