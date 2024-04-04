@@ -96,7 +96,7 @@ const Breadcrumbs = () => {
 
   return (
     <nav className="gap-2">
-      <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary mb-4">
+      <h2 className="text-xl text-neutral font-bold min-w-56 border-b-2 border-primary mb-4">
         You Are Here
       </h2>
       <ul className="space-y-0">{breadcrumbLinks}</ul>

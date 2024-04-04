@@ -16,6 +16,22 @@ const config: Config = {
       },
     },
   },
+  daisyui: {
+    themes: [
+      {
+        mytheme: {
+          primary: "#598392",
+          secondary: "#aec3b0",
+          accent: "#124559",
+          yellowish: "#eff6e0",
+          neutral: "#FDF9F7",
+          black: "#01161e",
+        },
+      },
+      "dark",
+      "cupcake",
+    ],
+  },
   plugins: [require("daisyui"), ScrollBar],
 };
 export default config;
