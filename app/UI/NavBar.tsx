@@ -13,14 +13,12 @@ const NavBar = () => {
   const { status } = useSession();
 
   return (
-    <div className="navbar bg-base-100 flex flex-row justify-between">
+    <div className="navbar bg-accent flex flex-row justify-between">
       <div className="flex flex-row gap-5">
         <Link href={status === "authenticated" ? "/home" : "/"}>
           <Image src={logo.src} alt="logo" width={50} height={50} />
         </Link>
-        <div className="text-xl tracking-wider">
-        PharmaGrades
-      </div>
+        <div className="text-xl text-neutral tracking-wider">PharmaGrades</div>
       </div>
       <AuthStatus />
     </div>
@@ -41,14 +39,16 @@ const AuthStatus = () => {
             className="btn btn-ghost btn-circle avatar"
           >
             <div className="w-10 rounded-full">
-              {session.user?.image?  
-              <Image
-                alt="Tailwind CSS Navbar component"
-                src={session.user?.image}
-                height={50}
-                width={50}
-              /> :
-              <VscAccount size={40}></VscAccount>}
+              {session.user?.image ? (
+                <Image
+                  alt="Tailwind CSS Navbar component"
+                  src={session.user?.image}
+                  height={50}
+                  width={50}
+                />
+              ) : (
+                <VscAccount size={40}></VscAccount>
+              )}
             </div>
           </div>
           <ul

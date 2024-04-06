@@ -38,9 +38,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex justify-center items-start text-slate-100 mt-10">
+    <div className="flex justify-center bg-neutral items-start text-primary mt-10">
       <div className="card border justify-center shadow-xl">
-        <div className="card-body gap-10">
+        <div className="card-body gap-10 bg-white">
           {isLoading ? (
             <Skeleton height={60} />
           ) : (

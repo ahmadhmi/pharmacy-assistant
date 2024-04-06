@@ -5,13 +5,12 @@ import Link from "next/link";
 
 interface Props {
   block: Block;
-
 }
 
 const BlockCard = ({ block }: Props) => {
   console.log(block._id);
   return (
-    <div className="card w-full bg-neutral md:w-80 bg-base-100 shadow-md">
+    <div className="card w-full bg-primary text-neutral md:w-80 shadow-md">
       <div className="card-body gap-6 min-h-72">
         <h2 className="card-title self-center">{block.name}</h2>
         <hr />
@@ -34,7 +33,7 @@ const BlockCard = ({ block }: Props) => {
             />
           </Link>
           <Link href={`/home/blocks/${block._id as string}`}>
-            <button className="btn btn-primary w-20" color="#a991f7">
+            <button className="btn btn-secondary w-20" color="#a991f7">
               View
             </button>
           </Link>

@@ -6,18 +6,14 @@ import { useBlocksContext } from "../_utils/blocks-context";
 import { Block } from "@/interfaces/block";
 import LinkBlock from "./home/link";
 import { VscArrowRight } from "react-icons/vsc";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import Breadcrumbs from "./Breadcrumbs";
-
-
 
 interface Props {
   children: React.ReactNode;
 }
 
 const SideBar = ({ children }: Props) => {
-
-  
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -30,7 +26,7 @@ const SideBar = ({ children }: Props) => {
           Quick Links
           <IoIosArrowDown />
         </label>
-        <main className="p-3 bg-white min-h-screen">{children}</main>
+        <main className="p-3 bg-neutral min-h-screen">{children}</main>
       </div>
       <div className="drawer-side">
         <label
@@ -38,7 +34,7 @@ const SideBar = ({ children }: Props) => {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <ul className="menu p-4 max-w-64 min-h-full bg-base-100 text-base-content rounded-r-lg border-t--2 border-primary">
+        <ul className="menu p-4 max-w-64 min-h-full bg-primary text-base-content rounded-r-lg border-t--2 border-primary">
           {/* {blocks.length === 0 ? (
             <p>There is no block for this account!</p>
           ) : (
@@ -57,11 +53,11 @@ const SideBar = ({ children }: Props) => {
               </button>
             </div>
           )} */}
-          <div>
-            <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary">
+          <div className="mb-5">
+            <h2 className="text-xl text-neutral font-bold min-w-56 border-b-2 border-neutral pb-3 mb-3">
               Quick Links
             </h2>
-            <div className="flex flex-col gap-2 shadow-xl py-4 px-2 rounded-lg">
+            <div className="flex flex-col gap-2  py-4 px-2 rounded-lg">
               <LinkBlock
                 href="/home/blocks/AddBlock"
                 Icon={VscArrowRight}
@@ -81,7 +77,7 @@ const SideBar = ({ children }: Props) => {
               </LinkBlock>
             </div>
           </div>
-          <Breadcrumbs/>
+          <Breadcrumbs />
         </ul>
       </div>
     </div>

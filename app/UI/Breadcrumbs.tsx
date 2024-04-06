@@ -77,14 +77,14 @@ const Breadcrumbs = () => {
 
     return (
       <li
-        className={`text-xs flex  rounded-md font-bold  ${
-          isLastSegment || beforeGrading ? " bg-primary  text-black" : ""
+        className={`text-sm flex py-1 mb-1 text-neutral rounded-md font-bold  ${
+          isLastSegment || beforeGrading ? " bg-accent  " : ""
         }`}
         key={href}
       >
         <Link href={href}>
           {(isLastSegment || beforeGrading) && (
-            <RxArrowRight size={20} color="black" />
+            <RxArrowRight size={20} color="white" />
           )}
           {segmentName}
         </Link>
@@ -96,7 +96,7 @@ const Breadcrumbs = () => {
 
   return (
     <nav className="gap-2">
-      <h2 className="text-xl text-primary font-bold min-w-56 border-b-2 border-primary mb-4">
+      <h2 className="text-xl text-neutral font-bold min-w-56 border-b-2 border-neutral pb-3 mb-6">
         You Are Here
       </h2>
       <ul className="space-y-0">{breadcrumbLinks}</ul>
