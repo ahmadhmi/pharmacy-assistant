@@ -277,9 +277,9 @@ export default function LabPage({ params }: Props) {
 
     return (
         <section className="flex flex-col gap-4 h-screen w-100% px-8 py-10 bg-neutral">
-            <div className="flex justify-between items-center py-2">
+            <div className="flex justify-between items-center py-2 flex-col sm:flex-row">
                 <h1 className="text-center text-3xl">Lab Page</h1>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-col sm:flex-row">
                     <label className="input input-bordered flex items-center gap-2">
                         <input
                             type="text"
@@ -366,7 +366,7 @@ export default function LabPage({ params }: Props) {
                                                 onChange={handleChecked}
                                                 className="checkbox checkbox-primary"
                                             />
-                                            <p className="font-bold text-primary">
+                                            <p className="font-bold text-primary max-w-[100px] sm:max-w-xl  overflow-auto">
                                                 {gradesheet.rx}
                                             </p>
                                             <div>
@@ -388,7 +388,7 @@ export default function LabPage({ params }: Props) {
                     <div>There is no student, please add student first!</div>
                 )}
             </div>{" "}
-            <div className=" flex justify-between w-full bg-white rounded-xl shadow-xl mt-4 gap-3 py-4 px-2">
+            <div className=" flex items-center justify-center sm:justify-between w-full bg-white rounded-xl shadow-xl mt-4 gap-3 py-4 px-2 flex-col sm:flex-row">
               <div className="flex items-center gap-2">
               <button
                     className="btn btn-secondary text-neutral"
