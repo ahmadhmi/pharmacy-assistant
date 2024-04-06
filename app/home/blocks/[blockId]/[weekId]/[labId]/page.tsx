@@ -276,172 +276,164 @@ export default function LabPage({ params }: Props) {
     };
 
     return (
-        <section className="flex flex-col gap-4 h-screen w-100% px-8 py-10 bg-neutral">
-            <div className="flex justify-between items-center py-2 flex-col sm:flex-row">
-                <h1 className="text-center text-3xl">Lab Page</h1>
-                <div className="flex gap-2 flex-col sm:flex-row">
-                    <label className="input input-bordered flex items-center gap-2">
+      <section className="flex flex-col gap-4 h-screen w-100% px-8 py-10 bg-neutral">
+        <div className="flex justify-between items-center py-2 flex-col sm:flex-row">
+          <h1 className="text-center text-3xl badge badge-primary rounded-md p-5 mb-5 sm:mb-0 text-neutral">Lab Page</h1>
+          <div className="flex gap-2 flex-col sm:flex-row">
+            <label className="input input-bordered flex items-center gap-2">
+              <input
+                type="text"
+                className="grow bg-transparent"
+                placeholder="Enter student name"
+                value={search}
+                onChange={handleInput}
+                onKeyDown={handleEnter}
+              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="w-4 h-4 opacity-70"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </label>
+            <button
+              onClick={handleShowAll}
+              className="btn btn-primary text-neutral"
+              title="search"
+            >
+              Show all
+            </button>
+            <Link
+              className="btn btn-primary text-neutral"
+              href={`${params.labId}/criteria`}
+            >
+              Edit Criteria
+            </Link>
+          </div>
+        </div>
+        <div
+          className="border-y overflow-y-auto scrollbar-thin scrollbar-thumb-black pr-2"
+          style={{ height: "80%" }}
+        >
+          {isLoading ? (
+            <Skeleton height={100}></Skeleton>
+          ) : searchedLabData || Object.keys(labData).length > 0 ? (
+            Object.keys(searchedLabData || labData).map((key) => (
+              <div
+                className="collapse collapse-arrow my-2 shadow-xl bg-secondary"
+                key={key}
+              >
+                <input type="checkbox" name="my-accordion-2" placeholder="1" />
+                <div className="collapse-title flex justify-between items-center text-xl font-medium">
+                  <div className="text-xl font-medium">
+                    {(searchedLabData || labData)[key][0]?.studentName}
+                  </div>
+                </div>
+                <div className="collapse-content bg-neutral m-2 rounded-xl">
+                  {(searchedLabData || labData)[key].map(
+                    (gradesheet, index) => (
+                      <div
+                        className="flex flex-row items-center justify-between text-black mt-3 border-b-2 border-primary p-2"
+                        key={index}
+                      >
                         <input
-                            type="text"
-                            className="grow bg-transparent"
-                            placeholder="Enter student name"
-                            value={search}
-                            onChange={handleInput}
-                            onKeyDown={handleEnter}
+                          title="checkbox"
+                          type="checkbox"
+                          name={gradesheet._id}
+                          value={gradesheet._id}
+                          checked={
+                            checkBoxValue.find((id) => id === gradesheet._id)
+                              ? true
+                              : false
+                          }
+                          onChange={handleChecked}
+                          className="checkbox checkbox-primary"
                         />
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 16 16"
-                            fill="currentColor"
-                            className="w-4 h-4 opacity-70"
-                        >
-                            <path
-                                fillRule="evenodd"
-                                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                                clipRule="evenodd"
-                            />
-                        </svg>
-                    </label>
-                    <button
-                        onClick={handleShowAll}
-                        className="btn btn-primary text-neutral"
-                        title="search"
-                    >
-                        Show all
-                    </button>
-                    <Link
-                        className="btn btn-primary text-neutral"
-                        href={`${params.labId}/criteria`}
-                    >
-                        Edit Criteria
-                    </Link>
-                </div>
-            </div>
-            <div
-                className="border-y overflow-y-auto scrollbar-thin scrollbar-thumb-black pr-2"
-                style={{ height: "80%" }}
-            >
-                {isLoading ? (
-                    <Skeleton height={100}></Skeleton>
-                ) : searchedLabData || Object.keys(labData).length > 0 ? (
-                    Object.keys(searchedLabData || labData).map((key) => (
-                        <div
-                            className="collapse collapse-arrow my-2 shadow-xl bg-secondary"
-                            key={key}
-                        >
-                            <input
-                                type="checkbox"
-                                name="my-accordion-2"
-                                placeholder="1"
-                            />
-                            <div className="collapse-title flex justify-between items-center text-xl font-medium">
-                                <div className="text-xl font-medium">
-                                    {
-                                        (searchedLabData || labData)[key][0]
-                                            ?.studentName
-                                    }
-                                </div>
-                            </div>
-                            <div className="collapse-content bg-neutral m-2 rounded-xl">
-                                {(searchedLabData || labData)[key].map(
-                                    (gradesheet, index) => (
-                                        <div
-                                            className="flex flex-row items-center justify-between text-black mt-3 border-b-2 border-primary p-2"
-                                            key={index}
-                                        >
-                                            <input
-                                                title="checkbox"
-                                                type="checkbox"
-                                                name={gradesheet._id}
-                                                value={gradesheet._id}
-                                                checked={
-                                                    checkBoxValue.find(
-                                                        (id) =>
-                                                            id ===
-                                                            gradesheet._id
-                                                    )
-                                                        ? true
-                                                        : false
-                                                }
-                                                onChange={handleChecked}
-                                                className="checkbox checkbox-primary"
-                                            />
-                                            <p className="font-bold text-primary max-w-[100px] sm:max-w-xl  overflow-auto">
-                                                {gradesheet.rx}
-                                            </p>
-                                            <div>
-                                                <Link
-                                                    href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/${gradesheet._id}`}
-                                                >
-                                                    <button className="btn btn-sm btn-primary text-neutral">
-                                                        Edit
-                                                    </button>
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    )
-                                )}
-                            </div>
+                        <p className="font-bold text-primary max-w-[100px] sm:max-w-xl  overflow-auto">
+                          {gradesheet.rx}
+                        </p>
+                        <div>
+                          <Link
+                            href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/${gradesheet._id}`}
+                          >
+                            <button className="btn btn-sm btn-primary text-neutral">
+                              Edit
+                            </button>
+                          </Link>
                         </div>
-                    ))
-                ) : (
-                    <div>There is no student, please add student first!</div>
-                )}
-            </div>{" "}
-            <div className=" flex items-center justify-center sm:justify-between w-full bg-white rounded-xl shadow-xl mt-4 gap-3 py-4 px-2 flex-col sm:flex-row">
-              <div className="flex items-center gap-2">
-              <button
-                    className="btn btn-secondary text-neutral"
-                    title="select All"
-                    onClick={handleSelectAll}
-                >
-                    Select all
-                </button>
-                <button
-                    className="btn btn-secondary text-neutral"
-                    title="Unselect All"
-                    onClick={handleUnSelectAll}
-                >
-                    Unselect all
-                </button>
-                <PDFDownloadLink document={<PDFFile />}>
-                    <button
-                        className={`btn btn-secondary text-neutral ${
-                            checkBoxValue.length === 0 ? "hidden" : "display"
-                        }`}
-                        title="Export"
-                        disabled={checkBoxValue.length < 1}
-                    >
-                        Export
-                    </button>
-                </PDFDownloadLink>
+                      </div>
+                    )
+                  )}
+                </div>
               </div>
-                <Link
-                    href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/`}
-                >
-                    <button title="Grading" className="btn btn-primary btn-wide flex justify-between text-white">
-                        Grading
-                        <VscArrowRight size={25}></VscArrowRight>
-                    </button>
-                </Link>
-            </div>
-            <div
-                onClick={() => setMessage("")}
-                className={`toast ${message === "" ? "hidden" : ""}`}
+            ))
+          ) : (
+            <div>There is no student, please add student first!</div>
+          )}
+        </div>{" "}
+        <div className=" flex items-center justify-center sm:justify-between w-full bg-white rounded-xl shadow-xl mt-4 gap-3 py-4 px-2 flex-col sm:flex-row">
+          <div className="flex items-center gap-2">
+            <button
+              className="btn btn-secondary text-neutral"
+              title="select All"
+              onClick={handleSelectAll}
             >
-                <div className="alert alert-secondary cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
-                    {message}
-                </div>
-            </div>
-            <div
-                onClick={() => setError("")}
-                className={`toast ${error === "" ? "hidden" : ""}`}
+              Select all
+            </button>
+            <button
+              className="btn btn-secondary text-neutral"
+              title="Unselect All"
+              onClick={handleUnSelectAll}
             >
-                <div className="alert alert-error cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
-                    {error}
-                </div>
-            </div>
-        </section>
+              Unselect all
+            </button>
+            <PDFDownloadLink document={<PDFFile />}>
+              <button
+                className={`btn btn-secondary text-neutral ${
+                  checkBoxValue.length === 0 ? "hidden" : "display"
+                }`}
+                title="Export"
+                disabled={checkBoxValue.length < 1}
+              >
+                Export
+              </button>
+            </PDFDownloadLink>
+          </div>
+          <Link
+            href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/`}
+          >
+            <button
+              title="Grading"
+              className="btn btn-primary btn-wide flex justify-between text-white"
+            >
+              Grading
+              <VscArrowRight size={25}></VscArrowRight>
+            </button>
+          </Link>
+        </div>
+        <div
+          onClick={() => setMessage("")}
+          className={`toast ${message === "" ? "hidden" : ""}`}
+        >
+          <div className="alert alert-secondary cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
+            {message}
+          </div>
+        </div>
+        <div
+          onClick={() => setError("")}
+          className={`toast ${error === "" ? "hidden" : ""}`}
+        >
+          <div className="alert alert-error cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
+            {error}
+          </div>
+        </div>
+      </section>
     );
 }
 
