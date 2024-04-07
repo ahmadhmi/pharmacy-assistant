@@ -37,7 +37,7 @@ export default function Grade({ params }: Props) {
     async function fetchGradesheet() {
         let response;
         let lab;
-        let template; 
+        let template;
         try {
             response = await axios.get(
                 `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading/${params.gradesheetId}`
@@ -45,8 +45,9 @@ export default function Grade({ params }: Props) {
             lab = await axios.get(
                 `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}`
             );
-            template = await axios.get(`/api/criteria/${lab.data.selectedTemplate}`)
-
+            template = await axios.get(
+                `/api/criteria/${lab.data.selectedTemplate}`
+            );
         } catch (ex: any) {
             if (ex.response.data.error) {
                 setError(
@@ -64,7 +65,10 @@ export default function Grade({ params }: Props) {
         }
         if (template?.data) {
             setTemplate(template.data);
-            if (!response?.data.criteria || response.data.criteria.length <= 0) {
+            if (
+                !response?.data.criteria ||
+                response.data.criteria.length <= 0
+            ) {
                 setTemplateCriteria(template.data.criteria);
             }
         }
@@ -126,25 +130,27 @@ export default function Grade({ params }: Props) {
 
     async function saveGradeSheet() {
         let newGradesheet;
-        let calcPass = true; 
-        let numPass = 0; 
+        let calcPass = true;
+        let numPass = 0;
         templateCriteria?.forEach((criterion) => {
-            if(criterion.pass){
-                numPass += 1; 
+            if (criterion.pass) {
+                numPass += 1;
             }
-        })
-        if(template){
-            calcPass = numPass >= (template.minimum || 3)
-        } 
+        });
+        if (template) {
+            calcPass = numPass >= (template.minimum || 3);
+        }
         templateCriteria?.forEach((criterion) => {
-            if(criterion.required){
-                if(!criterion.pass){
-                    calcPass = false; 
-                    console.log(criterion)
+            if (criterion.required) {
+                if (!criterion.pass) {
+                    calcPass = false;
+                    console.log(criterion);
                 }
             }
-        })
-        console.log(`Number of criteria passed:${numPass} Min:${template?.minimum} ${calcPass}`)
+        });
+        console.log(
+            `Number of criteria passed:${numPass} Min:${template?.minimum} ${calcPass}`
+        );
         if (form == 0) {
             newGradesheet = {
                 ...gradesheet,
@@ -192,18 +198,20 @@ export default function Grade({ params }: Props) {
         return (
             <section className="flex flex-col items-center gap-4">
                 <div className="">
-                    <h2 className="badge w-full p-4 badge-primary rounded-md text-white sm:text-lg">{`Student: ${
+                    <h2 className="badge w-full p-6 badge-primary rounded-md text-white text-xl sm:text-2xl">{`Student: ${
                         gradesheet?.studentName || gradesheet?.studentID
                     } — Rx: ${gradesheet?.rx}`}</h2>
                 </div>
                 <dialog id="add_criteria_modal" className="modal">
                     <div className="modal-box">
-                        <h3 className="font-bold text-lg">Add Criterion</h3>
+                        <h3 className="font-bold text-lg text-primary">
+                            Add Criterion
+                        </h3>
                         <form method="dialog">
                             <input
                                 type="text"
                                 placeholder="Eg. Professionalism"
-                                className="input input-md w-full"
+                                className="input input-md w-full bg-secondary text-neutral"
                                 value={criterionName}
                                 onChange={(e) => {
                                     setCriterionName(e.currentTarget.value);
@@ -211,12 +219,14 @@ export default function Grade({ params }: Props) {
                             ></input>
                             <div className="modal-action w-full">
                                 <button
-                                    className="btn btn-primary"
+                                    className="btn btn-secondary text-neutral"
                                     onClick={handleAddCriteria}
                                 >
                                     Add
                                 </button>
-                                <button className="btn btn-error">Close</button>
+                                <button className="btn btn-error text-neutral">
+                                    Close
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -224,7 +234,7 @@ export default function Grade({ params }: Props) {
                 <div className="flex flex-row gap-2">
                     <button
                         className={`btn ${
-                            form == 0 ? "btn-primary" : "btn-neutral"
+                            form == 0 ? "btn-primary text-neutral" : "bg-yellowish"
                         }`}
                         onClick={() => {
                             setForm(0);
@@ -234,7 +244,7 @@ export default function Grade({ params }: Props) {
                     </button>
                     <button
                         className={`btn ${
-                            form == 1 ? "btn-primary" : "btn-neutral"
+                            form == 1 ? "btn-primary text-neutral" : "bg-yellowish"
                         }`}
                         onClick={() => {
                             setForm(1);
@@ -249,7 +259,7 @@ export default function Grade({ params }: Props) {
                             {templateCriteria && templateCriteria.length > 0 ? (
                                 templateCriteria?.map((criteria: criteria) => (
                                     <li
-                                        className="w-full flex flex-row justify-between px-4 py-2 shadow-lg my-2 rounded-lg cursor-pointer hover:bg-neutral"
+                                        className="w-full bg-secondary text-neutral flex flex-row justify-between px-4 py-2 shadow-lg my-2 rounded-lg cursor-pointer hover:bg-yellowish hover:text-accent"
                                         key={criteria.name}
                                         onClick={() =>
                                             updateRadio(
@@ -262,7 +272,7 @@ export default function Grade({ params }: Props) {
                                         }
                                     >
                                         <div className="flex items-center gap-2">
-                                            <h2 className="text-base-content text-md">
+                                            <h2 className="text-base-content text-xl">
                                                 {criteria.name}
                                             </h2>
                                             {criteria.required ? (
@@ -295,7 +305,7 @@ export default function Grade({ params }: Props) {
                             )}
                             {templateCriteria && templateCriteria.length > 0 ? (
                                 <button
-                                    className="btn w-full"
+                                    className="btn w-full btn-primary text-neutral"
                                     onClick={() => {
                                         handleOpenAddCriteria();
                                     }}
@@ -312,13 +322,13 @@ export default function Grade({ params }: Props) {
                         <div className="flex flex-col md:flex-row gap-4 justify-center items-center w-full">
                             <label className="form-control">
                                 <div className="label">
-                                    <span className="label-text">
+                                    <span className="label-text font-bold text-primary">
                                         Achieved Marks
                                     </span>
                                 </div>
                                 <input
                                     type="number"
-                                    className="input-md max-w-xs rounded-md"
+                                    className="input-md max-w-xs rounded-md bg-secondary text-neutral"
                                     value={score}
                                     onChange={(e) => {
                                         console.log(e.currentTarget.value);
@@ -330,13 +340,13 @@ export default function Grade({ params }: Props) {
                             </label>
                             <label className="form-control">
                                 <div className="label">
-                                    <span className="label-text">
+                                    <span className="label-text font-bold text-primary">
                                         Maximum Marks Possible
                                     </span>
                                 </div>
                                 <input
                                     type="number"
-                                    className="input-md max-w-xs rounded-md"
+                                    className="input-md max-w-xs rounded-md bg-secondary text-neutral"
                                     value={maxScore}
                                     onChange={(e) => {
                                         setMaxScore(
@@ -351,7 +361,7 @@ export default function Grade({ params }: Props) {
                                 <span
                                     className={`label-text text-lg p-4 ${
                                         !pass
-                                            ? "badge badge-error text-white"
+                                            ? "badge badge-error text-neutral"
                                             : "badge badge-ghost"
                                     }`}
                                 >
@@ -366,7 +376,7 @@ export default function Grade({ params }: Props) {
                                 <span
                                     className={`label-text text-lg p-4 ${
                                         pass
-                                            ? "badge badge-primary text-white"
+                                            ? "badge badge-secondary text-neutral"
                                             : "badge badge-ghost"
                                     }`}
                                 >
@@ -377,7 +387,7 @@ export default function Grade({ params }: Props) {
                     </div>
                 )}
                 <textarea
-                    className="min-h-40 rounded p-2 w-full"
+                    className="min-h-40 p-2 w-full bg-secondary text-neutral rounded-xl"
                     placeholder="Comments..."
                     value={comment}
                     maxLength={1000}
@@ -386,7 +396,7 @@ export default function Grade({ params }: Props) {
                     }}
                 ></textarea>
                 <button
-                    className="btn w-full"
+                    className="btn w-full btn-primary text-neutral"
                     onClick={() => {
                         saveGradeSheet();
                     }}
@@ -397,33 +407,49 @@ export default function Grade({ params }: Props) {
         );
     } else {
         return (
-            <div
-                role="alert"
-                className="cursor-pointer"
-                onClick={() => {
-                    if (!gradesheet) {
-                        setError("");
-                        router.push(
-                            `/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
-                        );
-                    }
-                }}
-            >
+            <section className="flex flex-col items-center gap-4">
+                <div className="bg-gray-200 p-4 rounded-md w-56 skeleton text-lg"></div>
+                    <div className="flex flex-col gap-4 w-full">
+                        <ul className="flex flex-col gap-2 items-center min-h-64 max-h-72">
+                            <li className="w-full bg-gray-200 skeleton h-10"></li>
+                            <li className="w-full bg-gray-200 skeleton h-10"></li>
+                            <li className="w-full bg-gray-200 skeleton h-10"></li>
+                            <li className="w-full bg-gray-200 skeleton h-10"></li>
+                        </ul>
+                    </div>
+                <textarea
+                    className="min-h-40 p-2 w-full bg-gray-200 skeleton text-neutral rounded-xl"
+                ></textarea>
                 <div
-                    className={`alert hover:alert-warning flex flex-row ${
-                        error === "Page is loading..."
-                            ? "alert-info"
-                            : "alert-error"
-                    }`}
+                    role="alert"
+                    className="cursor-pointer"
+                    onClick={() => {
+                        if (!gradesheet) {
+                            setError("");
+                            router.push(
+                                `/home/blocks/${params.blockId}/${params.weekId}/${params.labId}/grading`
+                            );
+                        }
+                    }}
                 >
-                    {error === "Page is loading..." ? (
-                        <span className="loading loading-spinner loading-md"></span>
+                    {error.length > 0 && error !== "Page is loading..." ? (
+                        <div
+                            role="alert"
+                            className="cursor-pointer"
+                            onClick={() => {
+                                setError("");
+                                router.push(`/home/blocks/${params.blockId}`);
+                            }}
+                        >
+                            <div className="toast bg-error mb-6 rounded-2xl text-neutral hover:alert-warning">
+                                <span>{`${error}`}</span>
+                            </div>
+                        </div>
                     ) : (
-                        <VscError size={30}></VscError>
+                        <></>
                     )}
-                    <p className="break-words">{error}</p>
                 </div>
-            </div>
+            </section>
         );
     }
 }

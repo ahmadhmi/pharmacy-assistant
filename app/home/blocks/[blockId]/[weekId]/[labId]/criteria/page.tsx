@@ -96,23 +96,23 @@ export default function Criteria({ params }: Props) {
 
     if (markingTemplates) {
         return (
-            <section className="p-4">
+            <section className="p-4 bg-neutral">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center">
-                    <h1 className="sm:text-3xl text-2xl">{`Selected template for ${lab?.name}`}</h1>
+                    <h1 className="sm:text-xl text-md badge rounded-md p-4 bg-primary text-neutral">{`Selected template for ${lab?.name}`}</h1>
                     <div className="flex sm:items-center gap-2">
                         <Link
-                            className="btn"
+                            className="btn btn-secondary text-neutral"
                             href={`/home/blocks/${params.blockId}/${params.weekId}/${params.labId}`}
                         >
                             <VscArrowLeft></VscArrowLeft>
                             Back
                         </Link>
-                        <Link className="btn" href={`/home/template`}>
+                        <Link className="btn btn-secondary text-neutral" href={`/home/template`}>
                             <VscEdit></VscEdit>
                             Edit
                         </Link>
                         <button
-                            className="btn"
+                            className="btn btn-secondary text-neutral"
                             onClick={() => {
                                 saveSelection();
                             }}
@@ -130,9 +130,9 @@ export default function Criteria({ params }: Props) {
                                 onClick={() =>
                                     setSelectedTemplate({ ...template })
                                 }
-                                className={`text-black card min-w-52 min-h-64 max-h-64 w-60 hover:-translate-y-2 active:bg-gray-500 cursor-pointer shadow-md hover:shadow-xl transition-all duration-150 delay-75 ease-in ${
+                                className={`text-neutral bg-primary card min-w-52 min-h-64 max-h-64 w-60 hover:-translate-y-2 active:bg-gray-500 cursor-pointer shadow-md hover:shadow-xl transition-all duration-150 delay-75 ease-in ${
                                     template.name === selectedTemplate?.name
-                                        ? "opacity-70 bg-gray-300 border-4 border-primary"
+                                        ? "opacity-70 bg-accent border-4 border-primary"
                                         : ""
                                 }`}
                             >
@@ -146,7 +146,7 @@ export default function Criteria({ params }: Props) {
                                         template.name ? (
                                             <VscCheck
                                                 size={20}
-                                                color="green"
+                                                color="white"
                                             ></VscCheck>
                                         ) : (
                                             <VscCircle size={20}></VscCircle>
@@ -160,33 +160,15 @@ export default function Criteria({ params }: Props) {
                 <div>
                     <div className="flex flex-col sm:flex-row gap-4 my-4 sm:h-72">
                         <div className="flex shadow-xl rounded-2xl bg-inherit p-4 flex-col gap-4 sm:w-2/4">
-                            <h1 className="text-2xl">Information</h1>
-                            <input
-                                type="text"
-                                className="input input-md max-w-xs text-white"
-                                placeholder="name"
-                                value={templateName}
-                                disabled={true}
-                                onChange={(e) => {
-                                    setTemplateName(e.currentTarget.value);
-                                }}
-                            ></input>
-                            <input
-                                type="number"
-                                placeholder="Minimum required eg. 5"
-                                className="input input-md max-w-xs"
-                                disabled={true}
-                                value={templateMin}
-                                onChange={(e) =>
-                                    setTemplateMin(
-                                        Math.abs(
-                                            parseInt(e.currentTarget.value)
-                                        )
-                                    )
-                                }
-                            ></input>
+                            <h1 className="text-2xl text-primary font-bold">Information</h1>
+                            <div
+                                className="input input-md max-w-xs bg-secondary text-neutral"
+                            >{templateName || "Default"}</div>
+                            <div
+                                className="input input-md max-w-xs bg-secondary text-neutral"
+                            >{templateMin || "eg. Minimum of 5"}</div>
                             <textarea
-                                className="h-full rounded-xl p-2 text-white"
+                                className="h-full rounded-xl p-2 text-neutral bg-secondary"
                                 placeholder="description"
                                 value={templateDesc}
                                 disabled={true}
@@ -202,7 +184,7 @@ export default function Criteria({ params }: Props) {
                                         className="w-full flex items-center justify-between"
                                         key={index}
                                     >
-                                        <div className="badge flex items-center justify-between p-6 w-full">
+                                        <div className="rounded-xl text-neutral bg-secondary flex items-center justify-between p-4 w-full">
                                             <p>{criteria.name}</p>
                                             {criteria.required ? (
                                                 <VscVerified
@@ -222,7 +204,7 @@ export default function Criteria({ params }: Props) {
                     onClick={() => setMessage("")}
                     className={`toast ${message === "" ? "hidden" : ""}`}
                 >
-                    <div className="alert alert-info cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
+                    <div className="alert bg-secondary cursor-pointer text-neutral hover:alert-warning transition-colors duration-100 ease-in-out">
                         {message}
                     </div>
                 </div>
@@ -230,7 +212,7 @@ export default function Criteria({ params }: Props) {
                     onClick={() => setError("")}
                     className={`toast ${error === "" ? "hidden" : ""}`}
                 >
-                    <div className="alert alert-error cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
+                    <div className="alert alert-error cursor-pointer text-neutral hover:alert-warning transition-colors duration-100 ease-in-out">
                         {error}
                     </div>
                 </div>
@@ -254,7 +236,7 @@ export default function Criteria({ params }: Props) {
                 <div>
                     <div className="flex flex-col sm:flex-row gap-4 my-4 sm:h-72">
                         <div className="flex shadow-xl rounded-2xl bg-inherit p-4 flex-col gap-4 sm:w-2/4">
-                            <h1 className="text-2xl">Information</h1>
+                            <h1 className="text-2xl font-bold text-primary">Information</h1>
                             <input className="input max-w-xs skeleton bg-gray-200 rounded-md"></input>
                             <input className="input max-w-xs skeleton bg-gray-200 rounded-md"></input>
                             <textarea className="h-60 rounded-md skeleton bg-gray-200"></textarea>
@@ -281,7 +263,7 @@ export default function Criteria({ params }: Props) {
                     onClick={() => setMessage("")}
                     className={`toast ${message === "" ? "hidden" : ""}`}
                 >
-                    <div className="alert alert-info cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
+                    <div className="alert bg-secondary cursor-pointer text-neutral hover:alert-warning transition-colors duration-100 ease-in-out">
                         {message}
                     </div>
                 </div>
@@ -289,7 +271,7 @@ export default function Criteria({ params }: Props) {
                     onClick={() => setError("")}
                     className={`toast ${error === "" ? "hidden" : ""}`}
                 >
-                    <div className="alert alert-error cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
+                    <div className="alert alert-error cursor-pointer text-neutral hover:alert-warning transition-colors duration-100 ease-in-out">
                         {error}
                     </div>
                 </div>
