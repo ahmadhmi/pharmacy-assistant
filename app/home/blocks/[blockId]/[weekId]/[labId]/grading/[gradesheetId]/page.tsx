@@ -54,16 +54,20 @@ export default function Grade({ params }: Props) {
                 setError(
                     `${ex.response.statusText}: Please go back to the grading page and make your way here again.`
                 );
-            }try{
+            }
+        }
+        try{
+            if(lab && lab.data){
                 template = await axios.get(
-                    `/api/criteria/${lab!.data.selectedTemplate}`
+                    `/api/criteria/${lab.data.selectedTemplate}`
                 );
+                console.log(template)
             }
-            catch(ex:any){
-                setError(
-                    `Lab has no template selected for grading: Please go back to the lab page and select a template.`
-                );
-            }
+        }
+        catch(ex:any){
+            setError(
+                `Lab has no template selected for grading: Please go back to the lab page and select a template.`
+            );
         }
         if (response?.data) {
             setGradesheet(response.data);
