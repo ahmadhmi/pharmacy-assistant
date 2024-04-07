@@ -313,7 +313,7 @@ export default function LabPage({ params }: Props) {
               className="btn btn-primary text-neutral"
               href={`${params.labId}/criteria`}
             >
-              Edit Criteria
+              Select Template
             </Link>
           </div>
         </div>

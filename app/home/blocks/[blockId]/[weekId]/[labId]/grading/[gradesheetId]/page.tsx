@@ -45,9 +45,6 @@ export default function Grade({ params }: Props) {
             lab = await axios.get(
                 `/api/blocks/${params.blockId}/${params.weekId}/${params.labId}`
             );
-            template = await axios.get(
-                `/api/criteria/${lab.data.selectedTemplate}`
-            );
         } catch (ex: any) {
             if (ex.response.data.error) {
                 setError(
@@ -56,6 +53,15 @@ export default function Grade({ params }: Props) {
             } else {
                 setError(
                     `${ex.response.statusText}: Please go back to the grading page and make your way here again.`
+                );
+            }try{
+                template = await axios.get(
+                    `/api/criteria/${lab!.data.selectedTemplate}`
+                );
+            }
+            catch(ex:any){
+                setError(
+                    `Lab has no template selected for grading: Please go back to the lab page and select a template.`
                 );
             }
         }
