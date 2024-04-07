@@ -208,13 +208,13 @@ export default function Criteria({ params }: Props) {
 
     if (markingTemplates) {
         return (
-            <section className="p-4">
+            <section className="p-4 bg-neutral">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-xl font-semibold">Templates</h1>
-                    <div className="flex items-center gap-2">
+                    <h1 className="text-xl font-semibold badge badge-primary rounded-md p-4 text-neutral">Templates</h1>
+                    <div className="flex items-center gap-2 text-neutral">
                         <button
                             disabled={selectedTemplate == undefined}
-                            className="btn"
+                            className="btn btn-secondary text-neutral"
                             onClick={() => {
                                 saveSelection();
                             }}
@@ -227,12 +227,12 @@ export default function Criteria({ params }: Props) {
                 <div>
                     <dialog id="add_template_modal" className="modal">
                         <div className="modal-box">
-                            <h3 className="font-bold text-lg">Add Template</h3>
+                            <h3 className="font-bold text-lg text-primary">Add Template</h3>
                             <form method="dialog">
                                 <input
                                     type="text"
                                     placeholder="Template Name"
-                                    className="input input-md w-full"
+                                    className="input input-md w-full bg-secondary text-neutral"
                                     value={newTemplateName}
                                     onChange={(e) => {
                                         setNewTemplateName(
@@ -242,12 +242,12 @@ export default function Criteria({ params }: Props) {
                                 ></input>
                                 <div className="modal-action w-full">
                                     <button
-                                        className="btn btn-primary"
+                                        className="btn btn-secondary text-neutral"
                                         onClick={handleAddNewTemplate}
                                     >
                                         Add
                                     </button>
-                                    <button className="btn btn-error">
+                                    <button className="btn btn-error text-neutral">
                                         Close
                                     </button>
                                 </div>
@@ -256,12 +256,12 @@ export default function Criteria({ params }: Props) {
                     </dialog>
                     <dialog id="add_criteria_modal" className="modal">
                         <div className="modal-box">
-                            <h3 className="font-bold text-lg">Add Criteria</h3>
+                            <h3 className="font-bold text-lg text-primary">Add Criteria</h3>
                             <form method="dialog">
                                 <input
                                     type="text"
                                     placeholder="Eg. Professionalism"
-                                    className="input input-md w-full"
+                                    className="input input-md w-full bg-secondary text-neutral"
                                     value={newCriteriaName}
                                     onChange={(e) => {
                                         setNewCriteriaName(
@@ -270,12 +270,12 @@ export default function Criteria({ params }: Props) {
                                     }}
                                 ></input>
                                 <div className="flex gap-4 mt-2 px-4">
-                                    <h4 className="text-sm">
+                                    <h4 className="text-sm font-bold text-primary">
                                         Required to pass?:
                                     </h4>
                                     <input
                                         type="checkbox"
-                                        className="checkbox"
+                                        className="checkbox checkbox-secondary"
                                         checked={newCriteriaReq}
                                         onChange={(e) => {
                                             setNewCriteriaReq(e.target.checked);
@@ -284,12 +284,12 @@ export default function Criteria({ params }: Props) {
                                 </div>
                                 <div className="modal-action w-full">
                                     <button
-                                        className="btn btn-primary"
+                                        className="btn btn-secondary text-neutral"
                                         onClick={handleAddCriteria}
                                     >
                                         Add
                                     </button>
-                                    <button className="btn btn-error">
+                                    <button className="btn btn-error text-neutral">
                                         Close
                                     </button>
                                 </div>
@@ -298,13 +298,13 @@ export default function Criteria({ params }: Props) {
                     </dialog>
                     <dialog id="del_template_modal" className="modal">
                         <div className="modal-box">
-                            <h3 className="font-bold text-lg">
+                            <h3 className="font-bold text-lg text-primary">
                                 Delete Template: {`${toBeDeleted?.name}`}
                             </h3>
                             <form method="dialog">
                                 <div className="modal-action w-full">
                                     <button
-                                        className="btn btn-error"
+                                        className="btn btn-error text-neutral"
                                         onClick={() =>
                                             handleDeleteTemplate(toBeDeleted)
                                         }
@@ -315,7 +315,7 @@ export default function Criteria({ params }: Props) {
                                         onClick={() =>
                                             setToBeDeleted(undefined)
                                         }
-                                        className="btn btn-primary"
+                                        className="btn btn-secondary text-neutral"
                                     >
                                         Close
                                     </button>
@@ -328,9 +328,9 @@ export default function Criteria({ params }: Props) {
                             <div
                                 key={template.name}
                                 onClick={() => setSelectedTemplate(template)}
-                                className={`text-black card min-w-52 min-h-64 max-h-64 w-60 hover:-translate-y-2 active:bg-gray-500 cursor-pointer shadow-md hover:shadow-xl transition-all duration-150 delay-75 ease-in ${
+                                className={`text-neutral card bg-primary min-w-52 min-h-64 max-h-64 w-60 hover:-translate-y-2 active:bg-gray-500 cursor-pointer shadow-md hover:shadow-xl transition-all duration-150 delay-75 ease-in ${
                                     template.name === selectedTemplate?.name
-                                        ? "opacity-70 bg-gray-300 border-4 border-primary"
+                                        ? "opacity-70 bg-accent border-4 border-primary"
                                         : ""
                                 }`}
                             >
@@ -343,11 +343,11 @@ export default function Criteria({ params }: Props) {
                                         {selectedTemplate?.name ===
                                         template.name ? (
                                             <VscCheck
-                                                size={20}
-                                                color="green"
+                                                size={25}
+                                                color="white"
                                             ></VscCheck>
                                         ) : (
-                                            <VscCircle size={20}></VscCircle>
+                                            <VscCircle size={25}></VscCircle>
                                         )}
                                         <button
                                             className=""
@@ -367,16 +367,16 @@ export default function Criteria({ params }: Props) {
                         ))}
 
                         <div className="dropdown dropdown-hover dropdown-right">
-                            <div tabIndex={0} role="button" className="btn m-1">
+                            <div tabIndex={0} role="button" className="btn m-1 btn-secondary text-neutral">
                                 <VscAdd size={20}></VscAdd>
                             </div>
                             <ul
                                 tabIndex={0}
-                                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 hover:cursor-pointer"
+                                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 w-52 hover:cursor-pointer join join-vertical rounded-md"
                             >
                                 <li>
                                     <button
-                                        className="btn btn-sm"
+                                        className="btn btn-sm btn-secondary join-item"
                                         onClick={handleOpenAddTemplate}
                                     >
                                         Add Template
@@ -384,7 +384,7 @@ export default function Criteria({ params }: Props) {
                                 </li>
                                 <li>
                                     <button
-                                        className="btn btn-sm"
+                                        className="btn btn-sm btn-secondary join-item"
                                         disabled={
                                             markingTemplates?.find(
                                                 (template) =>
@@ -405,10 +405,10 @@ export default function Criteria({ params }: Props) {
                 <div>
                     <div className="flex flex-col sm:flex-row gap-4 my-4 sm:h-72">
                         <div className="flex shadow-xl rounded-2xl bg-inherit p-4 flex-col gap-4 sm:w-2/4">
-                            <h1 className="text-2xl">Edit Information</h1>
+                            <h1 className="text-2xl font-bold text-primary">Edit Information</h1>
                             <input
                                 type="text"
-                                className="input input-md max-w-xs"
+                                className="input input-md max-w-xs bg-secondary text-neutral text-lg"
                                 placeholder="name"
                                 value={templateName}
                                 disabled={selectedTemplate == null}
@@ -419,7 +419,7 @@ export default function Criteria({ params }: Props) {
                             <input
                                 type="number"
                                 placeholder="Minimum required eg. 5"
-                                className="input input-md max-w-xs"
+                                className="input input-md max-w-xs bg-secondary text-neutral text-lg"
                                 disabled={selectedTemplate == null}
                                 value={templateMin}
                                 onChange={(e) =>
@@ -431,7 +431,7 @@ export default function Criteria({ params }: Props) {
                                 }
                             ></input>
                             <textarea
-                                className="h-full rounded-xl p-2"
+                                className="h-full rounded-xl p-2 bg-secondary text-neutral text-md"
                                 placeholder="description"
                                 value={templateDesc}
                                 disabled={selectedTemplate == null}
@@ -444,11 +444,11 @@ export default function Criteria({ params }: Props) {
                             <ul className="flex flex-col gap-4">
                                 {templateCriteria?.map((criteria, index) => (
                                     <li
-                                        className="w-full flex items-center justify-between join"
+                                        className="w-full flex items-center justify-between join text-neutral"
                                         key={index}
                                     >
-                                        <div className="badge p-6 join-item w-5/6">
-                                            <p>{criteria.name}</p>
+                                        <div className="bg-secondary badge gap-4 rounded-xl p-6 join-item w-5/6">
+                                            <p className="text-lg">{criteria.name}</p>
                                             {criteria.required ? (
                                                 <VscVerified
                                                     size={25}
@@ -479,11 +479,11 @@ export default function Criteria({ params }: Props) {
                                     </li>
                                 ))}
                                 <button
-                                    className="btn"
+                                    className="btn btn-secondary text-neutral"
                                     disabled={selectedTemplate === null}
                                     onClick={handleOpenAddCriteria}
                                 >
-                                    <VscAdd size={20}></VscAdd>
+                                    <VscAdd size={25}></VscAdd>
                                 </button>
                             </ul>
                         </div>
@@ -493,7 +493,7 @@ export default function Criteria({ params }: Props) {
                     onClick={() => setMessage("")}
                     className={`toast ${message === "" ? "hidden" : ""}`}
                 >
-                    <div className="alert alert-info cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
+                    <div className="alert bg-secondary cursor-pointer text-neutral hover:alert-warning transition-colors duration-100 ease-in-out">
                         {message}
                     </div>
                 </div>
@@ -501,7 +501,7 @@ export default function Criteria({ params }: Props) {
                     onClick={() => setError("")}
                     className={`toast ${error === "" ? "hidden" : ""}`}
                 >
-                    <div className="alert alert-error cursor-pointer text-white hover:alert-warning transition-colors duration-100 ease-in-out">
+                    <div className="alert alert-error cursor-pointer text-neutral hover:alert-warning transition-colors duration-100 ease-in-out">
                         {error}
                     </div>
                 </div>
@@ -525,7 +525,7 @@ export default function Criteria({ params }: Props) {
                 <div>
                     <div className="flex flex-col sm:flex-row gap-4 my-4 sm:h-72">
                         <div className="flex shadow-xl rounded-2xl bg-inherit p-4 flex-col gap-4 sm:w-2/4">
-                            <h1 className="text-2xl">Information</h1>
+                            <h1 className="text-2xl font-bold text-primary">Information</h1>
                             <input className="input max-w-xs skeleton bg-gray-200 rounded-md"></input>
                             <input className="input max-w-xs skeleton bg-gray-200 rounded-md"></input>
                             <textarea className="h-60 rounded-md skeleton bg-gray-200"></textarea>

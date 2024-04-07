@@ -26,7 +26,7 @@ const SideBar = ({ children }: Props) => {
           Quick Links
           <IoIosArrowDown />
         </label>
-        <main className="p-3 bg-neutral min-h-screen">{children}</main>
+        <main className="p-3 bg-neutral min-h-screen rounded-tl-lg">{children}</main>
       </div>
       <div className="drawer-side">
         <label
@@ -34,7 +34,7 @@ const SideBar = ({ children }: Props) => {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <ul className="menu p-4 max-w-64 min-h-full bg-primary text-base-content rounded-r-lg border-t--2 border-primary">
+        <ul className="menu p-4 max-w-64 min-h-full bg-primary text-base-content border-t--2 border-primary">
           {/* {blocks.length === 0 ? (
             <p>There is no block for this account!</p>
           ) : (

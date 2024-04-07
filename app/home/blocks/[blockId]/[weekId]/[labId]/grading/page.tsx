@@ -108,8 +108,10 @@ export default function Grading({ params }: Props) {
         e.preventDefault();
         const Numbers = /^[0-9]+$/;
         if (!studentId.match(Numbers) || rx.length <= 0) {
-            setError("Student ID should all be in numbers and the Rx should not be empty");
-            setTimeout(() => setError(""), 4000); 
+            setError(
+                "Student ID should all be in numbers and the Rx should not be empty"
+            );
+            setTimeout(() => setError(""), 4000);
             return;
         }
         const student = block?.students?.find(
@@ -157,7 +159,7 @@ export default function Grading({ params }: Props) {
             <section className="flex-col sm:flex-col-reverse items-center">
                 <div className="flex items-center justify-between">
                     <div
-                        className={`badge badge-primary p-4 rounded-md text-white text-lg ${
+                        className={`badge badge-primary p-6 text-xl sm:text-3xl font rounded-md text-white ${
                             lab?.name ? "" : "hidden"
                         }`}
                     >
@@ -165,7 +167,7 @@ export default function Grading({ params }: Props) {
                     </div>
                 </div>
                 <div>
-                    <h1 className="text-lg text-neutral mt-4">
+                    <h1 className="text-lg text-primary font-bold mt-4">
                         Completed Marking Sheets
                     </h1>
                 </div>
@@ -173,7 +175,7 @@ export default function Grading({ params }: Props) {
                     {gradesheets ? (
                         Object.keys(gradesheets).map((key, index) => (
                             <div
-                                className="collapse collapse-arrow my-1 shadow-lg border-2 bg-secondary"
+                                className="collapse collapse-arrow my-1 shadow-lg border-2 bg-secondary text-neutral"
                                 key={key}
                             >
                                 <input
@@ -191,7 +193,9 @@ export default function Grading({ params }: Props) {
                                 </div>
                                 <div className="collapse-content bg-neutral m-2 rounded-xl">
                                     <div className="flex flex-row items-center justify-between my-2 text-neutral border-b-2">
-                                        <div className="text-accent font-bold">Rx Number</div>
+                                        <div className="text-accent font-bold">
+                                            Rx Number
+                                        </div>
                                     </div>
                                     {gradesheets ? (
                                         gradesheets[key].map(
@@ -227,18 +231,20 @@ export default function Grading({ params }: Props) {
                     )}
                 </div>
                 <form
-                    className="grid grid-cols-1 grid-rows-2 gap-4 md:flex items-center bg-white shadow-xl rounded-xl p-2"
+                    className="grid grid-cols-1 grid-rows-2 gap-4 xl:flex items-center bg-white shadow-xl rounded-xl p-2"
                     onSubmit={(e) => handleStartGrading(e)}
                 >
                     <div className="flex flex-row gap-4 w-full">
                         <label className="form-control w-full">
                             <div className="label">
-                                <span className="label-text text-accent font-bold">Student ID</span>
+                                <span className="label-text text-accent font-bold">
+                                    Student ID
+                                </span>
                             </div>
                             <select
                                 defaultValue={"default"}
                                 onChange={(e) => setId(e.currentTarget.value)}
-                                className="select w-full max-w-xs bg-secondary"
+                                className="select w-full max-w-xs bg-secondary text-neutral"
                             >
                                 {block?.students?.map((student: Student) => (
                                     <option
@@ -253,11 +259,13 @@ export default function Grading({ params }: Props) {
                         </label>
                         <label className="form-control w-full">
                             <div className="label">
-                                <span className="label-text text-accent font-bold">Date</span>
+                                <span className="label-text text-accent font-bold">
+                                    Date
+                                </span>
                             </div>
                             <input
                                 type="date"
-                                className="input-md rounded-md bg-secondary"
+                                className="input-md rounded-md text-neutral bg-secondary"
                                 value={date}
                                 onChange={(e) => {
                                     setDate(e.currentTarget.value);
@@ -267,20 +275,25 @@ export default function Grading({ params }: Props) {
                     </div>
                     <label className="form-control w-full">
                         <div className="label">
-                            <span className="label-text text-accent font-bold">Rx Number</span>
+                            <span className="label-text text-accent font-bold">
+                                Rx Number
+                            </span>
                         </div>
                         <input
                             type="text"
                             placeholder="111222333"
                             maxLength={20}
-                            className="input-md rounded-md bg-secondary text-black"
+                            className="input-md rounded-md bg-secondary text-neutral"
                             onChange={(e) => {
                                 setRx(e.currentTarget.value);
                             }}
                             value={rx}
                         ></input>
                     </label>
-                    <button className="btn btn-primary text-neutral mt-8" type="submit">
+                    <button
+                        className="btn btn-primary text-neutral mt-8"
+                        type="submit"
+                    >
                         Start Grading
                     </button>
                 </form>
@@ -304,31 +317,75 @@ export default function Grading({ params }: Props) {
         );
     } else {
         return (
-            <div
-                role="alert"
-                className="cursor-pointer"
-                onClick={() => {
-                    if (!lab) {
-                        setError("");
-                        router.push(`/home/blocks/${params.blockId}`);
-                    }
-                }}
-            >
-                <div
-                    className={`alert hover:alert-warning flex flex-row ${
-                        error === "Page is loading..."
-                            ? "alert bg-prim"
-                            : "alert-error"
-                    }`}
-                >
-                    {error === "Page is loading..." ? (
-                        <span className="loading loading-spinner loading-md"></span>
-                    ) : (
-                        <VscError size={30}></VscError>
-                    )}
-                    <p className="break-words">{`${error}: click me to go back to the block page`}</p>
+            <section>
+                <div className="flex items-center justify-between">
+                    <div
+                        className={`bg-gray-200 p-4 rounded-md w-56 skeleton text-lg`}
+                    ></div>
                 </div>
-            </div>
+                <div>
+                    <h1 className="text-lg font-bold text-primary mt-4">
+                        Completed Marking Sheets
+                    </h1>
+                </div>
+                <div className="overflow-y-auto min-h-96 max-h-96 my-2 px-2 scrollbar-thin scrollbar-thumb-black mb-4 rounded-lg">
+                    <div className="h-20 my-1 shadow-lg rounded-xl bg-gray-200  skeleton"></div>
+                    <div className="h-20 my-1 shadow-lg rounded-xl bg-gray-200  skeleton"></div>
+                    <div className="h-20 my-1 shadow-lg rounded-xl bg-gray-200  skeleton"></div>
+                    <div className="h-20 my-1 shadow-lg rounded-xl bg-gray-200  skeleton"></div>
+                </div>
+                <form
+                    className="grid grid-cols-1 grid-rows-2 gap-4 xl:flex items-center bg-white shadow-xl rounded-xl p-2"
+                >
+                    <div className="flex flex-row gap-4 w-full">
+                        <label className="form-control w-6/12">
+                            <div className="label">
+                                <span className="label-text text-accent font-bold">
+                                    Student ID
+                                </span>
+                            </div>
+                            <input className="input rounded-md bg-gray-200 skeleton" type="text"></input>
+                        </label>
+                        <label className="form-control w-5/12 sm:w-6/12">
+                            <div className="label">
+                                <span className="label-text text-accent font-bold">
+                                    Date
+                                </span>
+                            </div>
+                            <input className="input rounded-md max-w-xs bg-gray-200 skeleton" type="password"></input>
+                        </label>
+                    </div>
+                    <label className="form-control w-full">
+                        <div className="label">
+                            <span className="label-text text-accent font-bold">
+                                Rx Number
+                            </span>
+                        </div>
+                        <input className="input rounded-md bg-gray-200 skeleton" type="text"></input>
+                    </label>
+                    <div
+                        className="btn rounded-md skeleton bg-gray-200 text-neutral mt-8"
+                    >
+                        Start Grading
+                    </div>
+                </form>
+                {error.length > 0 && error !== "Page is loading..." ? (
+                    <div
+                        role="alert"
+                        className="cursor-pointer"
+                        onClick={() => {
+                            setError("");
+                            router.push(`/home/blocks/${params.blockId}`);
+                        }}
+                    >
+                        <div className="toast bg-error mb-6 rounded-2xl text-neutral hover:alert-warning">
+                            <span>{`${error}`}</span>
+                        </div>
+                    </div>
+                ) : (
+                    <></>
+                )}
+            </section>
         );
     }
 }

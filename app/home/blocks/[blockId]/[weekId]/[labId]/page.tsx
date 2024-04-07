@@ -278,7 +278,7 @@ export default function LabPage({ params }: Props) {
     return (
       <section className="flex flex-col gap-4 h-screen w-100% px-8 py-10 bg-neutral">
         <div className="flex justify-between items-center py-2 flex-col sm:flex-row">
-          <h1 className="text-center text-3xl badge badge-primary rounded-md p-5 mb-5 sm:mb-0 text-neutral">Lab Page</h1>
+          <h1 className="text-center text-3xl badge badge-primary rounded-md p-6 mb-5 sm:mb-0 text-neutral">Lab Page</h1>
           <div className="flex gap-2 flex-col sm:flex-row">
             <label className="input input-bordered flex items-center gap-2">
               <input
@@ -330,7 +330,7 @@ export default function LabPage({ params }: Props) {
                 key={key}
               >
                 <input type="checkbox" name="my-accordion-2" placeholder="1" />
-                <div className="collapse-title flex justify-between items-center text-xl font-medium">
+                <div className="collapse-title text-neutral flex justify-between items-center text-xl font-medium">
                   <div className="text-xl font-medium">
                     {(searchedLabData || labData)[key][0]?.studentName}
                   </div>

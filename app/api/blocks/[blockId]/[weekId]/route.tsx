@@ -2,10 +2,11 @@
 
 import "server-only";
 // api for deleteWeek, updateWeek?, addLab
-import { getBlock, deleteWeek, addLab } from "@/app/_services/databaseService";
+import { getBlock, deleteWeek, addLab, getTemplates, addMarkingTemplates } from "@/app/_services/databaseService";
 import authOptions from "@/app/auth/authOptions";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { defaultTemplate } from "@/interfaces/template";
 
 interface Props {
     params: {
@@ -34,7 +35,18 @@ export async function POST(request: NextRequest, { params }: Props) {
         }
 
         const body = await request.json();
-        const newLab = await addLab(params.blockId, params.weekId, body);
+        const templates = await getTemplates(session.user.email);
+        let newLab;
+        if (templates && templates.length > 0){
+            let template = templates.find((template) => template.name === "Default") || templates[0];
+            body["selectedTemplate"] = template._id; 
+            newLab = await addLab(params.blockId, params.weekId, body);
+        }else{
+            const newTemplateId = await addMarkingTemplates(defaultTemplate, session.user.email); 
+            body["selectedTemplate"] = newTemplateId; 
+            newLab = await addLab(params.blockId, params.weekId, body);
+        }
+        
         return NextResponse.json(newLab, {
             status: 200,
         });
