@@ -263,7 +263,7 @@ export default function LabPage({ params }: Props) {
                 (result: Record<string, Gradesheet[]>, key) => {
                     const searchedGradesheets = labData[key].filter(
                         (gradeSheets) =>
-                            gradeSheets.studentName?.includes(search)
+                            gradeSheets.studentName ?.toLowerCase().includes(search.toLowerCase())
                     );
                     if (searchedGradesheets.length)
                         result[key] = searchedGradesheets;
