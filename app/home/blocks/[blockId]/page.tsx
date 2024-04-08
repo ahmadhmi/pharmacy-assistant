@@ -469,7 +469,7 @@ export default function BlockPage({ params }: Props) {
                   </div>
                   <ul
                     tabIndex={0}
-                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 hover:cursor-pointer"
+                    className="dropdown-content z-[1] menu p-2 shadow bg-primary rounded-box w-52 hover:cursor-pointer"
                   >
                     <li>
                       <button onClick={() => setCreateWeekModalOpen(true)}>
