@@ -21,7 +21,7 @@ const WeekAccordion = ({
   blockId,
 }: Props) => {
   return (
-    <div key={week.name} className="collapse collapse-arrow bg-base-200">
+    <div key={week.name} className="collapse collapse-arrow bg-accent">
       <input type="radio" name="my-accordion-2" defaultChecked/>
       <div className="flex justify-between items-center collapse-title text-xl font-medium text-center">
         <div className="flex-grow">{week.name}</div>
@@ -59,7 +59,7 @@ const WeekAccordion = ({
               <div className="flex gap-3">
                 <Link
                   href={`/home/blocks/${blockId}/${week._id}/${lab._id}`}
-                  className="btn btn-primary w-20"
+                  className="btn btn-secondary w-20"
                 >
                   View
                 </Link>
@@ -81,13 +81,13 @@ const WeekAccordion = ({
               +
             </button> */}
           <button
-            className="btn btn-outline btn-accent "
+            className="btn btn-secondary "
             onClick={handleAddLab}
           >
             Add Lab
           </button>
           <button
-            className="btn btn-outline btn-error"
+            className="btn btn-error"
             onClick={() => handleDeleteWeek(week)}
           >
             Delete Week
