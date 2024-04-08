@@ -10,7 +10,7 @@ interface Props {
 const BlockCard = ({ block }: Props) => {
   console.log(block._id);
   return (
-    <div className="card w-full bg-primary text-neutral md:w-80 shadow-md">
+    <div className="card w-full bg-accent text-neutral md:w-80 shadow-md">
       <div className="card-body gap-6 min-h-72">
         <h2 className="card-title self-center">{block.name}</h2>
         <hr />
@@ -28,7 +28,7 @@ const BlockCard = ({ block }: Props) => {
           <Link href={`/home/blocks/${block._id as string}/editBlock`}>
             <CiEdit
               size={30}
-              color="#37cdbe"
+              color="#aec3b0"
               className="hover:cursor-pointer self-center"
             />
           </Link>

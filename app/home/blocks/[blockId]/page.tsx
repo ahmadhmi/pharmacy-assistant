@@ -313,7 +313,7 @@ export default function BlockPage({ params }: Props) {
   const [analyticsVisible, setAnalyticsVisible] = useState(false);
 
   return (
-    <div>
+    <div className="bg-white">
       <div className="flex justify-center items-start text-slate-100 mt-10">
         <div className="card border justify-center shadow-xl w-full">
           <div className="card-body gap-5">
@@ -323,7 +323,7 @@ export default function BlockPage({ params }: Props) {
               <div className="flex items-center justify-between p-4">
                 <div className="flex gap-5">
                   <button
-                    className={`btn ${contentVisible ? "btn-primary" : ""} `}
+                    className={`btn btn-primary ${contentVisible ? "btn-secondary" : ""} `}
                     onClick={() => {
                       setContentVisible(true);
                       setAnalyticsVisible(false);
@@ -332,7 +332,7 @@ export default function BlockPage({ params }: Props) {
                     Content
                   </button>
                   <button
-                    className={`btn ${analyticsVisible ? "btn-primary" : ""} `}
+                    className={`btn btn-primary ${analyticsVisible ? "btn-secondary" : ""} `}
                     onClick={() => {
                       setContentVisible(false);
                       setAnalyticsVisible(true);
@@ -341,7 +341,7 @@ export default function BlockPage({ params }: Props) {
                     Analytics
                   </button>
                 </div>
-                <h2 className="text-slate-600 text-2xl flex-grow text-center ">
+                <h2 className="text-black text-2xl flex-grow text-center ">
                   {block?.name}
                 </h2>
                 <div className="dropdown dropdown-hover dropdown-end">
