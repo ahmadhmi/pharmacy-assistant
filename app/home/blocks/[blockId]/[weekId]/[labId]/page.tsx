@@ -280,16 +280,8 @@ export default function LabPage({ params }: Props) {
         <div className="flex justify-between items-center py-2 flex-col sm:flex-row">
           <h1 className="text-center text-3xl badge badge-primary rounded-md p-6 mb-5 sm:mb-0 text-neutral">Lab Page</h1>
           <div className="flex gap-2 flex-col sm:flex-row">
-            <label className="input input-bordered flex items-center gap-2">
-              <input
-                type="text"
-                className="grow bg-transparent"
-                placeholder="Enter student name"
-                value={search}
-                onChange={handleInput}
-                onKeyDown={handleEnter}
-              />
-              <svg
+            <label className="input input-bordered flex items-center gap-2" style={{ width: '300px' }}>
+            <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
                 fill="currentColor"
@@ -301,14 +293,42 @@ export default function LabPage({ params }: Props) {
                   clipRule="evenodd"
                 />
               </svg>
+              <input
+                type="text"
+                className="grow bg-transparent"
+                placeholder="Enter student name"
+                value={search}
+                onChange={handleInput}
+                onKeyDown={handleEnter}
+              />
+              {search && (
+              <button 
+                onClick={handleShowAll}
+                style={{ 
+                  backgroundColor: '#d4d4d4', 
+                  height: '20px', 
+                  width: '20px', 
+                  padding: 0, display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  borderRadius: '50%' 
+                }}
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-3 w-3" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="white">
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth="3" 
+                      d="M6 18L18 6M6 6l12 12" 
+                      />
+                </svg>
+              </button>)}
             </label>
-            <button
-              onClick={handleShowAll}
-              className="btn btn-primary text-neutral"
-              title="search"
-            >
-              Show all
-            </button>
             <Link
               className="btn btn-primary text-neutral"
               href={`${params.labId}/criteria`}
