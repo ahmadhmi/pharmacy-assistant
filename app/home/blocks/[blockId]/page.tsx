@@ -584,13 +584,13 @@ export default function BlockPage({ params }: Props) {
                   {/* if there is a button in form, it will close the modal */}
                   <button
                     onClick={() => setCreateWeekModalOpen(false)}
-                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    className="btn btn-sm btn-circle btn-secondary absolute right-2 top-2"
                     disabled={isLoading}
                   >
                     ✕
                   </button>
                 </form>
-                <h3 className="font-bold text-lg">
+                <h3 className="font-bold text-accent">
                   Enter the name of the week:
                 </h3>
                 <form
@@ -601,7 +601,7 @@ export default function BlockPage({ params }: Props) {
                     <input
                       type="text"
                       placeholder="Week Name"
-                      className="input input-bordered input-primary w-full max-w-xs"
+                      className="input input-bordered text-black input-primary w-full max-w-xs"
                       required
                       value={addedWeek}
                       onChange={(e) => setAddedWeek(e.target.value)}
@@ -630,13 +630,13 @@ export default function BlockPage({ params }: Props) {
                 <form method="dialog">
                   <button
                     onClick={() => setCreateLabModalOpen(false)}
-                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 "
+                    className="btn btn-sm btn-circle btn-secondary absolute right-2 top-2 "
                     disabled={isLoading}
                   >
                     ✕
                   </button>
                 </form>
-                <h3 className="font-bold text-lg">
+                <h3 className="font-bold  text-accent">
                   Enter the name of the lab:
                 </h3>
                 <form
@@ -647,7 +647,7 @@ export default function BlockPage({ params }: Props) {
                     <input
                       type="text"
                       placeholder="Lab Name"
-                      className="input input-bordered input-primary w-full max-w-xs"
+                      className="input input-bordered text-black input-primary w-full max-w-xs"
                       required
                       value={addedLab}
                       onChange={(e) => setAddedLab(e.target.value)}
@@ -672,11 +672,11 @@ export default function BlockPage({ params }: Props) {
               id="delete_lab_modal"
               className={`modal ${deleteLabModalOpen ? "modal-open" : ""}`}
             >
-              <div className="modal-box text-white">
+              <div className="modal-box flex flex-col gap-4 text-white">
                 <form method="dialog">
                   <button
                     onClick={() => setDeleteLabModalOpen(false)}
-                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 "
+                    className="btn btn-sm btn-circle btn-secondary absolute right-2 top-2 "
                     disabled={isLoading}
                   >
                     ✕
@@ -687,7 +687,7 @@ export default function BlockPage({ params }: Props) {
                   className="py-4 flex flex-col justify-between gap-2"
                 >
                   <div className="flex justify-between gap-2 items-center">
-                    <p>Do you want to delete {selectedLabToDelete?.name}?</p>
+                    <p className="text-accent">Do you want to delete {selectedLabToDelete?.name}?</p>
                     <button
                       type="submit"
                       className="btn btn-error"
@@ -703,11 +703,11 @@ export default function BlockPage({ params }: Props) {
               id="delete_week_modal"
               className={`modal ${deleteWeekModalOpen ? "modal-open" : ""}`}
             >
-              <div className="modal-box text-white">
+              <div className="modal-box  flex flex-col gap-4 text-white">
                 <form method="dialog">
                   <button
                     onClick={() => setDeleteWeekModalOpen(false)}
-                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 "
+                    className="btn btn-sm btn-circle btn-secondary absolute right-2 top-2 "
                     disabled={isLoading}
                   >
                     ✕
@@ -718,7 +718,7 @@ export default function BlockPage({ params }: Props) {
                   className="py-4 flex flex-col justify-between gap-2"
                 >
                   <div className="flex justify-between gap-2 items-center">
-                    <p>Do you want to delete {selectedWeek?.name}?</p>
+                    <p className="text-accent">Do you want to delete {selectedWeek?.name}?</p>
                     <button
                       type="submit"
                       className="btn btn-error"
