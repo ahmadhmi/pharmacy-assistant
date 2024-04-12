@@ -62,11 +62,13 @@ export default function Grade({ params }: Props) {
                     `/api/criteria/${lab.data.selectedTemplate}`
                 );
                 console.log(template)
+            }else{
+                throw {response:{data:{error: "Failed to load lab"}}}
             }
         }
         catch(ex:any){
             setError(
-                `Lab has no template selected for grading: Please go back to the lab page and select a template.`
+                `${ex.response.data.error}: Please go back to the lab page and select a template.`
             );
         }
         if (response?.data) {
