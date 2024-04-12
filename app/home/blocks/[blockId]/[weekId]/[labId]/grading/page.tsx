@@ -244,7 +244,7 @@ export default function Grading({ params }: Props) {
                             <select
                                 defaultValue={"default"}
                                 onChange={(e) => setId(e.currentTarget.value)}
-                                className="select w-full max-w-xs bg-secondary text-neutral"
+                                className="select w-full max-w-xs bg-secondary text-neutral scrollbar-thin scrollbar-thumb-black"
                             >
                                 {block?.students?.map((student: Student) => (
                                     <option
