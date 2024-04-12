@@ -454,7 +454,7 @@ export default function Grade({ params }: Props) {
                             }}
                         >
                             <div className="p-4 absolute right-3 bottom-5 bg-error mb-6 rounded-2xl text-neutral hover:alert-warning">
-                                <span>{`${error}`}</span>
+                                <p className="break-words">{`${error}`}</p>
                             </div>
                         </div>
                     ) : (
