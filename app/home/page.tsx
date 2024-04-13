@@ -65,7 +65,7 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            <div className=" grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-20 w-full">
+            <div className=" grid grid-cols-1  sm:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-20 w-full">
               {blocks.length == 0 ? (
                 <p className="text-slate-800">
                   No blocks available currently.{" "}
