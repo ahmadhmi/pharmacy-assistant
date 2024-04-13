@@ -12,6 +12,9 @@ import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import Skeleton from "react-loading-skeleton";
+import { RxFileText } from "react-icons/rx";
+import { BsBarChartLine } from "react-icons/bs";
+
 import {
   BarChart,
   Bar,
@@ -330,14 +333,17 @@ export default function BlockPage({ params }: Props) {
     const res = await deleteWeek(selectedWeek);
     console.log(res);
 
-    const updatedWeeks = block?.weeks?.filter(
-      (week) => week.name !== selectedWeek.name
-    );
-    setBlock((prevBlock) => ({
-      ...prevBlock,
-      weeks: updatedWeeks,
-      users: block?.users || [],
-    }));
+    if (res) {
+      const updatedWeeks = block?.weeks?.filter(
+        (week) => week.name !== selectedWeek.name
+      );
+      setBlock((prevBlock) => ({
+        ...prevBlock,
+        weeks: updatedWeeks,
+        users: block?.users || [],
+      }));
+    }
+
     setDeleteWeekModalOpen(false);
     setSelectedWeek(undefined);
   };
@@ -431,10 +437,11 @@ export default function BlockPage({ params }: Props) {
             {isLoading ? (
               <Skeleton height={100} />
             ) : (
-              <div className="flex items-center justify-between p-4">
+              <div className="flex 
+                gap-4 items-center justify-between p-4">
                 <div className="flex gap-5">
                   <button
-                    className={`btn btn-primary ${
+                    className={`btn  hidden lg:inline btn-primary ${
                       contentVisible ? "btn-secondary" : ""
                     } `}
                     onClick={() => {
@@ -444,8 +451,17 @@ export default function BlockPage({ params }: Props) {
                   >
                     Content
                   </button>
+                  <RxFileText
+                    color={`${contentVisible ? "#aec3b0" : "#598392"}`}
+                    size={35}
+                    className={` ${contentVisible ? "hidden" : ""} lg:hidden `}
+                    onClick={() => {
+                      setContentVisible(true);
+                      setAnalyticsVisible(false);
+                    }}
+                  />
                   <button
-                    className={`btn btn-primary ${
+                    className={`btn hidden lg:inline btn-primary ${
                       analyticsVisible ? "btn-secondary" : ""
                     } `}
                     onClick={() => {
@@ -455,8 +471,17 @@ export default function BlockPage({ params }: Props) {
                   >
                     Analytics
                   </button>
+                  <BsBarChartLine
+                    color="#598392"
+                    size={35}
+                    className={`${analyticsVisible ? "hidden" : ""} lg:hidden `}
+                    onClick={() => {
+                      setContentVisible(false);
+                      setAnalyticsVisible(true);
+                    }}
+                  />
                 </div>
-                <h2 className="text-black text-2xl flex-grow text-center ">
+                <h2 className=" text-black text-2xl flex-grow text-center ">
                   {block?.name}
                 </h2>
                 <div className="dropdown dropdown-hover dropdown-end">
@@ -488,25 +513,16 @@ export default function BlockPage({ params }: Props) {
             <hr />
             <div>
               {analyticsVisible && (
-                <div className="flex justify-center gap-5">
-                  <ResponsiveContainer width={500} height={500}>
-                    <BarChart
-                      width={500}
-                      height={500}
-                      data={barchartData}
-                      margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                      }}
-                    >
+                <div className="flex flex-col sm:flex-row w-full justify-center">
+                  <ResponsiveContainer width="100%" height={400}>
+                    <BarChart data={barchartData} height={300}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" />
                       <YAxis />
                       <Tooltip />
                       <Legend />
                       <Bar
+                        barSize={60}
                         dataKey="number"
                         fill="#aec3b0"
                         activeBar={
@@ -515,8 +531,8 @@ export default function BlockPage({ params }: Props) {
                       />
                     </BarChart>
                   </ResponsiveContainer>
-                  <ResponsiveContainer width={600} height={500}>
-                    <PieChart width={400} height={400}>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <PieChart>
                       <Pie
                         activeIndex={activeIndex}
                         activeShape={renderActiveShape}
@@ -687,7 +703,9 @@ export default function BlockPage({ params }: Props) {
                   className="py-4 flex flex-col justify-between gap-2"
                 >
                   <div className="flex justify-between gap-2 items-center">
-                    <p className="text-accent">Do you want to delete {selectedLabToDelete?.name}?</p>
+                    <p className="text-accent">
+                      Do you want to delete {selectedLabToDelete?.name}?
+                    </p>
                     <button
                       type="submit"
                       className="btn btn-error"
@@ -718,7 +736,9 @@ export default function BlockPage({ params }: Props) {
                   className="py-4 flex flex-col justify-between gap-2"
                 >
                   <div className="flex justify-between gap-2 items-center">
-                    <p className="text-accent">Do you want to delete {selectedWeek?.name}?</p>
+                    <p className="text-accent">
+                      Do you want to delete {selectedWeek?.name}?
+                    </p>
                     <button
                       type="submit"
                       className="btn btn-error"
